@@ -1,0 +1,61 @@
+<alert>
+<identifier>urn:oid:1234.5678</identifier>
+<sender>test@example.com</sender>
+<sent>2024-04-21T11:51:29-03:00</sent>
+<status>Actual</status>
+<msgType>Alert</msgType>
+<scope>Public</scope>
+<info>
+<language>de-DE</language>
+<category>Met</category>
+<event>TestCase</event>
+<responseType>Prepare</responseType>
+<urgency>Future</urgency>
+<severity>Moderate</severity>
+<certainty>Likely</certainty>
+<onset>2024-04-22T00:00:00-03:00</onset>
+<expires>2024-04-22T10:00:00-03:00</expires>
+<senderName>FOSS Public Alert Server Test Sender</senderName>
+<headline>Headline for test case one</headline>
+<description>
+This is a testcase for the foss public alert server system
+</description>
+<instruction>
+Please verify that this alert is corretly parsed
+</instruction>
+<web>https://exampleTestCaseOne.com</web>
+<contact>
+Tel: 123456789
+</contact>
+<parameter>
+<valueName>ColorRisk</valueName>
+<value>#FFFE00</value>
+</parameter>
+<parameter>
+<valueName>TimeStampDateOnSet</valueName>
+<value>1713754800</value>
+</parameter>
+<parameter>
+<valueName>TimeStampDateExpires</valueName>
+<value>1713790800</value>
+</parameter>
+<parameter>
+<valueName>Municipios</valueName>
+<value>
+Aceguá - RS (4300034), Alegrete - RS (4300406), Amaral Ferrador - RS (4300638), Arroio do Padre - RS (4301073), Arroio Grande - RS (4301305), Bagé - RS (4301602), Barra do Quaraí - RS (4301875), Bossoroca - RS (4302501), Caçapava do Sul - RS (4302808), Cacequi - RS (4302907), Cachoeira do Sul - RS (4303004), Candiota - RS (4304358), Canguçu - RS (4304507), Capão do Cipó - RS (4304655), Capão do Leão - RS (4304663), Cerrito - RS (4305124), Chuí - RS (4305439), Cristal - RS (4306056), Dilermando de Aguiar - RS (4306379), Dom Pedrito - RS (4306601), Encruzilhada do Sul - RS (4306908), Formigueiro - RS (4308409), Garruchos - RS (4308656), Herval - RS (4307104), Hulha Negra - RS (4309654), Itacurubi - RS (4310553), Itaqui - RS (4310603), Jaguarão - RS (4311007), Jaguari - RS (4311106), Jari - RS (4311130), Lavras do Sul - RS (4311502), Maçambará - RS (4311718), Manoel Viana - RS (4311759), Mata - RS (4312104), Morro Redondo - RS (4312450), Nova Esperança do Sul - RS (4313037), Pedras Altas - RS (4314175), Pedro Osório - RS (4314209), Pelotas - RS (4314407), Pinheiro Machado - RS (4314506), Piratini - RS (4314605), Quaraí - RS (4315305), Quevedos - RS (4315321), Rio Grande - RS (4315602), Rosário do Sul - RS (4316402), Santa Margarida do Sul - RS (4316972), Santa Maria - RS (4316907), Santana da Boa Vista - RS (4317004), Sant'Ana do Livramento - RS (4317103), Santa Vitória do Palmar - RS (4317301), Santiago - RS (4317400), Santo Antônio das Missões - RS (4317707), São Borja - RS (4318002), São Francisco de Assis - RS (4318101), São Gabriel - RS (4318309), São José do Norte - RS (4318507), São Lourenço do Sul - RS (4318804), São Martinho da Serra - RS (4319125), São Pedro do Sul - RS (4319406), São Sepé - RS (4319604), São Vicente do Sul - RS (4319802), Toropi - RS (4321493), Tupanciretã - RS (4322202), Turuçu - RS (4322327), Unistalda - RS (4322376), Uruguaiana - RS (4322400), Vila Nova do Sul - RS (4323457)
+</value>
+</parameter>
+<parameter>
+<valueName>Test data 123</valueName>
+<value>test value 123</value>
+</parameter>
+<area>
+<areaDesc>
+Germany
+</areaDesc>
+<polygon>
+    52.843,7.778 52.416,13.931 50.472,11.865 49.182,8.459 51.180,6.328
+</polygon>
+</area>
+</info>
+</alert>

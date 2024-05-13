@@ -1,0 +1,6 @@
+foss_public_alert_server/cap
+foss_public_alert_server/static
+foss_public_alert_server/cache
+**/__pycache__/
+.idea
+.venv
