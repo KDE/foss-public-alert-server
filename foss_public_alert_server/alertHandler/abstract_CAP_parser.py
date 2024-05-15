@@ -36,8 +36,6 @@ class AbstractCAPParser(ABC):
         :param cap_tree: cap data of the alert
         :return: the identifier of the alert or an empty string in case of failure
         """
-
-        # find identifier
         id_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier')
         if id_node is None or not id_node.text:
             print(f"{self.source} - Couldn't find CAP alert message identifier, skipping")
@@ -45,6 +43,13 @@ class AbstractCAPParser(ABC):
         return id_node.text
 
     def find_sent_time(self, cap_tree, alert_id) -> str:
+        """
+        find the sent time of the alert in the xml data and return it
+        :param cap_tree: cap data of the alert
+        :param alert_id: the identifier of the alert
+        :return: the sent time of the alert
+        :raise: valueError if it can not find the sent time
+        """
         sent_time_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}sent')
         if sent_time_node is None or not sent_time_node.text:
             print(f"{self.source} - Couldn't find CAP alert message sent time, skipping {alert_id}")
@@ -52,6 +57,13 @@ class AbstractCAPParser(ABC):
         return sent_time_node.text
 
     def find_expire_time(self, cap_tree, alert_id) -> datetime:
+        """
+        find the expiry time in the CAP data and return it
+        :param cap_tree: cap data of the alert
+        :param alert_id: the identifier of the alert
+        :return: the expiry time of the alert or None we if it could not find one
+        :raise: ValueError if the alert is already expired
+        """
         expire_time: datetime = None
 
         for expireTimeNode in cap_tree.findall(
@@ -63,26 +75,31 @@ class AbstractCAPParser(ABC):
             if expire_time is None or datatime > expire_time:
                 expire_time = datatime
             if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                print(f"{self.source} - skipping alert {alert_id} expired on {datatime}")
+                # print(f"{self.source} - skipping alert {alert_id} expired on {datatime}")
                 raise ValueError(f"{self.source} - skipping alert {alert_id} expired on {datatime}")
 
         return expire_time
 
     @staticmethod
-    def geojson_polygon_to_cap(coordinates):
-        poly = ''
+    def geojson_polygon_to_cap(coordinates) -> str:
+        """
+        Converts a polygon to cap data
+        :param coordinates:
+        :return: a string with the coordinates
+        """
+        poly: str = ''
         for coord in coordinates[0]:
             poly += f"{coord[1]:.4f},{coord[0]:.4f} "
         return poly.strip()
 
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
-        Some sources do not include the polygons of the area direct in the CAP file but use geocodes instead.
-        Therefore, we append the polygons as geojson to the file
+        Some sources do not contain the polygons of the area directly in the CAP file, but use geocodes instead.
+        If necessary, we add the polygons to the file as geojson.
         :param cap_tree: the original cap xml tree
         :return: true if the data is expanded false if not
         """
-        expanded = False
+        expanded: bool = False
         for area in cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
             # if they are already polygons, we do not have to expand the data
             if area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon'):
@@ -116,7 +133,7 @@ class AbstractCAPParser(ABC):
 
     def flatten_xml(self, node: xml) -> None:
         """
-        remove whitespace at the beginning and ending from all text
+        remove whitespace at the beginning and end of the entire text in the xml-tree
         :param node: the root node of the xml tree
         :return: None
         """
@@ -126,9 +143,20 @@ class AbstractCAPParser(ABC):
         for child in node:
             self.flatten_xml(child)
 
-
     @staticmethod
-    def bbox_for_polygon(poly, min_lat, min_lon, max_lat, max_lon):
+    def bbox_for_polygon(poly, min_lat, min_lon, max_lat, max_lon) -> tuple[int, int, int, int]:
+        """
+        creates a bounding box from the given polygon.
+        Uses the min_lat, min_lon as lower bound and max_lat, max_lon as upper bound. Only updates the
+        values if the polygon exceeds these values
+        :param poly: the polygon
+        :param min_lat: the current minimal latitude
+        :param min_lon: the current minimal longitude
+        :param max_lat: the current maximal latitude
+        :param max_lon: the current maximal longitude
+        :return: new values of min_lat, min_lon, max_lat, max_lon if the polygon had lower/higher
+        values or the previous values if not
+        """
         if not poly:
             return min_lat, min_lon, max_lat, max_lon
         for point in poly.split(' '):
@@ -148,6 +176,18 @@ class AbstractCAPParser(ABC):
 
     @staticmethod
     def bbox_for_circle(circle, min_lat, min_lon, max_lat, max_lon):
+        """
+        creates a bounding box from the given circle.
+        Uses the min_lat, min_lon as lower bound and max_lat, max_lon as upper bound. Only updates the
+        values if the circle exceeds these values
+        :param poly: the polygon
+        :param min_lat: the current minimal latitude
+        :param min_lon: the current minimal longitude
+        :param max_lat: the current maximal latitude
+        :param max_lon: the current maximal longitude
+        :return: new values of min_lat, min_lon, max_lat, max_lon if the polygon had lower/higher
+        values or the previous values if not
+        """
         (center, radius) = circle.split(' ')
         (lat, lon) = center.split(',')
         try:
@@ -164,14 +204,14 @@ class AbstractCAPParser(ABC):
         return min_lat, min_lon, max_lat, max_lon
 
     @staticmethod
-    def is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat):
+    def is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat) -> bool:
         """
-        validate if the given bounding box is valid and does not except valid values
-        :param min_lon:
-        :param min_lat:
-        :param max_lon:
-        :param max_lat:
-        :return:
+        validate if the given bounding box is valid and does not except valid values.
+        :param min_lon: the minimal longitude of the bounding box
+        :param min_lat: the minimal latitude of the bounding box
+        :param max_lon: the maximal longitude of the bounding box
+        :param max_lat: the maximal latitude of the bounding box
+        :return: true if the bounding box if valid, false if not
         """
         return (-180.0 <= min_lon <= 180.0
                 and -180.0 <= min_lat <= 180.0
@@ -206,7 +246,7 @@ class AbstractCAPParser(ABC):
         return min_lat, min_lon, max_lat, max_lon
 
     @staticmethod
-    def write_to_database(new_alert: Alert):
+    def write_to_database(new_alert: Alert) -> None:
         try:
             # @todo write to database maybe a problem with race conditions?
             print("Writing to database...")
@@ -214,7 +254,7 @@ class AbstractCAPParser(ABC):
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
                 alert = alerts[0]
-                # TODO look for changes and update/notify as needed
+                # TODO look for changes and update/notify if needed
             else:
                 print("bounding box is:")
                 print(new_alert.bounding_box)
@@ -232,7 +272,7 @@ class AbstractCAPParser(ABC):
 
             cap_data_modified: bool = False
             # crude way to normalize to CAP v1.2, US NWS still uses v1.1 data
-            # @todo should not be necessary anymore it seams that they also use 1.2 now
+            # @todo should not be necessary anymore it seems that they also use 1.2 now
             if 'urn:oasis:names:tc:emergency:cap:1.1' in cap_data:
                 cap_data = cap_data.replace('urn:oasis:names:tc:emergency:cap:1.1',
                                             'urn:oasis:names:tc:emergency:cap:1.2')
