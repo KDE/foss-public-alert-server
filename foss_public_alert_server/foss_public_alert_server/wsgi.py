@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 WSGI config for foss_public_alert_server project.
 

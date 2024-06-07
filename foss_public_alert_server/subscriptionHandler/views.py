@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
 from django.contrib.gis.geos import Polygon

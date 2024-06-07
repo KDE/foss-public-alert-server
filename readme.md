@@ -1,3 +1,8 @@
+<!--
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # FOSS Public Alert Server
 
 The goal of this project is to provide an open source server that allows desktop applications like kPublicAlerts (still beta)

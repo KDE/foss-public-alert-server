@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 """
 Django settings for foss_public_alert_server project.
 
