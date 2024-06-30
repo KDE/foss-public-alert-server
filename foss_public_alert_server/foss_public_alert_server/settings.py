@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'subscriptionHandler.apps.SubscriptionHandlerConfig',
     'alertHandler.apps.AlertHandlerConfig',
+    'sourceFeedHandler.apps.SourcefeedhandlerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -138,6 +139,8 @@ USER_AGENT = "FOSS Public Alert Server"
 
 # timeperiod after which an inactive subscription without heartbeats will be deleted from the database
 DAYS_INACTIVE_TIMEOUT = 10
+
+DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS = 60
 
 
 # Default primary key field type

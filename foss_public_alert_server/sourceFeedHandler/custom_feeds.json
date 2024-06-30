@@ -1,0 +1,143 @@
+{
+  "sources": [
+    {
+      "source": {
+        "sourceId": "de-mowas-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Bundesamt für Bevölkerungschutz und Katastrophenhilfe",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://warnung.bund.de/bbk.mowas/gefahrendurchsagen.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "de-mowas",
+        "override": "True",
+        "ignore": "False"
+      }
+    },
+     {
+      "source": {
+        "sourceId": "de-mowas-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Germany: Dwd",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_MUL.zip",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "DWD-Zip",
+        "override": "True",
+        "ignore": "False"
+      }
+    },
+    {
+      "source": {
+        "sourceId": "de-mowas-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Deutscher Wetterdienst",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_MUL.zip",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "DWD-Zip",
+        "override": "True",
+        "ignore": "False"
+      }
+    },
+    {
+      "source": {
+        "sourceId": "de-mowas-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Landeshochwasserportal",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://warnung.bund.de/bbk.lhp/hochwassermeldungen.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "lhp-cap",
+        "override": "True",
+        "ignore": "False"
+      }
+    },
+      {
+      "source": {
+        "sourceId": "de-mowas-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Biwapp",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://warnung.bund.de/bbk.biwapp/warnmeldungen.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "biwapp-cap",
+        "override": "True",
+        "ignore": "False"
+      }
+    },
+    {
+      "source": {
+        "sourceId": "CH-alert-swiss-xx",
+        "byLanguage": [
+          {
+            "code": "ch",
+            "name": "Schweiz: alert-swiss",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://warnung.bund.de/bbk.biwapp/warnmeldungen.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "ch",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "alert-swiss-cap",
+        "override": "True",
+        "ignore": "False"
+      }
+    }
+  ]
+}
+

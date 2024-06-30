@@ -1,0 +1,27 @@
+{
+  "sources": [
+    {
+      "source": {
+        "sourceId": "co-ungrd-es",
+        "byLanguage": [
+          {
+            "code": "es",
+            "name": "Colombia: UNGRD (National Unit for Disaster Risk Management)",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/co-ungrd-es.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.170.2",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=32",
+        "authorName": "UNGRD contact",
+        "authorEmail": "contactenos@gestiondelriesgo.gov.co",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://www.gestiondelriesgo.gov.co/rss/AtomAlert.aspx",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "co",
+        "authorityAbbrev": "ungrd",
+
+        "reason": "Server not reachable"
+      }
+    }
+  ]
+}
