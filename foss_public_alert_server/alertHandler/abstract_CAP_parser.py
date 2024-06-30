@@ -13,20 +13,21 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from .models import Alert
+# from sourceFeedHandler.models import CAPFeedSource
+from foss_public_alert_server.celery import app as celery_app
 
 
 class AbstractCAPParser(ABC):
-    feed_url = None
+    feed_source = None
     session = None
-    source = None
     parser = None
 
-    def __init__(self, source_id, feed_url):
-        self.feed_url = feed_url
-        self.source = source_id
-        self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.source)
+    def __init__(self, feed_source):
+        self.feed_source = feed_source
+        self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.feed_source.source_id)
 
     @abstractmethod
+    @celery_app.task
     def get_feed(self):
         pass
 
@@ -256,8 +257,8 @@ class AbstractCAPParser(ABC):
                 alert = alerts[0]
                 # TODO look for changes and update/notify if needed
             else:
-                print("bounding box is:")
-                print(new_alert.bounding_box)
+                # print("bounding box is:")
+                # print(new_alert.bounding_box)
                 new_alert.save()
             # print(new_alert)
         except Exception as e:
@@ -295,11 +296,11 @@ class AbstractCAPParser(ABC):
             # find expire time
             expire_time = self.find_expire_time(cap_tree, alert_id)
 
-            # expand geocodes if necessary, and determine bounding box
+            # expand geocodes if necessary
             cap_data_modified |= self.expand_geocode(cap_tree)
-            if cap_data_modified or cap_source_url is None:
-                self.flatten_xml(cap_tree)
-                cap_data = ET.tostring(cap_tree, encoding='utf-8', xml_declaration=True).decode()
+
+            self.flatten_xml(cap_tree)
+            cap_data = ET.tostring(cap_tree, encoding='utf-8', xml_declaration=True).decode()
 
             # determine bounding box and drop elements without
             (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_tree)

@@ -8,14 +8,14 @@ from django.conf import settings
 
 class XMLCAPParser(AbstractCAPParser):
 
-    def __init__(self, source_id, feed_url):
-        super().__init__(source_id, feed_url)
+    def __init__(self, feed_source):
+        super().__init__(feed_source)
         self.parser = feedparser
 
     def get_feed(self):
         try:
-            print("fetching: " + self.feed_url)
-            feed = self.parser.parse(self.feed_url)
+            print("fetching: " + self.feed_source.cap_alert_feed)
+            feed = self.parser.parse(self.feed_source.cap_alert_feed)
 
             #print("got: " + str(feed))
 
@@ -45,7 +45,7 @@ class XMLCAPParser(AbstractCAPParser):
                     pass
 
                 try:
-                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT}) #@todo load user agent from config
+                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
                     if not req.ok:
                         print(f"Fetch error {req.status_code}: {cap_source_url}")
                         continue

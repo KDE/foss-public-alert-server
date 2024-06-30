@@ -8,11 +8,11 @@ from .abstract_CAP_parser import AbstractCAPParser
 
 class DWDCAPParser(AbstractCAPParser):
 
-    def __init__(self, feed_url, source_id):
-        super().__init__(feed_url, source_id)
+    def __init__(self, feed_source):
+        super().__init__(feed_source)
 
     def get_feed(self):
-        feed_data = requests.get(self.feed_url)
+        feed_data = requests.get(self.feed_source.cap_alert_feed)
         zip_file = zipfile.ZipFile(io.BytesIO(feed_data.content), 'r')
         for cap_file in zip_file.namelist():
             cap_data = zip_file.read(cap_file).decode('utf-8')

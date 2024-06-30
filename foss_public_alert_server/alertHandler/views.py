@@ -6,7 +6,7 @@ from json import loads
 
 # Create your views here.
 from .models import Alert
-from .tasks import fetch_alert_sources, test_celery
+from .tasks import test_celery
 from subscriptionHandler.models import Subscription # has to be so because of django
 from time import sleep
 
@@ -51,7 +51,7 @@ def get_alerts_for_subscription_id(request):
 def debug(request):
 
     try:
-        fetch_alert_sources()
+        # fetch_alert_sources()
         output = "success"
     except Exception as e:
         print("Something went wrong" + str(e))

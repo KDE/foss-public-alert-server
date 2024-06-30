@@ -8,8 +8,8 @@ from .abstract_CAP_parser import AbstractCAPParser
 
 class MoWaSCapParser(AbstractCAPParser):
 
-    def __init__(self, feed_url, source_id):
-        super().__init__(feed_url, source_id)
+    def __init__(self, feed_source):
+        super().__init__(feed_source)
 
     @staticmethod
     def convertProperty(xmlParent, mowasObj, propertyName):
@@ -26,7 +26,7 @@ class MoWaSCapParser(AbstractCAPParser):
         return re.sub(r'(-?\d+\.\d+),(-?\d+\.\d+)', r'\2,\1', polyData)
 
     def get_feed(self):
-        req = requests.get(self.feed_url)  # @todo why not cached?
+        req = requests.get(self.feed_source.cap_alert_feed)  # @todo why not cached?
         feedData = json.loads(req.content)
         for alert in feedData:
             ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')

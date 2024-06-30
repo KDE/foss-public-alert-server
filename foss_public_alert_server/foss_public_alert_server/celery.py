@@ -25,6 +25,7 @@ def debug_task(self):
 
 # create periodic tasks to fetch the alert source
 # every 60 seconds
+"""
 app.conf.beat_schedule = {
     'fetch_alert_sources_every_60s': {
         'task': 'fetch_alert_sources',
@@ -35,5 +36,6 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute="0", hour="0"),
     }
 }
+"""
 
 app.conf.timezone = 'UTC' # @todo fix timezone
