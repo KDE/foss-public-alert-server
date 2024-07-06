@@ -4,8 +4,8 @@ import json
 alert_hub_feeds_url = 'https://alert-hub-sources.s3.amazonaws.com/json'
 fpas_feeds_file = "custom_feeds.json"
 aggregated_feed_file_name = "../aggregated_feeds.json"
+aggregated_feed_object = {}
 version_code = "0.0.1"
-temp_sources_json = []
 reload_feed_source: bool = False
 
 
@@ -33,34 +33,23 @@ def get_fpas_feeds() -> json:
     return data
 
 
-def init_json_file() -> None:
+def write_json_file() -> None:
     """
-    creates a new file for the json data and write the version code init
+    creates a new file for the json data and dump the aggregated_feed_object in it
     :return: None
     """
     with open(aggregated_feed_file_name, 'w') as file:
-        file.write('{"version": "' + str(version_code) + '", "sources":')
-
-
-def end_json_file() -> None:
-    """
-    open the json file and dump the temp file list in it
-    :return: None
-    """
-    with open(aggregated_feed_file_name, 'a') as file:
-        print(temp_sources_json)
-        # dump temp source json tree into file and add end marker
-        json.dump(temp_sources_json, file)
-        file.write('}')
+        # dump json object into file
+        json.dump(aggregated_feed_object, file)
 
 
 def append_one_feed_to_json_list(data: json) -> None:
     """
-    # append the given data to temp list
+    append the given data to the aggregated_feed_object sources list
     :param data: json data of one feed source
     :return: None
     """
-    temp_sources_json.append(data)
+    aggregated_feed_object["sources"].append(data)
 
 
 def parse_one_alert_hub_feed(data: json) -> None:
@@ -72,7 +61,7 @@ def parse_one_alert_hub_feed(data: json) -> None:
     # add custom feature to the json
     data['source']['feedSource'] = "alert-hub"
     data['source']['format'] = "rss or atom"
-    data['source']['ignore'] = "False"
+    data['source']['ignore'] = False
 
     append_one_feed_to_json_list(data)
 
@@ -86,16 +75,16 @@ def check_if_we_have_an_override(authority_country: str) -> None:
     :return: None
     """
 
-    for i in temp_sources_json:
-        print(i['source']['authorityCountry'])
+    for i in aggregated_feed_object["sources"]:
+        # print(i['source']['authorityCountry'])
         # check authorityCountry code and if the source is not FPAS
         if i['source']['authorityCountry'] == authority_country and i["source"]["feedSource"] != "FPAS":
-            i['source']['ignore'] = "True"
-            print("Found entry to override. Set ignore to True")
+            i['source']['ignore'] = True
+            # print("Found entry to override. Set ignore to True")
 
 
 def parse_one_custom_feed(data: json):
-    if data['source']['override'] == "True":
+    if data['source']['override']:
         authority_country: str = data['source']["authorityCountry"]
         # check if we have to override
         check_if_we_have_an_override(authority_country)
@@ -111,7 +100,8 @@ def parse_feeds_and_create_new_json():
     alert_hub_feeds: json = get_alert_hub_feeds()
     fpas_feeds: json = get_fpas_feeds()
 
-    init_json_file()
+    aggregated_feed_object["version"] = version_code
+    aggregated_feed_object["sources"] = []
 
     for i in alert_hub_feeds['sources']:
         parse_one_alert_hub_feed(i)
@@ -119,8 +109,9 @@ def parse_feeds_and_create_new_json():
     for j in fpas_feeds['sources']:
         parse_one_custom_feed(j)
 
-    end_json_file()
+    write_json_file()
 
 
+# check if a reload is needed and if yes rewrite the aggregated_feeds.json file
 if reload_feed_source:
     parse_feeds_and_create_new_json()
