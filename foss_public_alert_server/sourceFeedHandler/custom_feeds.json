@@ -19,36 +19,13 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "de-mowas",
-        "override": "True",
-        "ignore": "False"
-      }
-    },
-     {
-      "source": {
-        "sourceId": "de-mowas-de",
-        "byLanguage": [
-          {
-            "code": "de",
-            "name": "Germany: Dwd",
-            "logo": ""
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": "True",
-        "capAlertFeed": "https://opendata.dwd.de/weather/alerts/cap/COMMUNEUNION_EVENT_STAT/Z_CAP_C_EDZW_LATEST_PVW_STATUS_PREMIUMEVENT_COMMUNEUNION_MUL.zip",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "de",
-        "authorityAbbrev": "",
-        "feedSource": "FPAS",
-        "format": "DWD-Zip",
-        "override": "True",
-        "ignore": "False"
+        "override": true,
+        "ignore": false
       }
     },
     {
       "source": {
-        "sourceId": "de-mowas-de",
+        "sourceId": "de-dwd-de",
         "byLanguage": [
           {
             "code": "de",
@@ -65,13 +42,13 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "DWD-Zip",
-        "override": "True",
-        "ignore": "False"
+        "override": true,
+        "ignore": false
       }
     },
     {
       "source": {
-        "sourceId": "de-mowas-de",
+        "sourceId": "de-lhp-de",
         "byLanguage": [
           {
             "code": "de",
@@ -88,13 +65,13 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "lhp-cap",
-        "override": "True",
-        "ignore": "False"
+        "override": true,
+        "ignore": false
       }
     },
       {
       "source": {
-        "sourceId": "de-mowas-de",
+        "sourceId": "de-biwapp-de",
         "byLanguage": [
           {
             "code": "de",
@@ -111,13 +88,12 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "biwapp-cap",
-        "override": "True",
-        "ignore": "False"
-      }
+        "override": true,
+        "ignore": false}
     },
     {
       "source": {
-        "sourceId": "CH-alert-swiss-xx",
+        "sourceId": "ch-alert-swiss-xx",
         "byLanguage": [
           {
             "code": "ch",
@@ -134,8 +110,8 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "alert-swiss-cap",
-        "override": "True",
-        "ignore": "False"
+        "override": true,
+        "ignore": false
       }
     }
   ]
