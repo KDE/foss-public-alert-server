@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('subscription/', include("subscriptionHandler.urls")),
-    path('alert/', include("alertHandler.urls"))
+    path('alert/', include("alertHandler.urls")),
+    path('sources/', include("sourceFeedHandler.urls"))
 ]
+
+# needed to allow media access with the development server
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
