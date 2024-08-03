@@ -7,7 +7,15 @@ import uuid
 
 # Create your models here.
 
-def alert_upload_path(instance, filename):
+def alert_upload_path(instance, filename) -> str:
+    """
+    return the upload path for cap alerts. Do not change the methode parameters
+    as this methode is called by django
+
+    :param instance: current instace of the alert where the file is being attached
+    :param filename: the filename that was originally given to the file
+    :return: filepath in Unix-style
+    """
     return f"alerts/{instance.source_id}/{filename}"
 
 
@@ -42,3 +50,17 @@ class Alert(models.Model):
         result += "source id:" + str(self.alert_id) + "\n"
         # @todo
         return result
+
+
+@receiver(models.signals.post_delete, sender=Alert)
+def auto_delete_capdata_on_delete(sender, instance:Alert, **kwargs) -> None:
+    """
+    called if Alert entry is deleted. Deletes also the locally stored cap data
+    :param instance: The actual instance being deleted.
+    :param kwargs:
+    :return: None
+    """
+    if instance.cap_data:
+        if os.path.isfile(instance.cap_data.path):
+            os.remove(instance.cap_data.path)
+
