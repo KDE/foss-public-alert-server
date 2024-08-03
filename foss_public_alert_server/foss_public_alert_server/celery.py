@@ -17,25 +17,29 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
+# set timelimit for periodic background task to 30s soft and 60s hard
+app.control.time_limit('task.create_parser_and_get_feed', soft=30, hard=60, reply=True)
+
 
 @app.task(bind=True, ignore_result=True, name="debugtask")
 def debug_task(self):
     print(f'Request: {self.request!r}')
 
 
-# create periodic tasks to fetch the alert source
-# every 60 seconds
-"""
+# create periodic tasks to remove old subscriptions
 app.conf.beat_schedule = {
-    'fetch_alert_sources_every_60s': {
-        'task': 'fetch_alert_sources',
-        'schedule': 60.0,
-    },
     'remove_inactive_subscription_every_day_at_midnight': {
-        'task': 'remove_old_subscriptions',
+        'task': 'task.remove_old_subscriptions',
         'schedule': crontab(minute="0", hour="0"),
-    }
+    },
+    'update_feed_sources_every_day_at_midnight': {
+        'task': 'task.reload_feed_sources_and_update_database',
+        'schedule': crontab(minute="0", hour="0"),
+    },
+    'remove_expired_alerts_every_hour': {
+        'task': 'task.remove_expired_alerts',
+        'schedule': crontab(minute="0", hour="*"),
+    },
 }
-"""
 
 app.conf.timezone = 'UTC' # @todo fix timezone
