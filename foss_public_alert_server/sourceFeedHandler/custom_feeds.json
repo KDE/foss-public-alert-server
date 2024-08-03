@@ -41,7 +41,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "DWD-Zip",
+        "format": "de-dwd-zip",
         "override": true,
         "ignore": false
       }
@@ -64,7 +64,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "lhp-cap",
+        "format": "de-lhp",
         "override": true,
         "ignore": false
       }
@@ -87,7 +87,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "biwapp-cap",
+        "format": "de-biwapp",
         "override": true,
         "ignore": false}
     },
@@ -104,12 +104,174 @@
         "authorName": "",
         "authorEmail": "",
         "sourceIsOfficial": "True",
-        "capAlertFeed": "https://warnung.bund.de/bbk.biwapp/warnmeldungen.json",
+        "capAlertFeed": "",
         "capAlertFeedStatus": "operating",
         "authorityCountry": "ch",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "alert-swiss-cap",
+        "format": "ch-alert-swiss",
+        "override": true,
+        "ignore": false
+      }
+    },
+
+    {
+      "source": {
+        "sourceId": "to-tms-xx",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Tonga: Tonga Meteorological Service",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/to-tms-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "False",
+        "capAlertFeed": "https://alerts.met.gov.to/capfeed.php",
+        "capAlertFeedStatus": "not reachable",
+        "authorityCountry": "to",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "us-noaa-ntwc-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), National Tsunami Warning Center",
+            "logo": "https://alert-hub.s3.ama…ages/us-noaa-ntwc-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://wcatwc.arh.noaa.gov/events/xml/PAAQAtom.xml",
+        "capAlertFeedStatus": "no xml cap feed",
+        "authorityCountry": "us",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "aw-dma-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Aruba: Meteorological Department of Aruba",
+            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "http://201.229.69.218/cap/en/alerts/rss.xml",
+        "capAlertFeedStatus": "server not reachable",
+        "authorityCountry": "aw",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "aw-dma-nl",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Aruba: Meteorological Department of Aruba",
+            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "http://201.229.69.218/cap/nl/alerts/rss.xml",
+        "capAlertFeedStatus": "server not reachable",
+        "authorityCountry": "aw",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "aw-dma-pap",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Aruba: Meteorological Department of Aruba",
+            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "http://201.229.69.218/cap/pap/alerts/rss.xml",
+        "capAlertFeedStatus": "server not reachable",
+        "authorityCountry": "aw",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "br-obsis-pt",
+        "byLanguage": [
+          {
+            "code": "pt",
+            "name": "Brazil: Observatório Sismológico - OBSIS",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/br-obsis-pt.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://www.obsis.unb.br/integracao/public/feed/pt/rss.xml",
+        "capAlertFeedStatus": "server not reachable",
+        "authorityCountry": "br",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "co-ungrd-es",
+        "byLanguage": [
+          {
+            "code": "es",
+            "name": "Colombia: UNGRD (Nationa…saster Risk Management)",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/co-ungrd-es.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://www.gestiondelriesgo.gov.co/rss/AtomAlert.aspx",
+        "capAlertFeedStatus": "server not reachable",
+        "authorityCountry": "co",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "alert-hub",
         "override": true,
         "ignore": false
       }
