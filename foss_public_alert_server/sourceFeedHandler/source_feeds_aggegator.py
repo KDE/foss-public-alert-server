@@ -1,11 +1,16 @@
+import datetime
+
 import requests
 import json
+import os
+from django.conf import settings
+
 
 alert_hub_feeds_url = 'https://alert-hub-sources.s3.amazonaws.com/json'
-fpas_feeds_file = "custom_feeds.json"
-aggregated_feed_file_name = "../aggregated_feeds.json"
+fpas_feeds_file = os.path.join(settings.BASE_DIR, "sourceFeedHandler/custom_feeds.json")
+aggregated_feed_file_name =  os.path.join(settings.BASE_DIR, "aggregated_feeds.json")
 aggregated_feed_object = {}
-version_code = "0.0.1"
+version_code = "0.0.2"
 reload_feed_source: bool = False
 
 
@@ -101,6 +106,7 @@ def parse_feeds_and_create_new_json():
     fpas_feeds: json = get_fpas_feeds()
 
     aggregated_feed_object["version"] = version_code
+    aggregated_feed_object["last_update"] = str(datetime.datetime.now())
     aggregated_feed_object["sources"] = []
 
     for i in alert_hub_feeds['sources']:
