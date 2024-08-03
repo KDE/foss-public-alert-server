@@ -1,14 +1,9 @@
-from celery import shared_task
-from django.shortcuts import render
+from json import loads
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
-from json import loads
 
-# Create your views here.
 from .models import Alert
-from .tasks import test_celery
 from subscriptionHandler.models import Subscription # has to be so because of django
-from time import sleep
 
 
 def get_alert_cap_data(request, identifier):
@@ -20,9 +15,8 @@ def get_alert_cap_data(request, identifier):
     except Exception as e: # @todo use other exception type
         return HttpResponseNotFound('no such alert')
 
-    if a.source_url:
-        return HttpResponseRedirect(a.source_url)
-    elif a.cap_data:
+    # server xml files to client
+    if a.cap_data:
         return HttpResponsePermanentRedirect(a.cap_data.url)
 
     return HttpResponseBadRequest('alert without CAP data?')
@@ -49,7 +43,6 @@ def get_alerts_for_subscription_id(request):
 
 
 def debug(request):
-
     try:
         # fetch_alert_sources()
         output = "success"
@@ -61,5 +54,11 @@ def debug(request):
 
 
 def index(request):
-    test_celery.delay()
-    return HttpResponse("Task started")
+    """
+    print("Test push notification")
+    for alert in Alert.objects.all():
+        for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
+            print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
+            requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
+    """
+    return HttpResponse("Hello World")
