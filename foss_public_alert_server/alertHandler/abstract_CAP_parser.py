@@ -1,35 +1,91 @@
 import os
 import xml
+import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 import datetime
-from django.contrib.gis.geos import Polygon
-# import feedparser
-import requests
 import requests_cache
-import requests
-import xml.etree.ElementTree as ET
 import json
+import warnings
+
+from django.contrib.gis.geos import Polygon
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from celery import shared_task
+# from celery.contrib import rdb
+
+from .Exceptions import AlertExpiredException, DatabaseWritingException, AlertParameterException, \
+    NoGeographicDataAvailableException
 from .models import Alert
-# from sourceFeedHandler.models import CAPFeedSource
+from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
+from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
 
 
 class AbstractCAPParser(ABC):
-    feed_source = None
+    feed_source: CAPFeedSource = None
     session = None
     parser = None
+    name = None
 
-    def __init__(self, feed_source):
+    def __init__(self, feed_source, name: str):
         self.feed_source = feed_source
         self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.feed_source.source_id)
+        self.name = name
 
     @abstractmethod
-    @celery_app.task
-    def get_feed(self):
+    def _load_alerts_from_feed(self):
+        """
+        protected abstract methode to fetch and process the cap feed
+        :return: None
+        """
         pass
+
+    @shared_task(name="get_feed")
+    def get_feed(self) -> None:
+        """
+        get the feed and process the data
+        :return: None
+        """
+
+        warnings_list = []
+
+        # configure warnings to append every warning to our list of warnings
+        def collect_warnings(message, category, filename, lineno, file=None, line=None):
+            warnings_list.append(f"{category.__name__}: {message}")
+
+        # write warning not to standard out but to our custom methode
+        warnings.showwarning = collect_warnings
+
+        try:
+            # store the start time to measure the feeds update time
+            start_time = datetime.datetime.now()
+            # load and process the feed
+            self._load_alerts_from_feed()
+            # store the end time
+            end_time = datetime.datetime.now()
+
+            # store duration os last fetch
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=end_time - start_time)
+
+            # update feed status information
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=True)
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=False)
+
+            # process the warnings
+            for warning in warnings_list:
+                print(warning)
+                if str(warning).__contains__("no valid bounding box"):
+                    # if there was min one invalid bounding box, set missing geo info to true
+                    CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=True)
+        except Exception as e:
+            print("Something went wrong while getting the Feed: " + str(e))
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
+            # add exceptions to warnings_lis
+            warnings_list.append(str(e))
+            # @todo add to error logger
+        # store warnings in database
+        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list))
 
     def find_identifier(self, cap_tree: xml) -> str:
         """
@@ -39,8 +95,8 @@ class AbstractCAPParser(ABC):
         """
         id_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier')
         if id_node is None or not id_node.text:
-            print(f"{self.source} - Couldn't find CAP alert message identifier, skipping")
-            raise ValueError("Couldn't find CAP alert message identifier, skipping")
+            print(f"{self.feed_source.source_id} - Couldn't find CAP alert message identifier, skipping")
+            raise AlertParameterException("Couldn't find CAP alert message identifier, skipping")
         return id_node.text
 
     def find_sent_time(self, cap_tree, alert_id) -> str:
@@ -53,11 +109,13 @@ class AbstractCAPParser(ABC):
         """
         sent_time_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}sent')
         if sent_time_node is None or not sent_time_node.text:
-            print(f"{self.source} - Couldn't find CAP alert message sent time, skipping {alert_id}")
-            raise ValueError(f"{self.source} - Couldn't find CAP alert message sent time, skipping {alert_id}")
+            print(f"{self.feed_source.source_id} - Couldn't find CAP alert message sent time, skipping {alert_id}")
+            raise AlertParameterException(
+                f"{self.feed_source.source_id} - Couldn't find CAP alert message sent time, skipping {alert_id}")
         return sent_time_node.text
 
-    def find_expire_time(self, cap_tree, alert_id) -> datetime:
+    @staticmethod
+    def find_expire_time(cap_tree, alert_id) -> datetime:
         """
         find the expiry time in the CAP data and return it
         :param cap_tree: cap data of the alert
@@ -76,9 +134,8 @@ class AbstractCAPParser(ABC):
             if expire_time is None or datatime > expire_time:
                 expire_time = datatime
             if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                # print(f"{self.source} - skipping alert {alert_id} expired on {datatime}")
-                raise ValueError(f"{self.source} - skipping alert {alert_id} expired on {datatime}")
-
+                # print(f"{self.feed_source.source_id} - skipping alert {alert_id} expired on {datatime}")
+                raise AlertExpiredException(f"alert {alert_id} expired on {datatime}")
         return expire_time
 
     @staticmethod
@@ -111,9 +168,9 @@ class AbstractCAPParser(ABC):
                 if not code_name or not code_value:
                     continue
                 # find correct geojson file in storage
-                # @todo think about better path
-                code_file = os.path.join(settings.BASE_DIR, '/alertHandler/data', code_name, f"{code_value}.geojson")
-                print("code file path is:" + str(code_file))
+                # @todo think about better path?
+                code_file = os.path.join(settings.BASE_DIR, 'alertHandler/data', code_name, f"{code_value}.geojson")
+                # print("code file path is:" + str(code_file))
                 if os.path.isfile(code_file):
                     geojson = json.load(open(code_file))
                     # append geojson to original file
@@ -130,6 +187,8 @@ class AbstractCAPParser(ABC):
                         print(f"unhandled geometry type: {geojson['geometry']['type']}")
                 else:
                     print(f"can't expand code {code_name}: {code_value}")
+                    # if code_name == "EMMA_ID" or code_name == "FIPS" or code_name == "NUTS2" or code_name == "NUTS3":
+                    #    rdb.set_trace()  # set breakpoint
         return expanded
 
     def flatten_xml(self, node: xml) -> None:
@@ -221,7 +280,7 @@ class AbstractCAPParser(ABC):
                 and min_lon != min_lat
                 and max_lon != max_lat)
 
-    def determine_bounding_box(self, cap_tree: xml) -> (int, int, int, int):
+    def determine_bounding_box(self, cap_tree: xml, alert_id) -> (int, int, int, int):
         min_lat = 90
         min_lon = 180
         max_lat = -90
@@ -238,37 +297,60 @@ class AbstractCAPParser(ABC):
                                                                             max_lat, max_lon)
 
             if not self.is_valid_bounding_box(min_lon=min_lon, min_lat=min_lat, max_lat=max_lat, max_lon=max_lon):
-                raise ValueError("bounding box is not valid")
+                # @todo for dwd we do nto get an valid bounding box
+                raise AlertParameterException(f"alert {alert_id} has no valid bounding box: {min_lat}, {min_lon}, "
+                                              f"{max_lat}, {max_lon}")
 
-            print(min_lat, min_lon, max_lat, max_lon)
+            # print(min_lat, min_lon, max_lat, max_lon)
 
         except Exception as e:
-            print("Something went wrong while determining bounding box" + str(e))
+            raise e
         return min_lat, min_lon, max_lat, max_lon
 
+    def validate_if_alert_is_in_country_borders(self) -> bool:
+        """
+        check if the B-box is inside the allowed area of the country
+        The check shouldn't be necessary and is just to avoid faulty or malicious alerts
+        :return: True if the alert is in the allowed area, False if not
+        """
+        country_code = self.feed_source.authorityCountry
+        # @todo implement
+        return True
+
     @staticmethod
-    def write_to_database(new_alert: Alert) -> None:
+    def write_to_database_and_send_notification(new_alert: Alert) -> None:
+        """
+        write the given alert to the database and check if we have to sent notifications
+        only stores the alert in the database if the alert is not already stored in the database
+        :param new_alert: the alert to store in the database
+        :return: None
+        """
         try:
-            # @todo write to database maybe a problem with race conditions?
-            print("Writing to database...")
+            # print("Writing to database...")
             # check if alert is already in database
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
                 alert = alerts[0]
                 # TODO look for changes and update/notify if needed
             else:
-                # print("bounding box is:")
-                # print(new_alert.bounding_box)
                 new_alert.save()
-            # print(new_alert)
+                # check if there are subscription
+                check_for_alerts_and_send_notifications(new_alert)
         except Exception as e:
-            print("Something went wrong while writing to database: " + str(e))
+            raise DatabaseWritingException(str(e))
 
-    def addAlert(self, cap_source_url: str = None, cap_data: xml = None):
+    def addAlert(self, cap_source_url: str = None, cap_data: xml = None) -> None:
+        """
+        parse the alert and store it in the database
+        :param cap_source_url: the url of the cap source
+        :param cap_data: the xml data of the cap alert
+        :return: None
+        :warns: if the alert can not be parsed correctly we raise a warning
+        """
         try:
             # print("Add new Alert")
             if not cap_data:
-                print(f"{self.source} - Got no CAP alert message, skipping")
+                print(f"{self.feed_source.source_id} - Got no CAP alert message, skipping")
                 return
 
             cap_data_modified: bool = False
@@ -283,7 +365,7 @@ class AbstractCAPParser(ABC):
             try:
                 cap_tree = ET.fromstring(cap_data)
             except ET.ParseError as e:
-                print(f"{self.source} - failed to parse CAP alert message XML: {e}")
+                print(f"{self.feed_source.source_id} - failed to parse CAP alert message XML: {e}")
                 print(cap_data)
                 return
 
@@ -303,12 +385,15 @@ class AbstractCAPParser(ABC):
             cap_data = ET.tostring(cap_tree, encoding='utf-8', xml_declaration=True).decode()
 
             # determine bounding box and drop elements without
-            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_tree)
-            print(min_lat, min_lon, max_lat, max_lon)
+            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_tree, alert_id)
+            # print(min_lat, min_lon, max_lat, max_lon)
+
+            # validate if the source country of the alert is allowed to send alerts for this area
+            # self.validate_if_alert_is_in_country_borders()
 
             if min_lat > max_lat or min_lon > max_lon:
-                print(f"{self.source} - No geographic data available for {alert_id} - skipping")
-                return
+                raise NoGeographicDataAvailableException(f"{self.feed_source.source_id}"
+                       f" - No geographic data available for {alert_id} - skipping")
 
             # to build a valid polygon. we have to fulfill the right-hand-rule
             # there we build the polygon with min_lon, min_lat, max_lon, max_lat
@@ -316,7 +401,7 @@ class AbstractCAPParser(ABC):
 
             # self.alertIds.append(alertId) # @todo why?
             new_alert: Alert = Alert(
-                source_id=self.source,
+                source_id=self.feed_source.source_id,
                 alert_id=alert_id,
                 bounding_box=bound_box_polygon,
                 issue_time=sent_time,
@@ -327,12 +412,18 @@ class AbstractCAPParser(ABC):
             if cap_source_url:
                 new_alert.source_url = cap_source_url
             if cap_data:
-                # upload cap data file to the server
+                # set the cap_data field to a simple file representation. The filepath is determined in the model
                 new_alert.cap_data = SimpleUploadedFile(f"{alert_id}.xml", cap_data.encode('utf-8'),
                                                         'application/xml')
                 new_alert.cap_data_modified = cap_data_modified
 
             # write alert to database
-            self.write_to_database(new_alert)
-        except Exception as e:
-            print("Something went wrong while adding the new alert: " + str(e))
+            self.write_to_database_and_send_notification(new_alert)
+        except DatabaseWritingException as e:
+            warnings.warn(f"Database error: {str(e)} - skipping")
+        except AlertExpiredException as e:
+            # nothing to do if an alert is expired
+            # warnings.warn(f"Alert Expired: [{self.feed_source.source_id}] - {str(e)} - skipping")
+            pass
+        except AlertParameterException as e:
+            warnings.warn(f"Parameter error:[{self.feed_source.source_id}] - {str(e)} - skipping")
