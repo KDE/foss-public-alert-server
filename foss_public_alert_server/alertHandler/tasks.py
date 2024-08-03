@@ -1,30 +1,10 @@
-from celery import shared_task
-
-from . import abstract_CAP_parser
-from .XML_CAP_parser import XMLCAPParser
-from .MOWAS_CAP_parser import MoWaSCapParser
-from .DWD_CAP_parser import DWDCAPParser
+import datetime
 from time import sleep
 
-from foss_public_alert_server.celery import app as celery_app
-from django.conf import settings
+from celery import shared_task
 
-from sourceFeedHandler.models import CAPFeedSource
+from .models import Alert
 
-
-
-""""
-@shared_task(name="fetch_alert_sources")
-def fetch_alert_sources():
-    print("fetching alert sources...")
-    i = 0
-    for feedReader in feedReaders:
-        feedReader.get_feed()
-        # if i > 10:
-        #    break
-        # i += 1
-        break # @todo test only the first one, remove line to fetch all sources
-"""
 
 @shared_task()
 def test_celery():
@@ -34,30 +14,27 @@ def test_celery():
     return "Task complete!"
 
 
-@celery_app.on_after_finalize.connect
-def setup_periodic_tasks(sender, **kwargs):
+def check_if_alert_is_expired(expire_time:datetime) -> bool:
     """
-    create a celery task for every feed to run every 60s
-    :param sender:
-    :param kwargs:
+    check if the expire_time is later than current time
+    :param expire_time: the expire_time of the alert
+    :return: true if alert is expired, false if not
+    """
+    return expire_time > datetime.datetime.now(datetime.timezone.utc)
+
+
+@shared_task(name="task.remove_expired_alerts")
+def remove_expired_alerts() -> bool:
+    """
+    check for every alert if it is expired and delete every expired alert
+    called by a periodic celery task
     :return:
     """
-    print("setup periodic tasks...")
-    print(CAPFeedSource.objects)
-    for feed in CAPFeedSource.objects.all():
-        parser:abstract_CAP_parser = None
-        print(feed.source_id)
-        match feed.format:
-            case "rss or atom":
-                print("its atom")
-            case "de-mowas":
-                print("its mowas")
-                parser = MoWaSCapParser(feed)
-            case "DWD-Zip":
-                print("its dwd")
-                parser = DWDCAPParser(feed)
-
-        if parser is not None:
-            sender.add_periodic_task(settings.DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS, parser.get_feed(), name='Periodic task for {}!'.format(feed.source_id))
-
-
+    alerts = Alert.objects
+    for alert in alerts:
+        if check_if_alert_is_expired:
+            print(f"delete alert {alert.alert_id}")
+            alerts.objects.filter(id=alert.id).delete()
+            # the delete() sends also a signal to a class methode (Alert.auto_delete_capdata_on_delete)
+            # to also delete the stored cap data
+    return True
