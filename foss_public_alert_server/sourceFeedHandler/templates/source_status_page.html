@@ -1,0 +1,51 @@
+ {% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Source Status</h1>
+  <p>
+    This page overviews all cap source providers included in the FOSS Public Alert Server. You can check the
+    Feed status in the "Last fetch status" column. If it is green, the feed is up and running.
+    If you are missing a cap feed and would like to add the feed, please contact us or open a merge request in this file
+  </p>
+
+  <p> This list contains {{ number_of_sources }} CAP providers</p>
+ <p> last refresh:  {{ datetime }}</p>
+
+{% if list_of_sources %}
+      <table>
+        <tr>
+          <th>Logo</th>
+          <th>Source ID</th>
+          <th>Name</th>
+          <th>Country</th>
+          <th>Source official?</th>
+           <th>Feed-URL</th>
+          <th>Status</th>
+          <th>last fetch duration</th>
+           <th>warnings</th>
+          <th>Missing geo Info</th>
+          <th>Last fetch status</th>
+        </tr>
+        {% for source in list_of_sources %}
+          <tr>
+            <th> <!--<img height="20" src={{ source.logo }} --> </th>
+            <th>{{ source.source_id }}</th>
+            <th>{{ source.name }}</th>
+            <th> {{source.authorityCountry }}</th>
+            <th>{{ source.source_is_official }} </th>
+            <th><a href={{ source.cap_alert_feed }}>Feed</a> </th>
+            <th>{{ source.cap_alert_feed_status }} </th>
+            <th>{{ source.last_fetch_duration }} </th>
+             <th>{{ source.feed_warnings }} </th>
+            <th>{{ source.missing_geo_information }} </th>
+            <th {% if source.last_fetch_status == True %} class="last_fetch_status_success"
+                {% elif source.last_fetch_status == None %} class="last_fetch_status_unknown" {% else %}
+              class="last_fetch_status_failure" {% endif %}>{{ source.last_fetch_status }}</th>
+          </tr>
+        {% endfor %}
+      </table>
+  {% else %}
+    <p>Error. There are no sources</p>
+  {% endif %}
+
+{% endblock %}
