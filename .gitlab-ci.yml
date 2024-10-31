@@ -5,3 +5,21 @@ include:
   - project: sysadmin/ci-utilities
     file:
       - /gitlab-templates/reuse-lint.yml
+
+container:
+  stage: "publish"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  image: quay.io/podman/stable:v4.3.1
+  tags:
+    - Linux
+  variables:
+    IMAGE_TAG: latest
+    IMAGE_NAME: foss-public-alert-server
+  script:
+    - sudo -u podman podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - sudo -u podman podman build --pull --no-cache --tag ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG} foss_public_alert_server/
+    - sudo -u podman podman push ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG}
+  after_script:
+    - sudo -u podman podman logout $CI_REGISTRY
