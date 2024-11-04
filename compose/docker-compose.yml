@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: 2022 Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: CC0-1.0
+
+# WARNING: For development only, not safely configured for dployments!!
+
+name: "foss-public-alert-server"
+
+volumes:
+  db:
+  feeder-cache:
+  app-static:
+  app-cap:
+
+services:
+  db:
+    image: postgis/postgis:14-3.2
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=foss-public-alert-server
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  amqp:
+    image: rabbitmq
+    restart: always
+
+  aggregator:
+    image: invent-registry.kde.org/webapps/foss-public-alert-server/foss-public-alert-server
+    build:
+      context: ../foss_public_alert_server
+      dockerfile: ../foss_public_alert_server/Containerfile
+    depends_on:
+      - db
+    restart: always
+    environment:
+      - AMQP_URL=amqp://amqp
+      - DJANGO_STATIC_ROOT=/app/static
+      - DJANGO_MEDIA_ROOT=/app/cap
+      - DJANGO_DEBUG=True
+      - POSTGRES_HOST=db
+      - POSTGRES_DATABASE=foss-public-alert-server
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "127.0.0.1:3032:3032"
+    volumes:
+      - app-cap:/app/cap
+      - app-static:/app/static
+
+  httpd:
+    image: httpd:2.4-bullseye
+    depends_on:
+      - aggregator
+    restart: always
+    volumes:
+      - app-cap:/srv/www/foss-public-alert-server/cap
+      - app-static:/srv/www/foss-public-alert-server/static
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - "127.0.0.1:8000:80"
