@@ -88,8 +88,10 @@ def unsubscribe(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('wrong HTTP method')
     data = loads(request.body)
+    if "subscription_id" not in data:
+        return HttpResponseBadRequest('invalid or missing parameters')
     subscription_id = data['subscription_id']
-    subscription = Subscription.objects.get(subscription_id=subscription_id)
+    subscription = Subscription.objects.get(id=subscription_id)
     subscription.delete()
     return HttpResponse("Successfully unsubscribed")
 
@@ -103,10 +105,13 @@ def heartbeat(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('wrong HTTP method')
     data = loads(request.body)
+    # check if request contains a subscription id
+    if "subscription_id" not in data:
+        return HttpResponseBadRequest('invalid or missing parameters')
     subscription_id = data['subscription_id']
     try:
         # update last heartbeat
-        Subscription.objects.filter(subscription_id=subscription_id).update(last_heartbeat=datetime.datetime.now())
+        Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now())
     except Exception as e:  # @todo use other Exception type
         print(f"Error: {e}")
         HttpResponseBadRequest("Subscription has expired. You must register again!")
