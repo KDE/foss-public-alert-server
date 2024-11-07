@@ -1,6 +1,7 @@
 from json import loads
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
+from django.contrib.gis.geos import Polygon
 
 from .models import Alert
 from subscriptionHandler.models import Subscription # has to be so because of django
@@ -23,13 +24,14 @@ def get_alert_cap_data(request, identifier):
 
 
 def get_alerts_for_subscription_id(request):
-    if request.method != 'GET':
+    if request.method != 'POST':
         return HttpResponseBadRequest('wrong HTTP method')
 
     try:
         data = loads(request.body)
         subscription_id = data['subscription_id']
-        polygon = Subscription.objects.filter(subscription_id=subscription_id)
+        subscription = Subscription.objects.get(id=subscription_id)
+        polygon = subscription.bounding_box
 
     except (ValueError, TypeError):
         return HttpResponseBadRequest("no valid subscription")
@@ -62,3 +64,46 @@ def index(request):
             requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
     """
     return HttpResponse("Hello World")
+
+
+def get_alerts_for_area(request):
+    """
+    get all alerts for the given area
+    :param request:
+    :return:
+    """
+    if request.method != 'GET':
+        return HttpResponseBadRequest('wrong HTTP method')
+
+    try:
+        y1 = float(request.GET.get('min_lat'))
+        y2 = float(request.GET.get('max_lat'))
+        x1 = float(request.GET.get('min_lon'))
+        x2 = float(request.GET.get('max_lon'))
+        if not isValidBbox(x1, y1, x2, y2):
+            return HttpResponseBadRequest('invalid bounding box')
+        request_bbox = Polygon.from_bbox((x1, y1, x2, y2))
+    except (ValueError, TypeError):
+        return HttpResponseBadRequest('invalid bounding box')
+
+    res = []
+    for alert in Alert.objects.filter(bbox__intersects=request_bbox):
+        res.append(str(alert.id))
+    return JsonResponse(res, safe=False)
+
+
+def isValidBbox(x1, y1, x2, y2):
+    """
+    check if the given BBox is valid
+    :param x1:
+    :param y1:
+    :param x2:
+    :param y2:
+    :return:
+    """
+    return (-180.0 <= x1 <= 180.0 and
+            -180.0 <= x2 <= 180.0 and
+            -90.0 <= y1 <= 90.0 and
+            -90.0 <= y2 <= 90.0 and
+            x1 != x2 and
+            y1 != y2)
