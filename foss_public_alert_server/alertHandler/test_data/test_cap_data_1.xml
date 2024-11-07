@@ -1,8 +1,9 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
 <!--
 SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-<alert>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
 <identifier>urn:oid:1234.5678</identifier>
 <sender>test@example.com</sender>
 <sent>2024-04-21T11:51:29-03:00</sent>

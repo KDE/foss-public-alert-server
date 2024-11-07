@@ -4,21 +4,25 @@
 import os
 from django.conf import settings
 from django.test import TestCase
-# from .models import Alert
-# Create your tests here.
-from abstract_CAP_parser import AbstractCAPParser
+from sourceFeedHandler.models import CAPFeedSource
+from .abstract_CAP_parser import AbstractCAPParser
+from .XML_CAP_parser import XMLCAPParser
 import xml.etree.ElementTree as ET
-
 
 class AlertHandlerCAPParserTestsCase(TestCase):
 
     @staticmethod
     def create_test_class_instance() -> AbstractCAPParser:
-        return AbstractCAPParser("Test_source_id", "https://OnlyForTesting.de")
+        feed = CAPFeedSource(
+            source_id="Test_source_id",
+            feedSource="https://OnlyForTesting.de"
+        )
+        return XMLCAPParser(feed)
 
     @staticmethod
     def create_test_cap_data():
-        return os.path.join(settings.BASE_DIR, '/alertHandler/test_data/test_cap_data_1.xml')
+        f = open(os.path.join(settings.BASE_DIR, 'alertHandler/test_data/test_cap_data_1.xml'))
+        return f.read()
 
     # test every helper methode
     def test_find_identifier(self):

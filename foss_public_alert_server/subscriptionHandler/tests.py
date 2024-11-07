@@ -26,9 +26,9 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lon': 12.063,
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('subscription/subscribe', data)
+        response = self.client.post('/subscription/subscribe', data, content_type="application/json")
         self.assertEquals(response.status_code, 200)
-        self.assertContains(response.content, 'Successfully subscribed')
+        self.assertContains(response, 'Successfully subscribed')
 
     def test_invalid_parameters(self):
         data = {
@@ -38,13 +38,12 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lon': 12.063,
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('subscription/subscribe', data)
-        print(response)
+        response = self.client.post('/subscription/subscribe', data, content_type="application/json")
         self.assertEquals(response.status_code, 400)
-        self.assertContains(response.content, 'invalid or missing parameter')
+        self.assertEquals(response.content, b'invalid or missing parameters')
 
     def test_send_notification(self):
-        for alert in Alert.objects:
+        for alert in Alert.objects.all():
             for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
                 print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
                 requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
