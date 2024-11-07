@@ -8,7 +8,7 @@ import uuid
 # Create your models here.
 
 class Subscription(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4(), editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bounding_box = models.PolygonField()
     distributor_url = models.CharField(max_length=255)
     last_heartbeat = models.DateTimeField()
