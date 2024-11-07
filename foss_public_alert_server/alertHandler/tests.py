@@ -6,7 +6,8 @@ from django.conf import settings
 from django.test import TestCase
 # from .models import Alert
 # Create your tests here.
-from abstract_CAP_parser import AbstractCAPParser
+from .abstract_CAP_parser import AbstractCAPParser
+from .XML_CAP_parser import XMLCAPParser
 import xml.etree.ElementTree as ET
 
 
@@ -14,7 +15,7 @@ class AlertHandlerCAPParserTestsCase(TestCase):
 
     @staticmethod
     def create_test_class_instance() -> AbstractCAPParser:
-        return AbstractCAPParser("Test_source_id", "https://OnlyForTesting.de")
+        return XMLCAPParser("Test_source_id", "https://OnlyForTesting.de")
 
     @staticmethod
     def create_test_cap_data():
