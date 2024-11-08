@@ -12,10 +12,18 @@ We have three main motivations. Firstly, we want to offer an easy-to-use alterna
  
 This project aims to expand the existing and already used alerting infrastructure and is not a replacement for any part of it. Stay informed and safe!
 
-
 *a project in collaboration with KDE and the FOSS Warn Team*
 
 This project is still in development and not yet ready for production!
+
+## Funding
+*2024-10 until 2025-10*
+
+> This project was funded through the [NGI0 Core Fund](https://nlnet.nl/core), a fund established by [NLnet](https://nlnet.nl/) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu/) programme, under the aegis of [DG Communications Networks, Content and Technology](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en) under grant agreement [No. 101092990](https://cordis.europa.eu/project/id/101092990).
+
+<img src="assets/NLnet_logo.svg" width=160>
+&nbsp;&nbsp;
+<img src="assets/NGI0Core_logo.svg" width=160>
 
 ## Server setup
 
