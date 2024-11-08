@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+import datetime
 import io
 import requests
 import zipfile

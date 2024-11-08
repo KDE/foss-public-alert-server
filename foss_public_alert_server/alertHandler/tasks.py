@@ -1,5 +1,14 @@
-import datetime
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+from celery import shared_task
+
+from .XML_CAP_parser import XMLCAPParser
+from .MOWAS_CAP_parser import MoWaSCapParser
+from .DWD_CAP_parser import DWDCAPParser
 from time import sleep
+import datetime
 
 from celery import shared_task
 

@@ -1,3 +1,9 @@
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+from celery import shared_task
+from .models import Subscription
+
 import json
 import datetime
 import requests

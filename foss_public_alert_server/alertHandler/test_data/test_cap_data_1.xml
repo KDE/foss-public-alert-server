@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <alert>
 <identifier>urn:oid:1234.5678</identifier>
 <sender>test@example.com</sender>
