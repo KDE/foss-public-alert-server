@@ -29,7 +29,9 @@ SECRET_KEY = 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', "*"]
+# just for debug @todo
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://10.0.2.2:8000']
 
 
 # Application definition
@@ -52,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware', # disable for post @todo
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -133,7 +135,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv('DJANGO_STATIC_ROOT', BASE_DIR.joinpath('static'))
 
 MEDIA_URL = 'cap/'
@@ -143,7 +145,7 @@ USER_AGENT = "FOSS Public Alert Server"
 
 # timeperiod after which an inactive subscription without heartbeats will be deleted from the database
 DAYS_INACTIVE_TIMEOUT = 10
-
+# timeperiod in seconds for feed updates used by the celery task scheduler
 DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS = 60
 
 
