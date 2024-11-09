@@ -5,11 +5,12 @@ import os
 
 from celery import Celery
 from celery.schedules import crontab
+from django.conf import settings
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foss_public_alert_server.settings')
 
-app = Celery('foss_public_alert_server', broker='amqp://localhost')  # pyamqp://guest@localhost//
+app = Celery('foss_public_alert_server', broker=settings.AMQP_URL)  # pyamqp://guest@localhost//
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
