@@ -5,6 +5,8 @@
 from django.db import models
 from django.dispatch import receiver
 from django.contrib.gis.db import models
+
+from datetime import datetime
 import os
 import uuid
 
@@ -15,5 +17,5 @@ class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bounding_box = models.PolygonField()
     distributor_url = models.CharField(max_length=255)
-    last_heartbeat = models.DateTimeField()
+    last_heartbeat = models.DateTimeField(default=datetime.now)
 
