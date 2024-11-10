@@ -6,6 +6,30 @@ include:
     file:
       - /gitlab-templates/reuse-lint.yml
 
+autotest:
+  stage: "build"
+  variables:
+     FF_NETWORK_PER_BUILD: 1
+     AMQP_URL: amqp://amqp
+     POSTGRES_DATABASE: foss-public-alert-server
+     POSTGRES_HOST: db
+     POSTGRES_USER: postgres
+     POSTGRES_PASSWORD: password
+  services:
+    - name: postgis/postgis:14-3.2
+      alias: db
+      variables:
+        POSTGRES_DB: foss-public-alert-server
+    - name: rabbitmq
+      alias: amqp
+  image: python:3.10-bullseye
+  before_script:
+     - apt-get update && apt-get -y install libgdal-dev
+     - pip install -r foss_public_alert_server/requirements.txt
+  script:
+     - cd foss_public_alert_server
+     - python3 manage.py test
+
 container:
   stage: "publish"
   rules:
