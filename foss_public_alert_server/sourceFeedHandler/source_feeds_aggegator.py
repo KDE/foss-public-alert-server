@@ -11,10 +11,8 @@ from django.conf import settings
 
 alert_hub_feeds_url = 'https://alert-hub-sources.s3.amazonaws.com/json'
 fpas_feeds_file = os.path.join(settings.BASE_DIR, "sourceFeedHandler/custom_feeds.json")
-aggregated_feed_file_name =  os.path.join(settings.BASE_DIR, "aggregated_feeds.json")
 aggregated_feed_object = {}
 version_code = "0.0.2"
-reload_feed_source: bool = False
 
 
 def get_alert_hub_feeds() -> json:
@@ -39,16 +37,6 @@ def get_fpas_feeds() -> json:
     with open(fpas_feeds_file, 'r') as file:
         data = json.load(file)
     return data
-
-
-def write_json_file() -> None:
-    """
-    creates a new file for the json data and dump the aggregated_feed_object in it
-    :return: None
-    """
-    with open(aggregated_feed_file_name, 'w') as file:
-        # dump json object into file
-        json.dump(aggregated_feed_object, file)
 
 
 def append_one_feed_to_json_list(data: json) -> None:
@@ -100,7 +88,7 @@ def parse_one_custom_feed(data: json):
     append_one_feed_to_json_list(data)
 
 
-def parse_feeds_and_create_new_json():
+def parse_feeds_and_create_new_json() -> json:
     """
     parse all feed sources and merge all feeds in a new file
     :return: None
@@ -118,9 +106,5 @@ def parse_feeds_and_create_new_json():
     for j in fpas_feeds['sources']:
         parse_one_custom_feed(j)
 
-    write_json_file()
+    return aggregated_feed_object
 
-
-# check if a reload is needed and if yes rewrite the aggregated_feeds.json file
-if reload_feed_source:
-    parse_feeds_and_create_new_json()

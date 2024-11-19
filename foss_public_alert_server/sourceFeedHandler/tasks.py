@@ -11,22 +11,7 @@ from alertHandler.MOWAS_CAP_parser import MoWaSCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
 from . import source_feeds_aggegator
 
-feeds_file = "aggregated_feeds.json"
-
-
-def get_feeds() -> json:
-    """
-    open the custom FPAS Feeds file and return the json data
-    :return: the custom feeds from FPAS
-    """
-    with open(feeds_file, 'r') as file:
-        data = json.load(file)
-    return data
-
-
-def store_feeds_in_database():
-    feeds = get_feeds()
-
+def store_feeds_in_database(feeds: json):
     for feed in feeds["sources"]:
         # only store the feeds in the database that are not ignored by us
         if not feed["source"]["ignore"]:
@@ -57,11 +42,11 @@ def reload_feed_sources_and_update_database() -> None:
     :return: None
     """
     # load new feeds and recreated json file
-    source_feeds_aggegator.parse_feeds_and_create_new_json()
+    feeds = source_feeds_aggegator.parse_feeds_and_create_new_json()
     # @todo validate json file before replacing the old database
     # clear old entries and store new feed in database
     CAPFeedSource.objects.all().delete()
-    store_feeds_in_database()
+    store_feeds_in_database(feeds)
 
 
 @shared_task(name="task.create_parser_and_get_feed")
