@@ -47,6 +47,7 @@ services:
     volumes:
       - app-cap:/app/cap
       - app-static:/app/static
+      - feeder-cache:/app/cache
 
   httpd:
     image: httpd:2.4-bullseye
