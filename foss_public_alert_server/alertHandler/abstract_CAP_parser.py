@@ -89,7 +89,7 @@ class AbstractCAPParser(ABC):
             warnings_list.append(str(e))
             # @todo add to error logger
         # store warnings in database
-        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list))
+        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
     def find_identifier(self, cap_tree: xml) -> str:
         """
