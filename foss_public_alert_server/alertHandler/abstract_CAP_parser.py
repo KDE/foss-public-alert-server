@@ -6,7 +6,7 @@ import os
 import xml
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
-import datetime
+from datetime import datetime, timezone
 import requests_cache
 import json
 import warnings
@@ -63,11 +63,11 @@ class AbstractCAPParser(ABC):
 
         try:
             # store the start time to measure the feeds update time
-            start_time = datetime.datetime.now()
+            start_time = datetime.now()
             # load and process the feed
             self._load_alerts_from_feed()
             # store the end time
-            end_time = datetime.datetime.now()
+            end_time = datetime.now()
 
             # store duration os last fetch
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=end_time - start_time)
@@ -132,12 +132,12 @@ class AbstractCAPParser(ABC):
         for expireTimeNode in cap_tree.findall(
                 '{urn:oasis:names:tc:emergency:cap:1.2}info/{urn:oasis:names:tc:emergency:cap:1.2}expires'):
             try:
-                datatime = datetime.datetime.fromisoformat(expireTimeNode.text)
+                datatime = datetime.fromisoformat(expireTimeNode.text)
             except ValueError:
                 continue
             if expire_time is None or datatime > expire_time:
                 expire_time = datatime
-            if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
+            if expire_time is not None and expire_time < datetime.now(timezone.utc):
                 # print(f"{self.feed_source.source_id} - skipping alert {alert_id} expired on {datatime}")
                 raise AlertExpiredException(f"alert {alert_id} expired on {datatime}")
         return expire_time
@@ -164,7 +164,8 @@ class AbstractCAPParser(ABC):
         expanded: bool = False
         for area in cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
             # if they are already polygons, we do not have to expand the data
-            if area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon'):
+            if area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None or area.find('{urn:oasis:names:tc:emergency'
+                                                                                       ':cap:1.2}circle}') is not None:
                 continue
             for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
                 code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
@@ -190,7 +191,7 @@ class AbstractCAPParser(ABC):
                     else:
                         print(f"unhandled geometry type: {geojson['geometry']['type']}")
                 else:
-                    print(f"can't expand code {code_name}: {code_value}")
+                    print(f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value}")
                     # if code_name == "EMMA_ID" or code_name == "FIPS" or code_name == "NUTS2" or code_name == "NUTS3":
                     #    rdb.set_trace()  # set breakpoint
         return expanded
@@ -271,15 +272,15 @@ class AbstractCAPParser(ABC):
     def is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat) -> bool:
         """
         validate if the given bounding box is valid and does not except valid values.
-        :param min_lon: the minimal longitude of the bounding box
-        :param min_lat: the minimal latitude of the bounding box
-        :param max_lon: the maximal longitude of the bounding box
-        :param max_lat: the maximal latitude of the bounding box
+        :param min_lon: the minimal longitude of the bounding box (-180 - +180)
+        :param min_lat: the minimal latitude of the bounding box (-90 - +90)
+        :param max_lon: the maximal longitude of the bounding box (-180 - +180)
+        :param max_lat: the maximal latitude of the bounding box (-90 - +90)
         :return: true if the bounding box if valid, false if not
         """
         return (-180.0 <= min_lon <= 180.0
-                and -180.0 <= min_lat <= 180.0
-                and -90.0 <= max_lon <= 90.0
+                and -180.0 <= max_lon <= 180.0
+                and -90.0 <= min_lat <= 90.0
                 and -90.0 <= max_lat <= 90.0
                 and min_lon != min_lat
                 and max_lon != max_lat)
@@ -342,6 +343,19 @@ class AbstractCAPParser(ABC):
                 check_for_alerts_and_send_notifications(new_alert)
         except Exception as e:
             raise DatabaseWritingException(str(e))
+
+    def update_feed_source_entry(self, sent_time:str) -> None:
+        """
+        check if the sent_time is newer then the latest stored timestamps and if yes replace the old datetime with the new one
+        :param sent_time: the sent time of the alert
+        :return: None
+        """
+        sent_time_datetime:datetime = datetime.fromisoformat(sent_time)
+        latest_entry = self.feed_source.latest_published_alert_datetime
+        if latest_entry is None:
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
+        elif sent_time_datetime > latest_entry:
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
 
     def addAlert(self, cap_source_url: str = None, cap_data: xml = None) -> None:
         """
@@ -420,6 +434,8 @@ class AbstractCAPParser(ABC):
                 new_alert.cap_data = SimpleUploadedFile(f"{alert_id}.xml", cap_data.encode('utf-8'),
                                                         'application/xml')
                 new_alert.cap_data_modified = cap_data_modified
+
+            self.update_feed_source_entry(sent_time)
 
             # write alert to database
             self.write_to_database_and_send_notification(new_alert)
