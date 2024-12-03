@@ -21,6 +21,7 @@
           <th>Source official?</th>
            <th>Feed-URL</th>
           <th>Status</th>
+          <th>last alert from</th>
           <th>last fetch duration</th>
            <th>warnings</th>
           <th>Missing geo Info</th>
@@ -35,6 +36,7 @@
             <th>{{ source.source_is_official }} </th>
             <th><a href={{ source.cap_alert_feed }}>Feed</a> </th>
             <th>{{ source.cap_alert_feed_status }} </th>
+            <th>{{ source.latest_published_alert_datetime }} </th>
             <th>{{ source.last_fetch_duration }} </th>
              <th>{{ source.feed_warnings }} </th>
             <th>{{ source.missing_geo_information }} </th>
