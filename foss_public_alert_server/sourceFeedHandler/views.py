@@ -2,15 +2,17 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 from django.shortcuts import render
+from django.http.request import HttpRequest
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
 
+from json import loads
 from .models import CAPFeedSource
 import datetime
 # Create your views here.
 
 
-def generate_source_status_page(request):
+def generate_source_status_page(request:HttpRequest):
     """
     generate a status page for every CapSource
     :param request:
@@ -28,6 +30,40 @@ def generate_source_status_page(request):
     }
 
     return render(request, 'source_status_page.html', context=context)
+
+
+def get_feed_status_for_area(request:HttpRequest):
+    """
+    return the feeds for the given country code
+    :param request: the http POST request a list of country codes as parameter 'country_code': [list]
+    :return: a list of feeds with this country code
+    """
+    if request.method != "POST":
+        return HttpResponseBadRequest("wrong HTTP method")
+
+
+    try:
+        data:list = request.POST.getlist('country_codes', None)
+    except ValueError:
+        return HttpResponseBadRequest('invalid parameters')
+
+    # check if the request contained valid data
+    if len(data) == 0:
+        return HttpResponseBadRequest('invalid parameters')
+
+    result = {'results': []}
+
+    for code in data:
+        for entry in CAPFeedSource.objects.filter(authorityCountry=code):
+            temp_result = {"name": entry.name,
+                           "source_is_official": entry.source_is_official,
+                           "cap_alert_feed_status": entry.cap_alert_feed_status,
+                           "authorityCountry": entry.authorityCountry,
+                           "register_url": entry.register_url}
+            result['results'].append(temp_result)
+
+    return JsonResponse(result, safe=False)
+
 
 def index(request):
     return HttpResponseRedirect("status")
