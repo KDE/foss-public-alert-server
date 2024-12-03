@@ -7,5 +7,6 @@ from .models import CAPFeedSource
 
 class CAPSourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'source_id', 'name')
+    search_fields = ['source_id']
 
 admin.site.register(CAPFeedSource, CAPSourceAdmin)
