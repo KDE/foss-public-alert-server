@@ -37,6 +37,7 @@ class CAPFeedSource(models.Model):
     feed_warnings = models.CharField(max_length=255, null=True)
     last_e_tag = models.CharField(max_length=255, null=True)
     periodic_task_name = models.CharField(max_length=255, null=True)
+    latest_published_alert_datetime = models.DateTimeField(null=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
