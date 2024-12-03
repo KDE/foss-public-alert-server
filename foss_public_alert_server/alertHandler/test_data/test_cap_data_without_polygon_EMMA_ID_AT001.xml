@@ -58,12 +58,9 @@ Aceguá - RS (4300034), Alegrete - RS (4300406), Amaral Ferrador - RS (4300638),
 <areaDesc>
 Germany
 </areaDesc>
-<polygon>
-    52.843,7.778 52.416,13.931 50.472,11.865 49.182,8.459 51.180,6.328
-</polygon>
 <geocode>
-    <valueName>Test</valueName>
-    <value>123456789</value>
+    <valueName>EMMA_ID</valueName>
+    <value>AT001</value>
 </geocode>
 </area>
 </info>
