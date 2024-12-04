@@ -189,7 +189,7 @@ class AbstractCAPParser(ABC):
                             poly.text = self.geojson_polygon_to_cap(coordinates)
                         expanded = True
                     else:
-                        print(f"unhandled geometry type: {geojson['geometry']['type']}")
+                        print(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
                 else:
                     print(f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value}")
                     # if code_name == "EMMA_ID" or code_name == "FIPS" or code_name == "NUTS2" or code_name == "NUTS3":
@@ -303,7 +303,7 @@ class AbstractCAPParser(ABC):
 
             if not self.is_valid_bounding_box(min_lon=min_lon, min_lat=min_lat, max_lat=max_lat, max_lon=max_lon):
                 # @todo for dwd we do nto get an valid bounding box
-                raise AlertParameterException(f"alert {alert_id} has no valid bounding box: {min_lat}, {min_lon}, "
+                raise AlertParameterException(f"{self.feed_source.source_id} - alert {alert_id} has no valid bounding box: {min_lat}, {min_lon}, "
                                               f"{max_lat}, {max_lon}")
 
             # print(min_lat, min_lon, max_lat, max_lon)
