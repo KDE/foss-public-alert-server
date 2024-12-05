@@ -278,11 +278,11 @@ class AbstractCAPParser(ABC):
         :return: true if the bounding box if valid, false if not
         """
         return (-180.0 <= min_lon <= 180.0
-                and -180.0 <= min_lat <= 180.0
-                and -90.0 <= max_lon <= 90.0
+                and -180.0 <= max_lon <= 180.0
+                and -90.0 <= min_lat <= 90.0
                 and -90.0 <= max_lat <= 90.0
-                and min_lon != min_lat
-                and max_lon != max_lat)
+                and min_lon < max_lon
+                and min_lat < max_lat)
 
     def determine_bounding_box(self, cap_tree: xml, alert_id) -> (int, int, int, int):
         min_lat = 90

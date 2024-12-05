@@ -1,0 +1,40 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!--
+SPDX-FileCopyrightText: none
+SPDX-License-Identifier: CC0-1.0
+-->
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+<identifier>OCA-marinePollution_2493</identifier>
+<sender>https://iocean.oca.gov.tw</sender>
+<sent>2024-12-05T00:00:02+08:00</sent>
+<status>Actual</status>
+<msgType>Alert</msgType>
+<source/>
+<scope>Public</scope>
+<info>
+<language>zh-TW</language>
+<category>Env</category>
+<event>海洋污染</event>
+<urgency>Immediate</urgency>
+<severity>Minor</severity>
+<certainty>Observed</certainty>
+<eventCode>
+<valueName>profile:CAP-TWP:Event:1.0</valueName>
+<value>marinePollution</value>
+</eventCode>
+<effective>2024-12-02T08:20:00+08:00</effective>
+<expires>2025-10-02T08:20:00+08:00</expires>
+<senderName>海洋保育署</senderName>
+<headline>海洋污染事件</headline>
+<description>海洋委員會\海洋保育署：雲林麥寮許厝寮岸際前方海域「烏賊號」舢舨翻覆案</description>
+<web>https://iocean.oca.gov.tw/</web>
+<parameter>
+<valueName>alert_title</valueName>
+<value/>
+</parameter>
+<area>
+<areaDesc>許厝寮西南方0.3浬</areaDesc>
+<circle>23.8262083333333,120.185488888889 0.5</circle>
+</area>
+</info>
+</alert>
