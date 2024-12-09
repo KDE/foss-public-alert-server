@@ -8,7 +8,7 @@ License: CC0-1.0
 Copyright: Meteoalarm / EUMETNET
 
 Files: foss_public_alert_server/alertHandler/data/ISO3166-2/*.geojson
-License: ODbL
+License: ODbL-1.0
 Copyright: OpenStreetMap
 
 Files: foss_public_alert_server/manage.py foss_public_alert_server/alertHandler/migrations/*.py foss_public_alert_server/subscriptionHandler/migrations/*.py foss_public_alert_server/sourceFeedHandler/migrations/*.py
