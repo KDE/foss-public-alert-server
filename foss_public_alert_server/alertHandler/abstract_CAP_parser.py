@@ -34,7 +34,7 @@ class AbstractCAPParser(ABC):
 
     def __init__(self, feed_source, name: str):
         self.feed_source = feed_source
-        self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.feed_source.source_id)
+        self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.feed_source.source_id, expire_after=60*60*24)
         self.name = name
 
     @abstractmethod
@@ -89,7 +89,7 @@ class AbstractCAPParser(ABC):
             warnings_list.append(str(e))
             # @todo add to error logger
         # store warnings in database
-        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list))
+        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
     def find_identifier(self, cap_tree: xml) -> str:
         """
