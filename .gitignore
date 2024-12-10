@@ -4,6 +4,8 @@
 foss_public_alert_server/cap
 foss_public_alert_server/static
 foss_public_alert_server/cache
+foss_public_alert_server/alertHandler/data/ISO3166-2/iso3166-2-boundaries.geojson
+foss_public_alert_server/alertHandler/data/ISO3166-2/iso3166-2-boundaries.zip
 **/__pycache__/
 .idea
 .venv
