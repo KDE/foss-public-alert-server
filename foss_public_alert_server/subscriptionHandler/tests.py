@@ -27,7 +27,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
         response = self.client.post('/subscription/subscribe', data, content_type="application/json")
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Successfully subscribed')
 
     def test_invalid_parameters(self):
@@ -39,8 +39,8 @@ class SubscriptionHandlerTestsCase(TestCase):
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
         response = self.client.post('/subscription/subscribe', data, content_type="application/json")
-        self.assertEquals(response.status_code, 400)
-        self.assertEquals(response.content, b'invalid or missing parameters')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.content, b'invalid or missing parameters')
 
     def test_send_notification(self):
         for alert in Alert.objects.all():
