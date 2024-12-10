@@ -21,9 +21,9 @@ This project is still in development and not yet ready for production!
 
 > This project was funded through the [NGI0 Core Fund](https://nlnet.nl/core), a fund established by [NLnet](https://nlnet.nl/) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu/) programme, under the aegis of [DG Communications Networks, Content and Technology](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en) under grant agreement [No. 101092990](https://cordis.europa.eu/project/id/101092990).
 
-<img src="assets/NLnet_logo.svg" width=160>
+<img src="https://nlnet.nl/logo/banner.svg" width=160>
 &nbsp;&nbsp;
-<img src="assets/NGI0Core_logo.svg" width=160>
+<img src="https://nlnet.nl/image/logos/NGI0Core_tag.svg" width=160>
 
 ## Server setup
 
