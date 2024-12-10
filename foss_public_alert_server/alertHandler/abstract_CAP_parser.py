@@ -351,10 +351,10 @@ class AbstractCAPParser(ABC):
         :return: None
         """
         sent_time_datetime:datetime = datetime.fromisoformat(sent_time)
-        latest_entry = self.feed_source.latest_published_alert_datetime
-        if latest_entry is None:
+        latest_entry = CAPFeedSource.objects.filter(id=self.feed_source.id).first()
+        if latest_entry is None or latest_entry.latest_published_alert_datetime is None:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
-        elif sent_time_datetime > latest_entry:
+        elif sent_time_datetime > latest_entry.latest_published_alert_datetime:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
 
     def addAlert(self, cap_source_url: str = None, cap_data: xml = None) -> None:
