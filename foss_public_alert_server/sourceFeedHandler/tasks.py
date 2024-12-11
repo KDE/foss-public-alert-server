@@ -74,7 +74,7 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
     if parser is not None:
         parser.get_feed(parser)
     else:
-        print("Parser is None")
+        print(f"{feed.source_id}: Parser is None for {feed_format}")
 
 
 # for manually update the feed sources in the database
