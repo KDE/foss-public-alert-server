@@ -41,7 +41,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-dwd-zip",
+        "format": "DWD-Zip",
         "override": true,
         "ignore": false
       }
@@ -64,12 +64,12 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-lhp",
+        "format": "de-mowas",
         "override": true,
         "ignore": false
       }
     },
-      {
+    {
       "source": {
         "sourceId": "de-biwapp-de",
         "byLanguage": [
@@ -87,7 +87,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-biwapp",
+        "format": "de-mowas",
         "override": true,
         "ignore": false}
     },
