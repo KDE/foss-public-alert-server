@@ -71,6 +71,29 @@
     },
       {
       "source": {
+        "sourceId": "de-lhp-nina-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Länderübergreifendes Hochwasserportal",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": "True",
+        "capAlertFeed": "https://warnung.bund.de/api31/lhp/mapData.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "de-nina",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
         "sourceId": "de-biwapp-de",
         "byLanguage": [
           {

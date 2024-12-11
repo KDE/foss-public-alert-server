@@ -8,6 +8,7 @@ from celery import shared_task
 from alertHandler import abstract_CAP_parser
 from alertHandler.XML_CAP_parser import XMLCAPParser
 from alertHandler.MOWAS_CAP_parser import MoWaSCapParser
+from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
 from . import source_feeds_aggegator
 
@@ -68,6 +69,8 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
         case "de-mowas":
             # print("its mowas")
             parser = MoWaSCapParser(feed)
+        case "de-nina":
+            parser = NinaCapParser(feed)
         case "DWD-Zip":
             # print("its dwd")
             parser = DWDCAPParser(feed)
