@@ -30,12 +30,6 @@ class XMLCAPParser(AbstractCAPParser):
         else:
             feed: FeedParserDict = self.parser.parse(self.feed_source.cap_alert_feed)
 
-        if feed.status == 304:
-            # print(f"Nothing changed for {self.feed_source.source_id}")
-            return
-        elif feed.status != 200:
-            raise "Feed status code is not 200"
-
         # check if header has en etag and if yes update the etag in the database
         if "etag" in feed.headers:
             new_etag = feed.headers["etag"]
