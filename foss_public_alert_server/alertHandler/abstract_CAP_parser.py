@@ -155,6 +155,27 @@ class AbstractCAPParser(ABC):
             poly += f"{coord[1]:.4f},{coord[0]:.4f} "
         return poly.strip()
 
+    def geojson_feature_to_cap(self, area, geojson) -> bool:
+        """
+        Add a GeoJSON polygon from a GEoJSON feature to the CAP <area> element.
+        :param area: the CAP <area> element to add the geometry to
+        :param geojson: A GeoJSON feature object
+        :return: True if a viable polygon was found and could be added, False otherwise
+        """
+        if geojson['geometry']['type'] == 'Polygon':
+            poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
+            poly.text = self.geojson_polygon_to_cap(geojson['geometry']['coordinates'])
+            return True
+        elif geojson['geometry']['type'] == 'MultiPolygon':
+            for coordinates in geojson['geometry']['coordinates']:
+                poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
+                poly.text = self.geojson_polygon_to_cap(coordinates)
+            return True
+        else:
+            print(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
+            return False
+
+
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
         Some sources do not contain the polygons of the area directly in the CAP file, but use geocodes instead.
@@ -176,21 +197,10 @@ class AbstractCAPParser(ABC):
                 # find correct geojson file in storage
                 # @todo think about better path?
                 code_file = os.path.join(settings.BASE_DIR, 'alertHandler/data', code_name, f"{code_value}.geojson")
-                # print("code file path is:" + str(code_file))
                 if os.path.isfile(code_file):
                     geojson = json.load(open(code_file))
                     # append geojson to original file
-                    if geojson['geometry']['type'] == 'Polygon':
-                        poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-                        poly.text = self.geojson_polygon_to_cap(geojson['geometry']['coordinates'])
-                        expanded = True
-                    elif geojson['geometry']['type'] == 'MultiPolygon':
-                        for coordinates in geojson['geometry']['coordinates']:
-                            poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-                            poly.text = self.geojson_polygon_to_cap(coordinates)
-                        expanded = True
-                    else:
-                        print(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
+                    expanded = expanded or self.geojson_feature_to_cap(area, geojson)
                 else:
                     print(f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value}")
                     # if code_name == "EMMA_ID" or code_name == "FIPS" or code_name == "NUTS2" or code_name == "NUTS3":
