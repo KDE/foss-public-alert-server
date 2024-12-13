@@ -64,7 +64,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-mowas",
+        "format": "de-nina",
         "override": true,
         "ignore": false
       }
