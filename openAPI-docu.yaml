@@ -1,0 +1,421 @@
+openapi: 3.1.0
+info:
+  title: "FOSS Public Alert Server API"
+  version: '1.0.0'
+  description: 'This is the API for the FOSS Public Alert Server. The server is in an early testing phase, and the API may change in the near future.'
+  termsOfService: 'https://invent.kde.org/webapps/foss-public-alert-server/-/wikis/Terms-of-Service'
+  contact:
+    name: FOSS Public Alert Server
+    url: https://invent.kde.org/webapps/foss-public-alert-server/
+    email: nucleus-ffm@posteo.de, vkrause@kde.org
+
+servers:
+  - url: https://todo.de
+
+tags:
+  - name: Subscription
+  - name: Alerts
+  - name: Alert Sources
+
+paths:
+  /subscription/subscribe:
+    post:
+      summary: Subscribe for a new area
+      description: Subscribe a client to a UnifiedPush endpoint for an area defined by a bounding box with coordinates.
+      tags:
+        - Subscription
+      requestBody:
+        description: Register a new client
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/new_subscription'
+        required: true
+      responses:
+        '200':
+          description: "Client successfully subscribed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "successfully subscribed"
+                  id:
+                    type: string
+                    description: The ID of the subscription to allow the client to unsubscribe. This ID should be stored by the client.
+                    example: "exampleSubscriptionID"
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
+  /subscription/unsubscribe:
+    post:
+      summary: Unsubscribe from an area
+      description: Unsubscribe a client from an area.
+      tags:
+        - Subscription
+      requestBody:
+        description: Remove the client from the area
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/delete_subscription'
+        required: true
+      responses:
+        '200':
+          description: "Client successfully removed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "successfully unsubscribed"
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
+  /subscription/heartbeat:
+    post:
+      summary: Client's heartbeat
+      description: The client should send a heartbeat every day. If the client fails to send a heartbeat for a week, the registration will be deleted. If the client sends a heartbeat but its data has already been deleted, the server returns a 410 code, and the client must register again. Clients can also check with this request if the server is still online.
+      tags:
+        - Subscription
+      requestBody:
+        description: Send heartbeat
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/heartbeat'
+        required: true
+      responses:
+        '200':
+          description: "Subscription still active and renewed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "Subscription successfully renewed"
+        '400':
+          description: "Invalid input"
+        '410':
+          description: "The server no longer has data for this subscription_id"
+        '422':
+          description: "Validation exception"
+
+  /alert/{UUID}:
+    get:
+      summary: Get one alert
+      description: Retrieve a specific alert using the provided alert ID. The alert follows the Common Alerting Protocol (CAP) Version 1.2.
+      tags:
+        - Alerts
+      parameters:
+        - in: path
+          name: UUID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "CAP alert data"
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/alert_response'
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
+  /alert/all:
+    post:
+      summary: Get all alerts for a subscription ID
+      description: Retrieve all alerts for a given subscription ID.
+      tags:
+        - Alerts
+      requestBody:
+        description: Request alerts for the given subscription ID
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/all_alerts_request'
+        required: true
+      responses:
+        '200':
+          description: "All CAP alerts for the subscription"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/all_alert_response'
+        '400':
+          description: "No valid subscription"
+        '422':
+          description: "Validation exception"
+
+  /alert/area:
+    post:
+      summary: Get all alerts for an area
+      description: Retrieve all alerts for a specified area defined by four coordinates.
+      tags:
+        - Alerts
+      requestBody:
+        description: Request alerts for a specific area
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/alert_area_request'
+        required: true
+      responses:
+        '200':
+          description: "All CAP alerts for the area"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/all_alert_response'
+        '400':
+          description: "No valid subscription"
+        '422':
+          description: "Validation exception"
+
+  /source/area_status:
+    post:
+      summary: Area status check
+      description: Check which feeds the server has for a list of country codes.
+      tags:
+        - Alert Sources
+      requestBody:
+        description: Request for area status based on country codes.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/area_status'
+        required: true
+      responses:
+        '200':
+          description: "List of all feeds for the country codes"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/area_status_response'
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
+components:
+  schemas:
+    new_subscription:
+      description: New subscription
+      properties:
+        distributor_url:
+          type: string
+          description: "The URL of the UnifiedPush server for sending alert notifications"
+          example: "https://example.de"
+        min_lat:
+          type: number
+          format: float
+          description: "The minimum latitude"
+          example: -90.0
+        max_lat:
+          type: number
+          format: float
+          description: "The maximum latitude"
+          example: 90.0
+        min_lon:
+          type: number
+          format: float
+          description: "The minimum longitude"
+          example: -180.0
+        max_lon:
+          type: number
+          format: float
+          description: "The maximum longitude"
+          example: 180.0
+
+    delete_subscription:
+      description: Unsubscribe from a location
+      properties:
+        subscription_id:
+          type: string
+          description: "The ID of the subscription to be removed"
+
+    heartbeat:
+      description: "A heartbeat to indicate the client is still online"
+      properties:
+        subscription_id:
+          type: string
+          description: "The subscription ID to check"
+          example: "subscription_id"
+
+    alert_request:
+      description: "Request a specific alert by ID"
+      properties:
+        alert_id:
+          type: string
+          description: "The UUID of the alert"
+          example: "ExampleAlertUUID"
+
+    alert_area_request:
+      description: "a bounding box with four coordinates"
+      properties:
+        min_lat:
+          type: number
+          format: float
+          description: "The minimum latitude"
+          example: -90.0
+        max_lat:
+          type: number
+          format: float
+          description: "The maximum latitude"
+          example: 90.0
+        min_lon:
+          type: number
+          format: float
+          description: "The minimum longitude"
+          example: -180.0
+        max_lon:
+          type: number
+          format: float
+          description: "The maximum longitude"
+          example: 180.0
+
+    alert_response:
+      type: object
+      properties:
+        identifier:
+          type: string
+          example: "urn:oid:2.49.0.1.4.0.2011.2.2.8.37.9"
+        sender:
+          type: string
+          example: "geomag@usgs.gov"
+        sent:
+          type: string
+          format: date-time
+          example: "2011-02-02T08:37:09-00:00"
+        status:
+          type: string
+          example: "Test"
+        msgType:
+          type: string
+          example: "Alert"
+        scope:
+          type: string
+          example: "Public"
+        info:
+          type: object
+          properties:
+            language:
+              type: string
+              example: "en"
+            category:
+              type: string
+              example: "Met"
+            event:
+              type: string
+              example: "Geomagnetic Storm"
+            urgency:
+              type: string
+              example: "Expected"
+            severity:
+              type: string
+              example: "Moderate"
+            certainty:
+              type: string
+              example: "Likely"
+            senderName:
+              type: string
+              example: "USGS Geomagnetism Program"
+            headline:
+              type: string
+              example: "Geomagnetic Storm Alert"
+            description:
+              type: string
+              example: "The U.S. Geological Survey (USGS) is bracing for the likely arrival of a major geomagnetic storm..."
+            instruction:
+              type: string
+              example: "While geomagnetic storms give rise to the beautiful Northern lights..."
+            web:
+              type: string
+              example: "http://www.usgs.gov/public/press/public_affairs/press_releases/pr1241m.html"
+            contact:
+              type: string
+              example: "Jill Caldwell 1-303-273-8486"
+            resource:
+              type: object
+              properties:
+                resourceDesc:
+                  type: string
+                  example: "Image file"
+                mimeType:
+                  type: string
+                  example: "image/jpeg"
+                uri:
+                  type: string
+                  example: "http://geomag.usgs.gov/realtime.html"
+            area:
+              type: object
+              properties:
+                areaDesc:
+                  type: string
+                  example: "Plots of the data from USGS observatories can be seen on-line at..."
+                polygon:
+                  type: string
+                  example: "45,-179.99 45,179.99 89.99,179.99 89.99,-179.99 45,-179.99"
+
+    area_status:
+      description: "A list of country codes in ISO 3166-1 format"
+      properties:
+        country_code:
+          type: array
+          items:
+            type: string
+          example: ["de", "fr"]
+
+    area_status_response:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Deutschland: Landeshochwasserportal"
+              source_is_official:
+                type: boolean
+                example: true
+              cap_alert_feed_status:
+                type: string
+                example: "operating"
+              authorityCountry:
+                type: string
+                example: "Germany"
+              feed_urls:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "https://www.bbk.bund.de/DE/Service/Aktuelles/Warnungen/HDW/HDW-Warnungen_DE.html"
+
+    all_alerts_request:
+      description: "Request all alerts for a specific subscription"
+      properties:
+        subscription_id:
+          type: string
+          description: "The ID of the subscription"
+          example: "example-subscription-id"
+
+    all_alert_response:
+      description: "All alerts for the given subscription"
+      type: array
+      items:
+        $ref: '#/components/schemas/alert_response'
