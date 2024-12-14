@@ -400,13 +400,13 @@ components:
                 example: "operating"
               authorityCountry:
                 type: string
-                example: "Germany"
-              feed_urls:
-                type: array
-                items:
-                  type: string
-                example:
-                  - "https://www.bbk.bund.de/DE/Service/Aktuelles/Warnungen/HDW/HDW-Warnungen_DE.html"
+                example: "de"
+              register_url:
+                type: string
+                example: "https://alertingauthority.wmo.int/authorities.php?recId=53"
+              latest_published_alert_datetime:
+                type: string
+                example: "2024-12-10T05:00:44Z"
 
     all_alerts_request:
       description: "Request all alerts for a specific subscription"
