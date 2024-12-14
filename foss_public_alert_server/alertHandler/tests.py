@@ -270,3 +270,24 @@ class AlertHandlerCAPParserTestsCase(TestCase):
 
         abstract_cap_parser.addAlert()
         self.assertEqual(Alert.objects.count(), 0)
+
+    def test_circle_area(self):
+        """
+        test circle bounding box computation
+        """
+        cap_data = self.create_test_cap_data('circle-area.xml')
+        abstract_cap_parser = self.create_test_class_instance()
+        ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')
+
+        try:
+            cap_tree = ET.fromstring(cap_data)
+        except ET.ParseError as e:
+            print(f"failed to parse CAP alert message XML: {e}")
+            return
+
+        (min_lat, min_lon, max_lat, max_lon) = abstract_cap_parser.determine_bounding_box(cap_tree, 'dummy')
+        self.assertTrue(AbstractCAPParser.is_valid_bounding_box(min_lon=min_lon, min_lat=min_lat, max_lat=max_lat, max_lon=max_lon))
+        self.assertAlmostEqual(min_lon, 120.180, delta=0.001)
+        self.assertAlmostEqual(min_lat, 23.821, delta=0.001)
+        self.assertAlmostEqual(max_lon, 120.190, delta=0.001)
+        self.assertAlmostEqual(max_lat, 23.830, delta=0.001)
