@@ -9,6 +9,7 @@ from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFo
 from json import loads
 from .models import CAPFeedSource
 import datetime
+from django.conf import settings
 # Create your views here.
 
 
@@ -66,6 +67,23 @@ def get_feed_status_for_area(request:HttpRequest):
 
     return JsonResponse(result, safe=False)
 
+def server_status(request:HttpRequest):
+    """
+    endpoint to check the server status
+    :param request:
+    :return:
+    """
+    if request.method != "GET":
+        return HttpResponseBadRequest("wrong HTTP method")
+
+    result = {
+        "server_version": settings.SERVER_VERSION,
+        "server_operator": settings.OPERATOR,
+        "privacy_notice": settings.PRIVACY_NOTICE,
+        "terms_of_service": settings.TERMS_OF_SERVICE,
+        "congestion_state": settings.CONGESTION_STATE
+    }
+    return JsonResponse(result)
 
 def index(request):
     return HttpResponseRedirect("status")
