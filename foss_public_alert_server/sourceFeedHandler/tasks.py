@@ -80,5 +80,6 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
         print(f"{feed.source_id}: Parser is None for {feed_format}")
 
 
-# for manually update the feed sources in the database
-# reload_feed_sources_and_update_database()
+# also run the feed update at startup, so we initially have feeds and feed config changes
+# are applied on startup
+reload_feed_sources_and_update_database.delay()
