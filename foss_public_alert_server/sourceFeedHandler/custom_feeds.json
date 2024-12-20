@@ -59,7 +59,7 @@
         "authorName": "",
         "authorEmail": "",
         "sourceIsOfficial": "True",
-        "capAlertFeed": "https://warnung.bund.de/bbk.lhp/hochwassermeldungen.json",
+        "capAlertFeed": "https://nina.api.proxy.bund.dev/api31/lhp/mapData.json",
         "capAlertFeedStatus": "operating",
         "authorityCountry": "de",
         "authorityAbbrev": "",
