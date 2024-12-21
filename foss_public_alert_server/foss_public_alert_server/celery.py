@@ -6,6 +6,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
+from celery.signals import worker_ready
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foss_public_alert_server.settings')
@@ -28,6 +29,19 @@ app.control.time_limit('task.create_parser_and_get_feed', soft=30, hard=60, repl
 @app.task(bind=True, ignore_result=True, name="debugtask")
 def debug_task(self):
     print(f'Request: {self.request!r}')
+
+@worker_ready.connect
+def execute_at_startup(sender, **k) -> None:
+    """
+    This task is executed when the application is started for the first time. Here we schedule the task to load the feed sources.
+    This is done to avoid having to wait until midnight for the feed sources to be retrieved for the first time.
+    :param sender:
+    :param k:
+    :return: None
+    """
+    with sender.app.connection() as conn:
+        print("Initialize feed sources...")
+        sender.app.send_task('task.reload_feed_sources_and_update_database')
 
 
 # create periodic tasks to remove old subscriptions
