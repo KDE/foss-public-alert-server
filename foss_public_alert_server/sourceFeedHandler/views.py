@@ -86,4 +86,14 @@ def server_status(request:HttpRequest):
     return JsonResponse(result)
 
 def index(request):
-    return HttpResponseRedirect("status")
+    """
+    show server information page
+    """
+    if request.method != 'GET':
+        return HttpResponseBadRequest('wrong HTTP method')
+
+    context = {
+        'version': settings.SERVER_VERSION
+    }
+
+    return render(request, 'server_info.html', context=context)
