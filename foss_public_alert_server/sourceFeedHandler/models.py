@@ -19,9 +19,9 @@ class CAPFeedSource(models.Model):
     source_id = models.CharField(max_length=255)
     code = models.CharField(max_length=255)  # @todo there can be more then one entry here
     name = models.CharField(max_length=255)
-    logo = models.CharField(max_length=255, null=True)
-    guid = models.CharField(max_length=255, null=True)
-    register_url = models.CharField(max_length=255, null=True)
+    logo = models.CharField(max_length=255, null=True, blank=True)
+    guid = models.CharField(max_length=255, null=True, blank=True)
+    register_url = models.CharField(max_length=255, null=True, blank=True)
     source_is_official = models.BooleanField(null=True)
     cap_alert_feed = models.CharField(max_length=255)
     cap_alert_feed_status = models.CharField(max_length=255)
@@ -31,13 +31,13 @@ class CAPFeedSource(models.Model):
     format = models.CharField(max_length=255)
     ignore = models.BooleanField(null=True)
 
-    last_fetch_status = models.BooleanField(null=True)
-    last_fetch_duration = models.DurationField(null=True)
-    missing_geo_information = models.BooleanField(null=True)
-    feed_warnings = models.CharField(max_length=255, null=True)
-    last_e_tag = models.CharField(max_length=255, null=True)
+    last_fetch_status = models.BooleanField(null=True, blank=True)
+    last_fetch_duration = models.DurationField(null=True, blank=True)
+    missing_geo_information = models.BooleanField(null=True,blank=True)
+    feed_warnings = models.CharField(max_length=255, null=True, blank=True)
+    last_e_tag = models.CharField(max_length=255, null=True, blank=True)
     periodic_task_name = models.CharField(max_length=255, null=True)
-    latest_published_alert_datetime = models.DateTimeField(null=True)
+    latest_published_alert_datetime = models.DateTimeField(null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
