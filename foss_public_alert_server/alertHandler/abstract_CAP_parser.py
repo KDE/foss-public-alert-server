@@ -471,3 +471,5 @@ class AbstractCAPParser(ABC):
             pass
         except AlertParameterException as e:
             warnings.warn(f"Parameter error:[{self.feed_source.source_id}] - {str(e)} - skipping")
+        except NoGeographicDataAvailableException as e:
+            warnings.warn(f"Unknown geometry code:[{self.feed_source.source_id}] - {str(e)} - skipping")
