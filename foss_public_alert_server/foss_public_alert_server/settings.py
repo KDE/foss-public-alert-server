@@ -164,7 +164,6 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')
 
 # server config for clients
-SERVER_VERSION = "1.0.0"
 OPERATOR = "KDE"
 PRIVACY_NOTICE = "https://invent.kde.org/webapps/foss-public-alert-server/-/wikis/Privacy"
 TERMS_OF_SERVICE = "https://invent.kde.org/webapps/foss-public-alert-server/-/wikis/Terms-of-Service"

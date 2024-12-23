@@ -9,8 +9,8 @@ from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFo
 from json import loads
 from .models import CAPFeedSource
 import datetime
+import os
 from django.conf import settings
-# Create your views here.
 
 
 def generate_source_status_page(request:HttpRequest):
@@ -67,6 +67,14 @@ def get_feed_status_for_area(request:HttpRequest):
 
     return JsonResponse(result, safe=False)
 
+def version_string() -> str:
+    version = "1.0.0"
+    revision_file = os.path.join(settings.BASE_DIR, "build-revision")
+    with open(revision_file, 'r') as f:
+        rev = f.read()
+        version = f"{version} ({rev})"
+    return version
+
 def server_status(request:HttpRequest):
     """
     endpoint to check the server status
@@ -77,7 +85,7 @@ def server_status(request:HttpRequest):
         return HttpResponseBadRequest("wrong HTTP method")
 
     result = {
-        "server_version": settings.SERVER_VERSION,
+        "server_version": version_string(),
         "server_operator": settings.OPERATOR,
         "privacy_notice": settings.PRIVACY_NOTICE,
         "terms_of_service": settings.TERMS_OF_SERVICE,
@@ -93,7 +101,7 @@ def index(request):
         return HttpResponseBadRequest('wrong HTTP method')
 
     context = {
-        'version': settings.SERVER_VERSION
+        'version': version_string()
     }
 
     return render(request, 'server_info.html', context=context)

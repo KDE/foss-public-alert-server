@@ -10,5 +10,8 @@ COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 COPY . /app
 
+ARG REVISION=""
+RUN echo -n "${REVISION}" > /app/build-revision
+
 EXPOSE 8000/tcp
 CMD /app/entrypoint.sh

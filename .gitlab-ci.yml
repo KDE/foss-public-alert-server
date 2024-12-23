@@ -43,7 +43,7 @@ container:
     IMAGE_NAME: foss-public-alert-server
   script:
     - sudo -u podman podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - sudo -u podman podman build --pull --no-cache --tag ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG} foss_public_alert_server/
+    - sudo -u podman podman build --pull --build-arg REVISION="$CI_COMMIT_SHORT_SHA" --no-cache --tag ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG} foss_public_alert_server/
     - sudo -u podman podman push ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG}
   after_script:
     - sudo -u podman podman logout $CI_REGISTRY
