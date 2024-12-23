@@ -34,6 +34,7 @@ def store_feeds_in_database(feeds: json):
             current_entries.delete()
 
     for feed in feeds["sources"]:
+        source_id = feed["source"]["sourceId"]
         # only store the feeds in the database that are not ignored by us
         if not feed["source"]["ignore"]:
             add_feed = False
@@ -61,15 +62,15 @@ def store_feeds_in_database(feeds: json):
                     add_feed = True
                 else:
                     # Nothing changed for the feed, we don't have to modify it
-                    print(f"Nothing changed for the feed {feed["source"]["sourceId"]}, skipping...")
+                    print(f"Nothing changed for the feed {source_id}, skipping...")
                     continue
             else:
                 # we don't have an entry of this feed
-                print(f"Feed {feed["source"]["sourceId"]} does not exists in our database, adding...")
+                print(f"Feed {source_id} does not exists in our database, adding...")
                 add_feed = True
 
             if add_feed:
-                print(f"add new feed: {feed["source"]["sourceId"]}")
+                print(f"add new feed: {source_id}")
                 new_feed = CAPFeedSource(
                     source_id=feed["source"]["sourceId"],
                     code=feed["source"]["byLanguage"][0]["code"],
