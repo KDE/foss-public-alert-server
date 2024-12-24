@@ -16,7 +16,7 @@ class CAPFeedSource(models.Model):
     - id: unique id of the feed source in database
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    source_id = models.CharField(max_length=255)
+    source_id = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=255)  # @todo there can be more then one entry here
     name = models.CharField(max_length=255)
     logo = models.CharField(max_length=255, null=True, blank=True)
