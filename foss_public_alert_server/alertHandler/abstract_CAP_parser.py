@@ -32,6 +32,7 @@ class AbstractCAPParser(ABC):
     session = None
     parser = None
     name = None
+    list_of_current_alert_ids = []
 
     def __init__(self, feed_source, name: str):
         self.feed_source = feed_source
@@ -83,6 +84,13 @@ class AbstractCAPParser(ABC):
                 if str(warning).__contains__("no valid bounding box"):
                     # if there was min one invalid bounding box, set missing geo info to true
                     CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=True)
+
+            # delete all old alerts in the database
+            for alert in Alert.objects.filter(source_id=self.feed_source.source_id):
+                if alert.alert_id not in self.list_of_current_alert_ids:
+                    print(f"{alert.alert_id} is no longer in the feed. Deleting...")
+                    alert.delete()
+
         except Exception as e:
             print("Something went wrong while getting the Feed: " + str(e))
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
@@ -461,6 +469,8 @@ class AbstractCAPParser(ABC):
 
             self.update_feed_source_entry(sent_time)
 
+            # add alert to temp list. this allows us to delete all alerts which are not in the feed anymore
+            self.list_of_current_alert_ids.append(new_alert.alert_id)
             # write alert to database
             self.write_to_database_and_send_notification(new_alert)
         except DatabaseWritingException as e:
