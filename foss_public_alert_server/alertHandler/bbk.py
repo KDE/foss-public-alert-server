@@ -66,7 +66,7 @@ class BBK:
                 for poly in area.get('polygon', []):
                     poly_node = ET.SubElement(area_node, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
                     poly_node.text = BBK.filterPolygon(poly)
-                for code in area['geocode']:
+                for code in area.get('geocode', []):
                     code_node = ET.SubElement(area_node, '{urn:oasis:names:tc:emergency:cap:1.2}geocode')
                     for prop in ['valueName', 'value']:
                         BBK.convertProperty(code_node, code, prop)
