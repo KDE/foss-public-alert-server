@@ -72,7 +72,7 @@ def subscribe(request):
     # send confirmation message via the distributor to verify it. Only store the new subscription,
     # if the distributor is reachable
     test_push = requests.post(s.distributor_url, json.dumps("Successfully subscribed"))
-    if test_push.status_code == 200:
+    if 200 <= test_push.status_code <= 299:
         s.save()
     else:
         return HttpResponseBadRequest('Distributor url is invalid or not reachable. Please check your unified push '
