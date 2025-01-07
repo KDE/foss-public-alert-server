@@ -2,6 +2,29 @@
   "sources": [
     {
       "source": {
+        "sourceId": "be-bealert-xx",
+        "byLanguage": [
+          {
+            "code": "fr",
+            "name": "Belgium: Centre de Crise National",
+            "logo": ""
+          }
+        ],
+        "authorName": "BE-Alert",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://publicalerts.be/CapGateway/feed/rss",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "be",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
         "sourceId": "de-mowas-de",
         "byLanguage": [
           {
