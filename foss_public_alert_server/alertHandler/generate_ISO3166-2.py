@@ -8,6 +8,10 @@ import requests
 import zipfile
 import math
 import pyclipper
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 file_name = "data/ISO3166-2/iso3166-2-boundaries.zip"
 folder_name = "data/ISO3166-2/"
@@ -23,10 +27,9 @@ ISO3166_2_URL = f"https://volkerkrause.eu/~vkrause/iso3166-boundaries/iso3166-2-
 def download_iso3166File():
     name = os.path.join(os.path.dirname(__file__), file_name)
     zip_location = os.path.join(os.path.dirname(__file__), folder_name)
-    print(name)
     if os.path.exists(name):
         return
-    print(f"Downloading {ISO3166_2_URL}...")
+    logger.info(f"Downloading {ISO3166_2_URL}...")
     r = requests.get(ISO3166_2_URL)
     if r.status_code < 400:
         with open(name, 'wb') as f:
@@ -98,16 +101,16 @@ def simplifyRing(ring):
 
     # deal with tiny enclaves/exclaves like Baarle "in" BE/NL
     if distance(bbox[0], bbox[1]) < threshold:
-        print("dropping polygon with bounding box below threshold")
+        logger.info("dropping polygon with bounding box below threshold")
         return []
 
     ring_length = len(ring)
     ring = douglasPeucker(ring, threshold)
     if len(ring) < 5:
-        print("polygon degenerated, using bounding box instead")
+        logger.info("polygon degenerated, using bounding box instead")
         ring = [bbox[0], [bbox[1][0], bbox[0][1]], bbox[1], [bbox[0][0], bbox[1][1]], bbox[0]]
     else:
-        print(f"polygon simplification dropped {ring_length - len(ring)} of {ring_length} points")
+        logger.info(f"polygon simplification dropped {ring_length - len(ring)} of {ring_length} points")
     return ring
 
 

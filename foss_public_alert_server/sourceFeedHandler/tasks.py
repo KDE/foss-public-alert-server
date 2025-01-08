@@ -1,16 +1,24 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from .models import CAPFeedSource
 import json
+import logging
+
 from celery import shared_task
+from django.core.exceptions import ObjectDoesNotExist
+from django_celery_beat.models import PeriodicTask
 
 from alertHandler import abstract_CAP_parser
 from alertHandler.XML_CAP_parser import XMLCAPParser
 from alertHandler.MOWAS_CAP_parser import MoWaSCapParser
 from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
+
 from . import source_feeds_aggegator
+from .models import CAPFeedSource
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def compare(compare_description, old_entry, new_entry) -> bool:
     """
@@ -19,7 +27,7 @@ def compare(compare_description, old_entry, new_entry) -> bool:
     """
     if old_entry != new_entry and old_entry is not None:
         # something changed
-        print(f"{compare_description} changed - {old_entry} is now {new_entry}")
+        logger.info(f"{compare_description} changed - {old_entry} is now {new_entry}")
         return True
     else:
         return False
@@ -30,7 +38,7 @@ def store_feeds_in_database(feeds: json):
     # delete all feed which are not in the new feed list
     for entry in current_entries:
         if entry.source_id not in new_feed_ids:
-            print(f"Delete old feed: {entry.source_id}")
+            logger.info(f"Delete old feed: {entry.source_id}")
             current_entries.delete()
 
     for feed in feeds["sources"]:
@@ -56,21 +64,27 @@ def store_feeds_in_database(feeds: json):
                 something_changed |= compare("format", current_entry.format, feed["source"]["format"])
                 something_changed |= compare("ignore", current_entry.ignore, feed["source"]["ignore"])
 
+
                 if something_changed:
                     # delete the changed entry and set flag to re-add the feed
                     current_entry.delete()
                     add_feed = True
                 else:
+                    # check if periodic task still exists
+                    if not PeriodicTask.objects.filter(name=current_entry.periodic_task_name).exists():
+                        # if the periodic task is missing, recreate the task
+                        logger.info(f"Periodic task for {current_entry.source_id} was missing, recreating...")
+                        current_entry.create_periodic_task()
                     # Nothing changed for the feed, we don't have to modify it
-                    print(f"Nothing changed for the feed {source_id}, skipping...")
+                    logger.info(f"Nothing changed for the feed {source_id}, skipping...")
                     continue
             else:
                 # we don't have an entry of this feed
-                print(f"Feed {source_id} does not exists in our database, adding...")
+                logger.info(f"Feed {source_id} does not exists in our database, adding...")
                 add_feed = True
 
             if add_feed:
-                print(f"add new feed: {source_id}")
+                logger.info(f"add new feed: {source_id}")
                 new_feed = CAPFeedSource(
                     source_id=feed["source"]["sourceId"],
                     code=feed["source"]["byLanguage"][0]["code"],
@@ -109,8 +123,13 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
     :param feed_format: the format field of the CAPFeedSource entry
     :return: None
     """
-    print("Current feed id: " + feed_id)
-    feed = CAPFeedSource.objects.get(id=feed_id)
+    logger.debug("Current feed id: " + feed_id)
+    try:
+        feed = CAPFeedSource.objects.get(id=feed_id)
+    except ObjectDoesNotExist:
+        feed = None
+        logger.error(f"Feed {feed_id} is None - skipping")
+        return
     parser: abstract_CAP_parser = None
     # create parser corresponding to the feed format
     match feed_format:
@@ -128,8 +147,7 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
     if parser is not None:
         parser.get_feed(parser)
     else:
-        print(f"{feed.source_id}: Parser is None for {feed_format}")
-
+        logger.error(f"{feed.source_id}: Parser is None for {feed_format}")
 
 # for manually update the feed sources in the database
 # reload_feed_sources_and_update_database()

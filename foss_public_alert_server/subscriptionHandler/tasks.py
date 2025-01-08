@@ -7,6 +7,7 @@ from .models import Subscription
 import json
 import datetime
 import requests
+import logging
 
 from celery import shared_task
 from django.conf import settings
@@ -14,6 +15,8 @@ from django.conf import settings
 from alertHandler.models import Alert
 from .models import Subscription
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @shared_task(name="task.remove_old_subscriptions")
 def remove_old_subscription():
@@ -33,9 +36,10 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
     check for the given Alert if there is a subscription that wants to get a notification
     :return: None
     """
-    print("check for push notifications")
+    logger.info("check for push notifications")
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
-        print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
+        # @todo is the distributor_url to sensitive to write it into logs?
+        logger.debug(f"Send notification for {subscription.id} to {subscription.distributor_url}")
         requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
     # @todo check performance
     pass

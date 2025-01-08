@@ -6,8 +6,11 @@ import datetime
 import requests
 import json
 import os
+import logging
 from django.conf import settings
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 alert_hub_feeds_url = 'https://alert-hub-sources.s3.amazonaws.com/json'
 fpas_feeds_file = os.path.join(settings.BASE_DIR, "sourceFeedHandler/custom_feeds.json")
@@ -26,7 +29,7 @@ def get_alert_hub_feeds() -> json:
         data = response.json()
         return data
     else:
-        print('Error while loading alerthub data')
+        logger.error('Error while loading alerthub data')
 
 
 def get_fpas_feeds() -> json:

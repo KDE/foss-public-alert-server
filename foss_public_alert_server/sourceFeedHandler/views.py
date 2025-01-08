@@ -68,7 +68,7 @@ def get_feed_status_for_area(request:HttpRequest):
     return JsonResponse(result, safe=False)
 
 def version_string() -> str:
-    version = "1.0.0"
+    version = "1.0.0" # @todo move to settings?
     revision_file = os.path.join(settings.BASE_DIR, "build-revision")
     with open(revision_file, 'r') as f:
         rev = f.read()

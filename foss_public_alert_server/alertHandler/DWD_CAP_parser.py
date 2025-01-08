@@ -6,6 +6,10 @@ import datetime
 import io
 import requests
 import zipfile
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from .abstract_CAP_parser import AbstractCAPParser
 from sourceFeedHandler.models import CAPFeedSource
@@ -23,14 +27,13 @@ class DWDCAPParser(AbstractCAPParser):
         }
         response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
         if response.status_code == 304:
-            # print(f"Nothing changed for {self.feed_source.source_id}")
+            logging.debug(f"Nothing changed for {self.feed_source.source_id}")
             return
         elif response.status_code != 200:
             raise "Feed status code is not 200"
 
         # update etag and store it in the database
         new_etag = response.headers.get("ETag")
-        # print(f"etag is {new_etag}")
         CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
 
         zip_file = zipfile.ZipFile(io.BytesIO(response.content), 'r')

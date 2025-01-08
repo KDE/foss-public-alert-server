@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import os
+import logging
 from datetime import datetime, timezone
 from django.conf import settings
 from django.test import TestCase
@@ -12,6 +13,9 @@ from .models import Alert
 from .abstract_CAP_parser import AbstractCAPParser
 from .XML_CAP_parser import XMLCAPParser
 import xml.etree.ElementTree as ET
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class AlertHandlerCAPParserTestsCase(TestCase):
@@ -37,8 +41,8 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         try:
             cap_tree = ET.fromstring(cap_data)
         except ET.ParseError as e:
-            print(f"failed to parse CAP alert message XML: {e}")
-            print(cap_data)
+            logger.debug(f"failed to parse CAP alert message XML: {e}")
+            logger.debug(cap_data)
             return
 
         return abstract_cap_parser, cap_tree
@@ -96,8 +100,8 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         try:
             cap_tree = ET.fromstring(cap_data)
         except ET.ParseError as e:
-            print(f"failed to parse CAP alert message XML: {e}")
-            print(cap_data)
+            logger.debug(f"failed to parse CAP alert message XML: {e}")
+            logger.debug(cap_data)
             return
 
         before_polygon = cap_tree.find(
@@ -117,8 +121,8 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         try:
             cap_tree = ET.fromstring(cap_data)
         except ET.ParseError as e:
-            print(f"failed to parse CAP alert message XML: {e}")
-            print(cap_data)
+            logger.debug(f"failed to parse CAP alert message XML: {e}")
+            logger.debug(cap_data)
             return
 
         expand_geocode: ET.XML = abstract_cap_parser.expand_geocode(cap_tree)
@@ -282,7 +286,7 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         try:
             cap_tree = ET.fromstring(cap_data)
         except ET.ParseError as e:
-            print(f"failed to parse CAP alert message XML: {e}")
+            logger.debug(f"failed to parse CAP alert message XML: {e}")
             return
 
         (min_lat, min_lon, max_lat, max_lon) = abstract_cap_parser.determine_bounding_box(cap_tree, 'dummy')

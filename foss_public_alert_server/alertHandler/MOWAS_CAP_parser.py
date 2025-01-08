@@ -6,6 +6,10 @@ import json
 import re
 import requests
 import xml.etree.ElementTree as ET
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from sourceFeedHandler.models import CAPFeedSource
 
@@ -25,14 +29,13 @@ class MoWaSCapParser(AbstractCAPParser):
         }
         response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
         if response.status_code == 304:
-            # print(f"Nothing changed for {self.feed_source.source_id}")
+            logging.debug(f"Nothing changed for {self.feed_source.source_id}")
             return
         elif response.status_code != 200:
             raise "Feed status code is not 200"
 
         # update etag and store it in the database
         new_etag = response.headers.get("ETag")
-        # print(f"etag is {new_etag}")
         CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
 
         feed_data = json.loads(response.content)

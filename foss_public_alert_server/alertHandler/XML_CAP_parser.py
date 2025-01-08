@@ -4,6 +4,7 @@
 
 import datetime
 import requests
+import logging
 
 import feedparser
 from feedparser import FeedParserDict
@@ -13,6 +14,8 @@ from django.conf import settings
 from .abstract_CAP_parser import AbstractCAPParser
 from sourceFeedHandler.models import CAPFeedSource
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class XMLCAPParser(AbstractCAPParser):
 
@@ -21,7 +24,7 @@ class XMLCAPParser(AbstractCAPParser):
         self.parser = feedparser
 
     def _load_alerts_from_feed(self):
-        print("fetching: " + self.feed_source.source_id)
+        logger.info(f"fetching: {self.feed_source.source_id}")
         # use etags to reduce network load
         last_e_tag = self.feed_source.last_e_tag
         # the etag can be none, so only use it, if it is not none
@@ -33,7 +36,6 @@ class XMLCAPParser(AbstractCAPParser):
         # check if header has en etag and if yes update the etag in the database
         if "etag" in feed.headers:
             new_etag = feed.headers["etag"]
-            # print(f"etag is {new_etag}")
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
         else:
             # print("feed does not have an etag")
@@ -42,8 +44,6 @@ class XMLCAPParser(AbstractCAPParser):
         # print("got: " + str(feed))
 
         for entry in feed['entries']:
-            # print("Found Entry")
-            # print(entry)
             # find the link to the CAP source
             cap_source_url = ''
             for link in entry['links']:
@@ -57,25 +57,25 @@ class XMLCAPParser(AbstractCAPParser):
             # if we have expiry data available here already, check that
             # to avoid additional downloads
             try:
-                expire_time = datetime.datetime.fromisoformat(entry.get('cap_expires'))
-                if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                    print(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {expire_time} - skipping")
-                    continue
+                if entry.get('cap_expires') is not None:
+                    expire_time = datetime.datetime.fromisoformat(entry.get('cap_expires'))
+                    if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
+                        logger.info(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {expire_time} - skipping")
+                        continue
             except ValueError as e:
-                print(f"Failed to parse expiry time: {entry.get('cap_expires')}")
+                logger.exception(f"Failed to parse expiry time: {entry.get('cap_expires')}", exc_info=e)
             except TypeError as e:
-                pass
+                logger.exception("Type error", exc_info=e)
 
             try:
                 req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
                 if not req.ok:
-                    print(f"Fetch error {req.status_code}: {cap_source_url}")
+                    logger.error(f"Fetch error {req.status_code}: {cap_source_url}")
                     continue
             except requests.exceptions.ConnectionError as e:
-                print(f"Connection error: {cap_source_url}")
+                logger.error(f"Connection error: {cap_source_url}")
                 continue
 
             cap_data = req.content.decode('utf-8')
-            # print("got feed, call addAlert")
             # add alert to database
             self.addAlert(cap_source_url=cap_source_url, cap_data=cap_data)

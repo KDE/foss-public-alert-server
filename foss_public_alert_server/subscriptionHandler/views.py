@@ -3,18 +3,20 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import time
-from django.shortcuts import render
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
-from django.contrib.gis.geos import Polygon
-from json import loads
+import logging
 import datetime
 import requests
 import json
+from json import loads
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
+from django.contrib.gis.geos import Polygon
 
 from .models import Subscription
 
-
-# Create your views here.
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def isValidBbox(x1, y1, x2, y2):
@@ -113,10 +115,13 @@ def heartbeat(request):
         return HttpResponseBadRequest('invalid or missing parameters')
     subscription_id = data['subscription_id']
     try:
+        Subscription.objects.get(id=subscription_id)
         # update last heartbeat
         Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now())
-    except Exception as e:  # @todo use other Exception type
-        print(f"Error: {e}")
+    except ObjectDoesNotExist:
+        HttpResponseBadRequest("Subscription has expired. You must register again!")
+    except Exception as e:
+        logger.error(f"Can not update subscription: {e}")
         HttpResponseBadRequest("Subscription has expired. You must register again!")
 
     return HttpResponse("subscription successfully renewed")

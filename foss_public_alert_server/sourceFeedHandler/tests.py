@@ -1,10 +1,14 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import logging
+
 from django.test import TestCase, RequestFactory
 from django.http.request import HttpRequest
 from .views import get_feed_status_for_area
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class SourceFeedHandlerTestsCase(TestCase):
     fixtures = ["sourceFeedHandlerDump.json"]
@@ -47,7 +51,7 @@ class SourceFeedHandlerTestsCase(TestCase):
         request: HttpRequest = self.factory.post("/sources/area_status", data)
         response = get_feed_status_for_area(request)
 
-        print(response)
+        logger.debug(response)
 
         self.assertEqual(response.status_code, 400)
 

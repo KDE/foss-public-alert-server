@@ -6,6 +6,10 @@ import json
 import re
 import requests
 import xml.etree.ElementTree as ET
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from sourceFeedHandler.models import CAPFeedSource
 
@@ -27,10 +31,10 @@ class NinaCapParser(AbstractCAPParser):
         try:
             req = self.session.get(url)
             if not req.ok:
-                print(f"Fetch error {req.status_code}: {url}")
+                logger.error(f"Fetch error {req.status_code}: {url}")
                 return None
         except requests.exceptions.ConnectionError as e:
-            print(f"Connection error: {url}")
+            logger.error(f"Connection error: {url}",exc_info=True)
             return None
         return req.json()
 

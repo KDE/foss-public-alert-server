@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import logging
+
 from celery import shared_task
 from django.shortcuts import render
 
@@ -12,9 +14,11 @@ from django.contrib.gis.geos import Polygon
 from .models import Alert
 from subscriptionHandler.models import Subscription # has to be so because of django
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def get_alert_cap_data(request, identifier):
-    print("Get alert Data for" + str(identifier))
+    logger.info(f"Get alert Data for {str(identifier)}")
     if request.method != 'GET':
         return HttpResponseBadRequest('wrong HTTP method')
     try:
@@ -50,17 +54,6 @@ def get_alerts_for_subscription_id(request):
     return JsonResponse(result, safe=False)
 
 
-def debug(request):
-    try:
-        # fetch_alert_sources()
-        output = "success"
-    except Exception as e:
-        print("Something went wrong" + str(e))
-        output = str(e)
-
-    return HttpResponse(output)
-
-
 def index(request):
     """
     print("Test push notification")
@@ -69,7 +62,7 @@ def index(request):
             print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
             requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
     """
-    return HttpResponse("Hello World")
+    return HttpResponse("Hello World") #@todo redirect user
 
 
 def get_alerts_for_area(request):

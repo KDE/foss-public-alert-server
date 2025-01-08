@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import requests
+import json
+import logging
+
 from django.test import TestCase
 from django.test import Client
 from django.conf import settings
@@ -8,10 +12,8 @@ from django.conf import settings
 from alertHandler.models import Alert
 from .models import Subscription
 
-# Create your tests here.
-
-import requests
-import json
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class SubscriptionHandlerTestsCase(TestCase):
@@ -45,7 +47,7 @@ class SubscriptionHandlerTestsCase(TestCase):
     def test_send_notification(self):
         for alert in Alert.objects.all():
             for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
-                print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
+                logger.debug(f"Send notification for {subscription.id} to {subscription.distributor_url}")
                 requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
         # @todo check performance
 
@@ -82,4 +84,3 @@ def test_subscription_missing_parameter():
     return response.content
 
 # test_successful_subscription()
-# print(test_subscription_missing_parameter())
