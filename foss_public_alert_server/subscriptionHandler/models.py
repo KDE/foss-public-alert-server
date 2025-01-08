@@ -7,11 +7,8 @@ from django.dispatch import receiver
 from django.contrib.gis.db import models
 
 from datetime import datetime
-import os
 import uuid
 
-
-# Create your models here.
 
 class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
