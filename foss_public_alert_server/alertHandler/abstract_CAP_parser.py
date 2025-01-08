@@ -11,6 +11,7 @@ import requests_cache
 import json
 import warnings
 import math
+import logging
 
 from django.contrib.gis.geos import Polygon
 from django.conf import settings
@@ -26,6 +27,9 @@ from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
 
+# logging config
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class AbstractCAPParser(ABC):
     feed_source: CAPFeedSource = None
@@ -56,7 +60,7 @@ class AbstractCAPParser(ABC):
 
         warnings_list = []
 
-        # configure warnings to append every warning to our list of warnings
+        # configure warnings (aka error messages) to append every warning to our list of warnings
         def collect_warnings(message, category, filename, lineno, file=None, line=None):
             warnings_list.append(f"{category.__name__}: {message}")
 
@@ -80,7 +84,6 @@ class AbstractCAPParser(ABC):
 
             # process the warnings
             for warning in warnings_list:
-                print(warning)
                 if str(warning).__contains__("no valid bounding box"):
                     # if there was min one invalid bounding box, set missing geo info to true
                     CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=True)
@@ -88,15 +91,14 @@ class AbstractCAPParser(ABC):
             # delete all old alerts in the database
             for alert in Alert.objects.filter(source_id=self.feed_source.source_id):
                 if alert.alert_id not in self.list_of_current_alert_ids:
-                    print(f"{alert.alert_id} is no longer in the feed. Deleting...")
+                    logger.info(f"{alert.alert_id} is no longer in the feed. Deleting...")
                     alert.delete()
 
         except Exception as e:
-            print("Something went wrong while getting the Feed: " + str(e))
+            logger.exception(f"Something went wrong while getting the feed {self.feed_source.source_id}", exc_info=e)
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
             # add exceptions to warnings_lis
             warnings_list.append(str(e))
-            # @todo add to error logger
         # store warnings in database
         CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
@@ -108,7 +110,6 @@ class AbstractCAPParser(ABC):
         """
         id_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier')
         if id_node is None or not id_node.text:
-            print(f"{self.feed_source.source_id} - Couldn't find CAP alert message identifier, skipping")
             raise AlertParameterException("Couldn't find CAP alert message identifier, skipping")
         return id_node.text
 
@@ -122,7 +123,6 @@ class AbstractCAPParser(ABC):
         """
         sent_time_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}sent')
         if sent_time_node is None or not sent_time_node.text:
-            print(f"{self.feed_source.source_id} - Couldn't find CAP alert message sent time, skipping {alert_id}")
             raise AlertParameterException(
                 f"{self.feed_source.source_id} - Couldn't find CAP alert message sent time, skipping {alert_id}")
         return sent_time_node.text
@@ -147,7 +147,6 @@ class AbstractCAPParser(ABC):
             if expire_time is None or datatime > expire_time:
                 expire_time = datatime
             if expire_time is not None and expire_time < datetime.now(timezone.utc):
-                # print(f"{self.feed_source.source_id} - skipping alert {alert_id} expired on {datatime}")
                 raise AlertExpiredException(f"alert {alert_id} expired on {datatime}")
         return expire_time
 
@@ -180,7 +179,7 @@ class AbstractCAPParser(ABC):
                 poly.text = self.geojson_polygon_to_cap(coordinates)
             return True
         else:
-            print(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
+            logger.warning(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
             return False
 
 
@@ -192,10 +191,11 @@ class AbstractCAPParser(ABC):
         :return: true if the data is expanded false if not
         """
         expanded: bool = False
+        is_first_error_for_source = True
         for area in cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
             # if they are already polygons, we do not have to expand the data
-            if area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None or area.find('{urn:oasis:names:tc:emergency'
-                                                                                       ':cap:1.2}circle}') is not None:
+            if (area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None
+                    or area.find('{urn:oasis:names:tc:emergency:cap:1.2}circle') is not None):
                 continue
             for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
                 code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
@@ -210,9 +210,17 @@ class AbstractCAPParser(ABC):
                     # append geojson to original file
                     expanded = expanded or self.geojson_feature_to_cap(area, geojson)
                 else:
-                    print(f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value}")
-                    # if code_name == "EMMA_ID" or code_name == "FIPS" or code_name == "NUTS2" or code_name == "NUTS3":
-                    #    rdb.set_trace()  # set breakpoint
+                    if is_first_error_for_source:
+                        is_first_error_for_source = False
+                        logger.error(
+                            f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value} "
+                            f"(For all error messages see DEBUG level)")
+                    else:
+                        # this is not the first error for this source - hide the error at error level and just log
+                        # at debug level to avoid spamming the logs
+                        logger.debug(
+                            f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value}")
+
         return expanded
 
     def flatten_xml(self, node: xml) -> None:
@@ -310,12 +318,11 @@ class AbstractCAPParser(ABC):
         :param max_lat: the maximal latitude of the bounding box (-90 - +90)
         :return: true if the bounding box if valid, false if not
         """
-        return (-180.0 <= min_lon <= 180.0
-                and -180.0 <= max_lon <= 180.0
-                and -90.0 <= min_lat <= 90.0
-                and -90.0 <= max_lat <= 90.0
-                and min_lon != min_lat
-                and max_lon != max_lat)
+        polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
+        is_valid = polygon.valid
+        if not is_valid:
+            logger.debug(f"BBox is invalid because of: {polygon.valid_reason}")
+        return is_valid
 
     def determine_bounding_box(self, cap_tree: xml, alert_id) -> (int, int, int, int):
         min_lat = 90
@@ -338,7 +345,6 @@ class AbstractCAPParser(ABC):
                 raise AlertParameterException(f"{self.feed_source.source_id} - alert {alert_id} has no valid bounding box: {min_lat}, {min_lon}, "
                                               f"{max_lat}, {max_lon}")
 
-            # print(min_lat, min_lon, max_lat, max_lon)
 
         except Exception as e:
             raise e
@@ -363,7 +369,6 @@ class AbstractCAPParser(ABC):
         :return: None
         """
         try:
-            # print("Writing to database...")
             # check if alert is already in database
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
@@ -398,9 +403,8 @@ class AbstractCAPParser(ABC):
         :warns: if the alert can not be parsed correctly we raise a warning
         """
         try:
-            # print("Add new Alert")
             if not cap_data:
-                print(f"{self.feed_source.source_id} - Got no CAP alert message, skipping")
+                logger.info(f"{self.feed_source.source_id} - Got no CAP alert message, skipping")
                 return
 
             cap_data_modified: bool = False
@@ -415,8 +419,8 @@ class AbstractCAPParser(ABC):
             try:
                 cap_tree = ET.fromstring(cap_data)
             except ET.ParseError as e:
-                print(f"{self.feed_source.source_id} - failed to parse CAP alert message XML: {e}")
-                print(cap_data)
+                logger.exception(f"{self.feed_source.source_id} - failed to parse CAP alert message XML:", exc_info=e)
+                logger.debug(cap_data)
                 return
 
             # find identifier
@@ -436,7 +440,6 @@ class AbstractCAPParser(ABC):
 
             # determine bounding box and drop elements without
             (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_tree, alert_id)
-            # print(min_lat, min_lon, max_lat, max_lon)
 
             # validate if the source country of the alert is allowed to send alerts for this area
             # self.validate_if_alert_is_in_country_borders()
@@ -475,11 +478,14 @@ class AbstractCAPParser(ABC):
             self.write_to_database_and_send_notification(new_alert)
         except DatabaseWritingException as e:
             warnings.warn(f"Database error: {str(e)} - skipping")
+            logger.exception(f"Database error: {str(e)} - skipping")
         except AlertExpiredException as e:
             # nothing to do if an alert is expired
             # warnings.warn(f"Alert Expired: [{self.feed_source.source_id}] - {str(e)} - skipping")
             pass
         except AlertParameterException as e:
             warnings.warn(f"Parameter error:[{self.feed_source.source_id}] - {str(e)} - skipping")
+            logger.exception(f"Parameter error:[{self.feed_source.source_id}] skipping", exc_info=e)
         except NoGeographicDataAvailableException as e:
             warnings.warn(f"Unknown geometry code:[{self.feed_source.source_id}] - {str(e)} - skipping")
+            logger.exception(f"Unknown geometry code:[{self.feed_source.source_id}]- skipping", exc_info=e)
