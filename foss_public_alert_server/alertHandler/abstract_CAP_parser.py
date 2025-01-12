@@ -324,7 +324,10 @@ class AbstractCAPParser(ABC):
         is_in_lat_lon_range = (-180 <= min_lon <= 180 and
                                -180 <=max_lon <= 180 and
                                -90 <= min_lat <= 90 and
-                               -90 <= max_lat <= 90)
+                               -90 <= max_lat <= 90 and
+                                min_lon != min_lat and
+                               max_lon != max_lat)
+
         if not is_valid or not is_in_lat_lon_range:
             logger.debug(f"BBox is invalid because of: {polygon.valid_reason}")
         return is_valid and is_in_lat_lon_range
