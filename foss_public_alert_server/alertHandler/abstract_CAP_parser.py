@@ -318,11 +318,16 @@ class AbstractCAPParser(ABC):
         :param max_lat: the maximal latitude of the bounding box (-90 - +90)
         :return: true if the bounding box if valid, false if not
         """
-        polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-        is_valid = polygon.valid
-        if not is_valid:
+        polygon:Polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
+        # I'm not sure what exactly this check tests, maybe it's not necessary
+        is_valid =  polygon.valid
+        is_in_lat_lon_range = (-180 <= min_lon <= 180 and
+                               -180 <=max_lon <= 180 and
+                               -90 <= min_lat <= 90 and
+                               -90 <= max_lat <= 90)
+        if not is_valid or not is_in_lat_lon_range:
             logger.debug(f"BBox is invalid because of: {polygon.valid_reason}")
-        return is_valid
+        return is_valid and is_in_lat_lon_range
 
     def determine_bounding_box(self, cap_tree: xml, alert_id) -> (int, int, int, int):
         min_lat = 90
