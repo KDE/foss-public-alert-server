@@ -2,6 +2,7 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+from dateutil import parser
 import datetime
 import requests
 import logging
@@ -58,7 +59,7 @@ class XMLCAPParser(AbstractCAPParser):
             # to avoid additional downloads
             try:
                 if entry.get('cap_expires') is not None:
-                    expire_time = datetime.datetime.fromisoformat(entry.get('cap_expires'))
+                    expire_time = parser.isoparse(entry.get('cap_expires'))
                     if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
                         logger.info(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {expire_time} - skipping")
                         continue

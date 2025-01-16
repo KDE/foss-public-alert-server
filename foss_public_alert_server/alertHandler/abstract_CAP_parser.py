@@ -6,6 +6,7 @@ import os
 import xml
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
+from dateutil import parser
 from datetime import datetime, timezone
 import requests_cache
 import json
@@ -141,7 +142,7 @@ class AbstractCAPParser(ABC):
         for expireTimeNode in cap_tree.findall(
                 '{urn:oasis:names:tc:emergency:cap:1.2}info/{urn:oasis:names:tc:emergency:cap:1.2}expires'):
             try:
-                datatime = datetime.fromisoformat(expireTimeNode.text)
+                datatime = parser.isoparse(expireTimeNode.text)
             except ValueError:
                 continue
             if expire_time is None or datatime > expire_time:
@@ -395,7 +396,7 @@ class AbstractCAPParser(ABC):
         :param sent_time: the sent time of the alert
         :return: None
         """
-        sent_time_datetime:datetime = datetime.fromisoformat(sent_time)
+        sent_time_datetime:datetime = parser.isoparse(sent_time)
         latest_entry = CAPFeedSource.objects.filter(id=self.feed_source.id).first()
         if latest_entry is None or latest_entry.latest_published_alert_datetime is None:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
