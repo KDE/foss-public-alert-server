@@ -86,7 +86,7 @@ def get_alerts_for_area(request):
         return HttpResponseBadRequest('invalid bounding box')
 
     res = []
-    for alert in Alert.objects.filter(bbox__intersects=request_bbox):
+    for alert in Alert.objects.filter(bounding_box__intersects=request_bbox):
         res.append(str(alert.id))
     return JsonResponse(res, safe=False)
 

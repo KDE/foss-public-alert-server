@@ -12,7 +12,7 @@ info:
     email: nucleus-ffm@posteo.de, vkrause@kde.org
 
 servers:
-  - url: https://todo.de
+  - url: https://alerts.kde.org
 
 tags:
   - name: Subscription
@@ -163,18 +163,44 @@ paths:
           description: "Validation exception"
 
   /alert/area:
-    post:
+    get:
       summary: Get all alerts for an area
       description: Retrieve all alerts for a specified area defined by four coordinates.
       tags:
         - Alerts
-      requestBody:
-        description: Request alerts for a specific area
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/alert_area_request'
-        required: true
+      parameters:
+        - in: query
+          name: min_lat
+          required: true
+          schema:
+            type: number
+            format: float
+          description: "The minimum latitude"
+          example: -90.0
+        - in: query
+          name: max_lat
+          required: true
+          schema:
+            type: number
+            format: float
+          description: "The maximum latitude"
+          example: 90.0
+        - in: query
+          name: min_lon
+          required: true
+          schema:
+            type: number
+            format: float
+          description: "The minimum longitude"
+          example: -180.0
+        - in: query
+          name: max_lon
+          required: true
+          schema:
+            type: number
+            format: float
+          description: "The maximum longitude"
+          example: 180.0
       responses:
         '200':
           description: "All CAP alerts for the area"
@@ -264,30 +290,6 @@ components:
           type: string
           description: "The UUID of the alert"
           example: "ExampleAlertUUID"
-
-    alert_area_request:
-      description: "a bounding box with four coordinates"
-      properties:
-        min_lat:
-          type: number
-          format: float
-          description: "The minimum latitude"
-          example: -90.0
-        max_lat:
-          type: number
-          format: float
-          description: "The maximum latitude"
-          example: 90.0
-        min_lon:
-          type: number
-          format: float
-          description: "The minimum longitude"
-          example: -180.0
-        max_lon:
-          type: number
-          format: float
-          description: "The maximum longitude"
-          example: 180.0
 
     alert_response:
       type: object
