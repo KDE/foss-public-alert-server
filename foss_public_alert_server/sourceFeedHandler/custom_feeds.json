@@ -112,7 +112,8 @@
         "feedSource": "FPAS",
         "format": "de-nina",
         "override": true,
-        "ignore": false}
+        "ignore": false
+      }
     },
     {
       "source": {
@@ -156,7 +157,7 @@
         "authorityCountry": "to",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -179,7 +180,7 @@
         "authorityCountry": "us",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -202,7 +203,7 @@
         "authorityCountry": "aw",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -225,7 +226,7 @@
         "authorityCountry": "aw",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -248,7 +249,7 @@
         "authorityCountry": "aw",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -271,7 +272,7 @@
         "authorityCountry": "br",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -294,7 +295,7 @@
         "authorityCountry": "co",
         "authorityAbbrev": "",
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
@@ -318,9 +319,8 @@
         "capAlertFeedStatus": "operating",
         "authorityCountry": "no",
         "authorityAbbrev": "met",
-
         "feedSource": "AlertHub",
-        "format": "alert-hub",
+        "format": "rss or atom",
         "override": true,
         "ignore": false
       }
