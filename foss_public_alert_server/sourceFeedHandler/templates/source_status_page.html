@@ -39,7 +39,9 @@
             <th>{{ source.latest_published_alert_datetime }} </th>
             <th>{{ source.last_fetch_duration }} </th>
              <th>{{ source.feed_warnings }} </th>
-            <th>{{ source.missing_geo_information }} </th>
+            <th {% if source.missing_geo_information == False %} class="last_fetch_status_success"
+                {% elif source.missing_geo_information == None %} class="last_fetch_status_unknown" {% else %}
+              class="last_fetch_status_failure" {% endif %}> {{ source.missing_geo_information }} </th>
             <th {% if source.last_fetch_status == True %} class="last_fetch_status_success"
                 {% elif source.last_fetch_status == None %} class="last_fetch_status_unknown" {% else %}
               class="last_fetch_status_failure" {% endif %}>{{ source.last_fetch_status }}</th>
