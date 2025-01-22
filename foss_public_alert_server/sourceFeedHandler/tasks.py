@@ -39,7 +39,7 @@ def store_feeds_in_database(feeds: json):
     for entry in current_entries:
         if entry.source_id not in new_feed_ids:
             logger.info(f"Delete old feed: {entry.source_id}")
-            current_entries.delete()
+            entry.delete()
 
     for feed in feeds["sources"]:
         source_id = feed["source"]["sourceId"]
@@ -71,7 +71,8 @@ def store_feeds_in_database(feeds: json):
                     add_feed = True
                 else:
                     # check if periodic task still exists
-                    if not PeriodicTask.objects.filter(name=current_entry.periodic_task_name).exists():
+                    if (current_entry.cap_alert_feed_status == "operating" and
+                            not PeriodicTask.objects.filter(name=current_entry.periodic_task_name).exists()):
                         # if the periodic task is missing, recreate the task
                         logger.info(f"Periodic task for {current_entry.source_id} was missing, recreating...")
                         current_entry.create_periodic_task()
