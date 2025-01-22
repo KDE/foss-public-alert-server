@@ -95,6 +95,10 @@ class AbstractCAPParser(ABC):
                     logger.info(f"{alert.alert_id} is no longer in the feed. Deleting...")
                     alert.delete()
 
+        except ET.ParseError as e:
+            logger.exception(f"{self.feed_source.source_id} - failed to parse CAP alert message XML:", exc_info=e)
+            warnings.warn(f"Failed to parse CAP alert message XML {e}")
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
         except Exception as e:
             logger.exception(f"Something went wrong while getting the feed {self.feed_source.source_id}", exc_info=e)
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
@@ -323,7 +327,7 @@ class AbstractCAPParser(ABC):
         # I'm not sure what exactly this check tests, maybe it's not necessary
         is_valid =  polygon.valid
         is_in_lat_lon_range = (-180 <= min_lon <= 180 and
-                               -180 <=max_lon <= 180 and
+                               -180 <= max_lon <= 180 and
                                -90 <= min_lat <= 90 and
                                -90 <= max_lat <= 90 and
                                 min_lon != min_lat and
@@ -425,12 +429,8 @@ class AbstractCAPParser(ABC):
                 cap_data_modified = True
 
             ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')
-            try:
-                cap_tree = ET.fromstring(cap_data)
-            except ET.ParseError as e:
-                logger.exception(f"{self.feed_source.source_id} - failed to parse CAP alert message XML:", exc_info=e)
-                logger.debug(cap_data)
-                return
+
+            cap_tree = ET.fromstring(cap_data)
 
             # find identifier
             alert_id = self.find_identifier(cap_tree)
