@@ -5,7 +5,7 @@ from celery import shared_task
 from .models import Subscription
 
 import json
-import datetime
+from datetime import timezone, datetime
 import requests
 import logging
 
@@ -26,7 +26,7 @@ def remove_old_subscription():
     deletes all subscription which hasn't sent a heartbeat since the in the settings defined number of days
     """
     for subscription in Subscription.objects.all():
-        timedelta = datetime.datetime.now() - subscription.last_heartbeat
+        timedelta = datetime.now(timezone.utc) - subscription.last_heartbeat
         if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
             msg = "Subscription timed out and is deleted. please renew your subscription."
             requests.post(subscription.distributor_url, json.dumps(msg))
