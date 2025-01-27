@@ -6,7 +6,7 @@ from django.contrib.gis import admin
 from .models import Subscription
 
 class SubscriptionAdmin(admin.GISModelAdmin):
-    pass
+    list_display = ('id', 'last_heartbeat')
 
 # Register your models here.
 admin.site.register(Subscription, SubscriptionAdmin)
