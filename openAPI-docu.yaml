@@ -53,6 +53,35 @@ paths:
         '422':
           description: "Validation exception"
 
+  /subscription/update_subscription:
+    post:
+      summary: Update a subscription
+      description: Update a subscription and renew the used tokens
+      tags:
+        - Subscription
+      requestBody:
+        description: Update a subscription
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/update_subscription'
+        required: true
+      responses:
+        '200':
+          description: "Subscription successfully updated"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "successfully updated"
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
   /subscription/unsubscribe:
     post:
       summary: Unsubscribe from an area
@@ -243,10 +272,15 @@ components:
     new_subscription:
       description: New subscription
       properties:
-        distributor_url:
+        token:
           type: string
-          description: "The URL of the UnifiedPush server for sending alert notifications"
-          example: "https://example.de"
+          description: "The token for sending push notifications for alerts. Depending on the used service e.g. 
+          The URL of the UnifiedPush server or the token for APN or Firebase"
+          example: ["https://example.de", "bearer<token data in BASE64>"]
+        push_service:
+          type: string
+          description: "Specifies the wanted push notification service"
+          example: ["UnifiedPush", "UnifiedPush_encrypted", "APN", "Firebase"]
         min_lat:
           type: number
           format: float
@@ -267,6 +301,20 @@ components:
           format: float
           description: "The maximum longitude"
           example: 180.0
+
+    update_subscription:
+      description: Unsubscribe from a location
+      properties:
+        subscription_id:
+          type: string
+          description: "The ID of the subscription to be removed"
+        push_service:
+          type: string
+          description: "The push notification service"
+          example: ["UnifiedPush", "UnifiedPush_encrypted", "APN", "Firebase"]
+        token:
+          type: string
+          description: "The push notification token"
 
     delete_subscription:
       description: Unsubscribe from a location

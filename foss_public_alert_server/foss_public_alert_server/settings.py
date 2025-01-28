@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'subscriptionHandler.apps.SubscriptionHandlerConfig',
     'alertHandler.apps.AlertHandlerConfig',
     'sourceFeedHandler.apps.SourcefeedhandlerConfig',
+    'configuration.apps.ConfigurationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -146,11 +147,8 @@ MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT', BASE_DIR.joinpath('cap'))
 
 USER_AGENT = "FOSS Public Alert Server"
 
-# timeperiod after which an inactive subscription without heartbeats will be deleted from the database
-DAYS_INACTIVE_TIMEOUT = 10
 # timeperiod in seconds for feed updates used by the celery task scheduler
 DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS = 60
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -165,11 +163,28 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # RabitMQ server URL for Celery
 AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')
 
-# server config for clients
-OPERATOR = "KDE"
-PRIVACY_NOTICE = "https://invent.kde.org/webapps/foss-public-alert-server/-/wikis/Privacy"
-TERMS_OF_SERVICE = "https://invent.kde.org/webapps/foss-public-alert-server/-/wikis/Terms-of-Service"
-CONGESTION_STATE = 1
+# Default settings for the server. The values can be changed at runtime in the admin interface
+DEFAULT_SETTINGS = [
+    # name, datatype, default value
+    # timeperiod after which an inactive subscription without heartbeats will be deleted from the database
+    ["DAYS_INACTIVE_TIMEOUT", "int", 10],
+
+    # server config for clients
+    ["OPERATOR", "char", "Example"],
+    ["PRIVACY_NOTICE", "char", "https://example.com"],
+    ["TERMS_OF_SERVICE", "char", "https://example.com"],
+
+    # defines which push services the server is capable of
+    ["SUPPORT_UnifiedPush", "bool", True],
+    ["SUPPORT_UnifiedPush_encrypted", "bool", False],
+    ["SUPPORT_APN", "bool", False],
+    ["SUPPORT_Firebase", "bool", False],
+
+    # is a metric for clients to see if this client is near its capacity limit
+    # in the future this value will be automatically calculated.
+    ["CONGESTION_STATE", "int",  1],
+    ["VERSION", "char", "1.0.0"]
+]
 
 # Logging config
 

@@ -14,6 +14,8 @@ from django.conf import settings
 
 from alertHandler.models import Alert
 from .models import Subscription
+from configuration.models import AppSetting
+from subscriptionHandler.push_notification_services import unified_push, unified_push_encrpted, apn, firebase
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -25,7 +27,7 @@ def remove_old_subscription():
     """
     for subscription in Subscription.objects.all():
         timedelta = datetime.datetime.now() - subscription.last_heartbeat
-        if timedelta.days > settings.DAYS_INACTIVE_TIMEOUT:
+        if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
             msg = "Subscription timed out and is deleted. please renew your subscription."
             requests.post(subscription.distributor_url, json.dumps(msg))
             subscription.delete()
@@ -39,7 +41,16 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
     logger.info("check for push notifications")
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
         # @todo is the distributor_url to sensitive to write it into logs?
-        logger.debug(f"Send notification for {subscription.id} to {subscription.distributor_url}")
-        requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
-    # @todo check performance
+        logger.debug(f"Send notification for {subscription.id} to {subscription.token}")
+        match subscription.push_service:
+            case "UnifiedPush":
+                unified_push.send_notification(subscription.token, json.dumps(alert.alert_id))
+            case "UnifiedPush_encrypted":
+                unified_push_encrpted.send_notification(subscription.token,json.dumps(alert.alert_id), None)
+            case "APN":
+                apn.send_notification(subscription.token, "", "", "", "", "")
+            case "Firebase":
+                firebase.send_notification(subscription.token, json.dumps(alert.alert_id))
+
+            # @todo check performance
     pass

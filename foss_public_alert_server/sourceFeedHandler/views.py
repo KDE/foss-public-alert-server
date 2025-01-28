@@ -12,6 +12,8 @@ import datetime
 import os
 from django.conf import settings
 
+from configuration.models import AppSetting
+
 
 def generate_source_status_page(request:HttpRequest):
     """
@@ -68,7 +70,7 @@ def get_feed_status_for_area(request:HttpRequest):
     return JsonResponse(result, safe=False)
 
 def version_string() -> str:
-    version = "1.0.0" # @todo move to settings?
+    version = AppSetting.get("VERSION")
     revision_file = os.path.join(settings.BASE_DIR, "build-revision")
     with open(revision_file, 'r') as f:
         rev = f.read()
@@ -86,10 +88,10 @@ def server_status(request:HttpRequest):
 
     result = {
         "server_version": version_string(),
-        "server_operator": settings.OPERATOR,
-        "privacy_notice": settings.PRIVACY_NOTICE,
-        "terms_of_service": settings.TERMS_OF_SERVICE,
-        "congestion_state": settings.CONGESTION_STATE
+        "server_operator": AppSetting.get("OPERATOR"),
+        "privacy_notice": AppSetting.get("PRIVACY_NOTICE"),
+        "terms_of_service": AppSetting.get("TERMS_OF_SERVICE"),
+        "congestion_state": AppSetting.get("CONGESTION_STATE")
     }
     return JsonResponse(result)
 
