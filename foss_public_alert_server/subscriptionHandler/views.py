@@ -10,10 +10,13 @@ import json
 from json import loads
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
 from django.contrib.gis.geos import Polygon
 
 from .models import Subscription
+from .push_notification_services import unified_push, unified_push_encrpted, apn, firebase
+from django.conf import settings
+from configuration.models import AppSetting
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -34,6 +37,23 @@ def isValidBbox(x1, y1, x2, y2):
             -90.0 <= y2 <= 90.0 and
             x1 != x2 and
             y1 != y2)
+
+def is_active_subscription_update_heartbeat(subscription_id) -> bool:
+    """
+    check if the subscription is still active. If yes, update the last heartbeat for this subscription
+    :param subscription_id: the subscription id to check
+    :return: True if the subscription is active, False if the subscription is already deleted
+    """
+    try:
+        Subscription.objects.get(id=subscription_id)
+        # update last heartbeat
+        Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now())
+        return True
+    except ObjectDoesNotExist:
+        return False
+    except Exception as e:
+        logger.error(f"Can not update subscription: {e}")
+        return False
 
 
 def index(request):
@@ -56,7 +76,8 @@ def subscribe(request):
             'max_lat' not in data or
             'min_lon' not in data or
             'max_lon' not in data or
-            'distributor_url' not in data):
+            'token' not in data or
+            'push_service' not in data):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     # load data from request
@@ -64,17 +85,42 @@ def subscribe(request):
     max_lat = float(data['max_lat'])
     min_lon = float(data['min_lon'])
     max_lon = float(data['max_lon'])
+    push_service = data['push_service']
+    token = data['token']
+
+    if AppSetting.get(f"SUPPORT_{push_service}"):
+        logger.debug(f"Push Service {push_service} is supported by this server")
+    else:
+        return HttpResponseBadRequest('This Push Service is not available on this instance. '
+                                      'Please try a different service')
 
     if not isValidBbox(min_lon, min_lat, max_lon, max_lat):
         return HttpResponseBadRequest('invalid bounding box')
 
     bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-    s = Subscription(distributor_url=data['distributor_url'], bounding_box=bbox, last_heartbeat=datetime.datetime.now())
+    s = Subscription(token=token, bounding_box=bbox, push_service=push_service, last_heartbeat=datetime.datetime.now())
 
-    # send confirmation message via the distributor to verify it. Only store the new subscription,
-    # if the distributor is reachable
-    test_push = requests.post(s.distributor_url, json.dumps("Successfully subscribed"))
-    if 200 <= test_push.status_code <= 299:
+    # send confirmation message via the push system to verify it. Only store the new subscription,
+    # if the push service is reachable
+    test_push = None
+    match push_service:
+        case "UnifiedPush":
+            test_push = unified_push.send_notification(s.token, json.dumps("Successfully subscribed"))
+        case "UnifiedPush_encrypted":
+            test_push = unified_push_encrpted.send_notification(s.token,
+                                                                json.dumps("Successfully subscribed"),
+                                                                None)
+        case "APN":
+            test_push = apn.send_notification(s.token,
+                                              "Successfully subscribed",
+                                              "",
+                                              "",
+                                              "",
+                                              "")
+        case "Firebase":
+            test_push = firebase.send_notification(s.token, json.dumps("Successfully subscribed") )
+
+    if test_push is not None and 200 <= test_push.status_code <= 299:
         s.save()
     else:
         return HttpResponseBadRequest('Distributor url is invalid or not reachable. Please check your unified push '
@@ -100,6 +146,44 @@ def unsubscribe(request):
     subscription.delete()
     return HttpResponse("Successfully unsubscribed")
 
+def update_subscription(request):
+    """
+    depending on the type of push_service they are different needs to maintain the push notification connection
+    this methode calls the corresponding methode for the different push services
+    :param request: the HTTP request
+    :return: HTTP response
+    """
+    if request.method != 'POST':
+        return HttpResponseBadRequest('wrong HTTP method')
+    data = loads(request.body)
+
+    # check parameter of request
+    if 'push_service' not in data or 'subscription_id' not in data:
+        return HttpResponseBadRequest('invalid or missing parameters')
+    subscription_id = data['subscription_id']
+    push_service = data['push_service']
+
+    # check if subscription is still active
+    if not is_active_subscription_update_heartbeat(subscription_id):
+        return HttpResponseBadRequest("Subscription has expired. You must register again!")
+
+    # check if push_service is supported
+    if not AppSetting.get(f"SUPPORT_{push_service}") or AppSetting.get(f"SUPPORT_{push_service}") is None:
+        return HttpResponseBadRequest('unsupported push service')
+
+    # call the push notification handler
+    match push_service:
+        case "UnifiedPush":
+            unified_push.update_subscription(request)
+        case "UnifiedPush_encrypted":
+            unified_push_encrpted.update_subscription(request)
+        case "APN":
+            return apn.update_subscription(request)
+        case "Firebase":
+            return firebase.update_subscription(request)
+        case _:
+            logger.debug("Not supported push service")
+            return HttpResponseBadRequest('something went wrong')
 
 def heartbeat(request):
     """
@@ -114,12 +198,8 @@ def heartbeat(request):
     if "subscription_id" not in data:
         return HttpResponseBadRequest('invalid or missing parameters')
     subscription_id = data['subscription_id']
-    try:
-        # update last heartbeat
-        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now()) == 0:
-            return HttpResponseNotFound("Subscription has expired. You must register again!")
-    except Exception as e:
-        logger.error(f"Can not update subscription: {e}")
-        return HttpResponseBadRequest("invalid request")
 
-    return HttpResponse("subscription successfully renewed")
+    if is_active_subscription_update_heartbeat(subscription_id):
+        return HttpResponse("subscription successfully renewed")
+    else:
+        return HttpResponseBadRequest("Subscription has expired. You must register again!")

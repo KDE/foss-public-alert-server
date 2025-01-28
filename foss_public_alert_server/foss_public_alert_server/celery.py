@@ -7,6 +7,10 @@ from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
 from celery.signals import worker_ready
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foss_public_alert_server.settings')
@@ -40,8 +44,10 @@ def execute_at_startup(sender, **k) -> None:
     :return: None
     """
     with sender.app.connection() as conn:
-        print("Initialize feed sources...")
+        logger.info("Initialize feed sources...")
         sender.app.send_task('task.reload_feed_sources_and_update_database')
+        logger.info("Store default settings in database...")
+        sender.app.send_task('task.store_default_settings_in_database')
 
 
 # create periodic tasks to remove old subscriptions

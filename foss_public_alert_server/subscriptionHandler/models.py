@@ -13,6 +13,7 @@ import uuid
 class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bounding_box = models.PolygonField()
-    distributor_url = models.CharField(max_length=255)
+    token = models.CharField(max_length=255) # @todo 255 enough?
+    push_service = models.CharField(max_length=255, default=None)
     last_heartbeat = models.DateTimeField(default=datetime.now)
 

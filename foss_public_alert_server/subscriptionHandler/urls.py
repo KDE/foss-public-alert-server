@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("subscribe", views.subscribe, name="subscribe"),
+    path("update_subscription", views.update_subscription, name="update_subscription"),
     path("unsubscribe", views.unsubscribe, name="unsubscribe"),
     path("heartbeat", views.heartbeat, name="heartbeat")
 ]
