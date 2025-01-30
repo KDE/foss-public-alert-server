@@ -108,7 +108,7 @@ paths:
                     example: "Subscription successfully renewed"
         '400':
           description: "Invalid input"
-        '410':
+        '404':
           description: "The server no longer has data for this subscription_id"
         '422':
           description: "Validation exception"

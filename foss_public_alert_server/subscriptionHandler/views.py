@@ -10,7 +10,7 @@ import json
 from json import loads
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.contrib.gis.geos import Polygon
 
 from .models import Subscription
@@ -115,13 +115,11 @@ def heartbeat(request):
         return HttpResponseBadRequest('invalid or missing parameters')
     subscription_id = data['subscription_id']
     try:
-        Subscription.objects.get(id=subscription_id)
         # update last heartbeat
-        Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now())
-    except ObjectDoesNotExist:
-        HttpResponseBadRequest("Subscription has expired. You must register again!")
+        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now()) == 0:
+            return HttpResponseNotFound("Subscription has expired. You must register again!")
     except Exception as e:
         logger.error(f"Can not update subscription: {e}")
-        HttpResponseBadRequest("Subscription has expired. You must register again!")
+        return HttpResponseBadRequest("invalid request")
 
     return HttpResponse("subscription successfully renewed")
