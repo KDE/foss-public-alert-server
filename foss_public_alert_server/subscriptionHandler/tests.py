@@ -26,6 +26,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lat': 52.789,
             'min_lon': 8.591,
             'max_lon': 12.063,
+            "push_service": "UnifiedPush",
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
         response = self.client.post('/subscription/subscribe', data, content_type="application/json")
@@ -38,6 +39,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lat': 52.789,
             #'min_lon': 8.591, missing
             'max_lon': 12.063,
+            "push_service": "UnifiedPush",
             'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
         response = self.client.post('/subscription/subscribe', data, content_type="application/json")
@@ -48,7 +50,7 @@ class SubscriptionHandlerTestsCase(TestCase):
         for alert in Alert.objects.all():
             for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
                 logger.debug(f"Send notification for {subscription.id} to {subscription.distributor_url}")
-                requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
+                requests.post(subscription.token, json.dumps(alert.alert_id)) #@todo fix
         # @todo check performance
 
 
@@ -64,6 +66,7 @@ def test_successful_subscription():
         'max_lat': 52.789,
         'min_lon': 8.591,
         'max_lon': 12.063,
+        "push_service": "UnifiedPush",
         'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
     }
     response = make_http_request(url, data)
@@ -78,6 +81,7 @@ def test_subscription_missing_parameter():
         'max_lat': 52.789,
         #'min_lon': 8.591, missing
         'max_lon': 12.063,
+        "push_service": "UnifiedPush",
         'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
     }
     response = make_http_request(url, data)
