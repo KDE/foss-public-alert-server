@@ -65,28 +65,28 @@ def parse_one_alert_hub_feed(data: json) -> None:
     append_one_feed_to_json_list(data)
 
 
-def check_if_we_have_an_override(authority_country: str) -> None:
+def check_if_we_have_an_override(source_id: str) -> None:
     """
-    check if we have already a feed with the sanem authorityCountry
+    check if we have already a feed with the same source_id
     if yes, we set the feed to ignore to use our custom feed
 
-    :param authority_country: the country to override
+    :param source_id: the source id to override
     :return: None
     """
 
     for i in aggregated_feed_object["sources"]:
         # print(i['source']['authorityCountry'])
         # check authorityCountry code and if the source is not FPAS
-        if i['source']['authorityCountry'] == authority_country and i["source"]["feedSource"] != "FPAS":
+        if i['source']['sourceId'] == source_id and i["source"]["feedSource"] != "FPAS":
             i['source']['ignore'] = True
             # print("Found entry to override. Set ignore to True")
 
 
 def parse_one_custom_feed(data: json):
     if data['source']['override']:
-        authority_country: str = data['source']["authorityCountry"]
+        source_id: str = data['source']["sourceId"]
         # check if we have to override
-        check_if_we_have_an_override(authority_country)
+        check_if_we_have_an_override(source_id)
 
     append_one_feed_to_json_list(data)
 
