@@ -12,7 +12,7 @@ import os
 
 class CAPSourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'source_id', 'name')
-    search_fields = ['source_id']
+    search_fields = ['source_id', 'cap_alert_feed']
     actions = ['purge_dangling_cap_files']
 
     @admin.action(description="Purge dangling CAP files")
@@ -39,5 +39,6 @@ class CAPSourceAdmin(admin.ModelAdmin):
 
         self.message_user(request, f"Removed {count} file(s), {errors} error(s)", messages.SUCCESS if errors == 0 else messages.ERROR)
 
+    search_fields = ['source_id', 'cap_alert_feed']
 
 admin.site.register(CAPFeedSource, CAPSourceAdmin)
