@@ -58,6 +58,10 @@ app.conf.beat_schedule = {
         'task': 'task.remove_expired_alerts',
         'schedule': crontab(minute="0", hour="*"),
     },
+    'generate_full_geojson_every_minute': {
+        'task': 'task.generate_full_geojson',
+        'schedule': crontab(minute="*", hour="*"),
+    },
 }
 
 app.conf.timezone = 'UTC' # @todo fix timezone

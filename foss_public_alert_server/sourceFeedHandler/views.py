@@ -93,6 +93,11 @@ def server_status(request:HttpRequest):
     }
     return JsonResponse(result)
 
+
+def alert_map(request: HttpRequest):
+    return render(request, 'map.html')
+
+
 def index(request):
     """
     show server information page

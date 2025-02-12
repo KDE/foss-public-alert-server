@@ -3,10 +3,12 @@
 
 import json
 import logging
+import os
 
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django_celery_beat.models import PeriodicTask
+from django.conf import settings
 
 from alertHandler import abstract_CAP_parser
 from alertHandler.XML_CAP_parser import XMLCAPParser
@@ -15,7 +17,9 @@ from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
 
 from . import source_feeds_aggegator
+from . import cap_to_geojson
 from .models import CAPFeedSource
+from alertHandler.models import Alert
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -150,5 +154,25 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
     else:
         logger.error(f"{feed.source_id}: Parser is None for {feed_format}")
 
-# for manually update the feed sources in the database
-# reload_feed_sources_and_update_database()
+
+@shared_task(name="task.generate_full_geojson")
+def create_full_geojson() -> None:
+    """
+    Generates a single GeoJSON file in MEDIAROOT containing all currently
+    active alerts.
+    Geometry is simplified to keep the size manageable. This is meant for
+    diagnostic purposes, not for accuracy.
+    """
+
+    output = {}
+    output['type'] = 'FeatureCollection'
+    output['name'] = 'Worldwide Aggregated CAP Alerts'
+    output['features'] = []
+
+    for alert in Alert.objects.all():
+        feature = cap_to_geojson.cap_to_geojson(alert.cap_data.path)
+        feature['properties']['url'] = alert.cap_data.url
+        output['features'].append(feature)
+
+    with open(os.path.join(settings.MEDIA_ROOT, 'full.geojson'), 'w') as f:
+        f.write(json.dumps(output))
