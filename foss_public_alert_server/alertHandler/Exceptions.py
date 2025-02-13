@@ -6,6 +6,9 @@ class AlertExpiredException(BaseException):
 
 
 class DatabaseWritingException(BaseException):
+    """
+    raised if something went wrong while writing in the database
+    """
     pass
 
 
@@ -14,4 +17,14 @@ class AlertParameterException(BaseException):
 
 
 class NoGeographicDataAvailableException(BaseException):
+    """
+    This exception is raised if we do not have geo information for this alert. This can be due to missing geocode
+    translation
+    """
+    pass
+
+class NothingChangedException(BaseException):
+    """
+    This exception is raised if a http request returns status code 304  Nothing changed
+    """
     pass
