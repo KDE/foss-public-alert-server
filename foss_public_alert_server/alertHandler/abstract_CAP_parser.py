@@ -19,10 +19,10 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from celery import shared_task
-# from celery.contrib import rdb
+
 
 from .exceptions import AlertExpiredException, DatabaseWritingException, AlertParameterException, \
-    NoGeographicDataAvailableException
+    NoGeographicDataAvailableException, NothingChangedException
 from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
@@ -58,7 +58,7 @@ class AbstractCAPParser(ABC):
         get the feed and process the data
         :return: None
         """
-
+        store_warnings = True
         warnings_list = []
 
         # configure warnings (aka error messages) to append every warning to our list of warnings
@@ -76,7 +76,7 @@ class AbstractCAPParser(ABC):
             # store the end time
             end_time = datetime.now()
 
-            # store duration os last fetch
+            # store duration as last fetch duration
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=end_time - start_time)
 
             # update feed status information
@@ -85,7 +85,7 @@ class AbstractCAPParser(ABC):
 
             # process the warnings
             for warning in warnings_list:
-                if str(warning).__contains__("no valid bounding box"):
+                if str(warning).__contains__("no valid bounding box") or str(warning).__contains__("Unknown geometry code"):
                     # if there was min one invalid bounding box, set missing geo info to true
                     CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=True)
 
@@ -95,17 +95,29 @@ class AbstractCAPParser(ABC):
                     logger.info(f"{alert.alert_id} is no longer in the feed. Deleting...")
                     alert.delete()
 
+        except NothingChangedException as e:
+            logger.info(f"{self.feed_source.source_id} - nothing changed")
+            # do not store empty warnings if we just checked for changes
+            store_warnings = False
         except ET.ParseError as e:
             logger.exception(f"{self.feed_source.source_id} - failed to parse CAP alert message XML:", exc_info=e)
             warnings.warn(f"Failed to parse CAP alert message XML {e}")
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
+        except DatabaseWritingException as e:
+            logger.exception(f"Something went wrong while writing in the database  "
+                             f"{self.feed_source.source_id}", exc_info=e)
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
+            # do not add database exceptions to warnings because they could include sensitive information
+            warnings_list.append("Database writing error")
         except Exception as e:
             logger.exception(f"Something went wrong while getting the feed {self.feed_source.source_id}", exc_info=e)
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
             # add exceptions to warnings_lis
             warnings_list.append(str(e))
-        # store warnings in database
-        CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
+
+        if store_warnings:
+            # store warnings in database
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
     def find_identifier(self, cap_tree: xml) -> str:
         """
@@ -217,6 +229,7 @@ class AbstractCAPParser(ABC):
                 else:
                     if is_first_error_for_source:
                         is_first_error_for_source = False
+                        warnings.warn(f"Unknown geometry code: {code_name}: {code_value}")
                         logger.error(
                             f"Geo error[{self.feed_source.source_id}] - can't expand code {code_name}: {code_value} "
                             f"(For all error messages see DEBUG level)")
@@ -454,8 +467,7 @@ class AbstractCAPParser(ABC):
             # self.validate_if_alert_is_in_country_borders()
 
             if min_lat > max_lat or min_lon > max_lon:
-                raise NoGeographicDataAvailableException(f"{self.feed_source.source_id}"
-                       f" - No geographic data available for {alert_id} - skipping")
+                raise NoGeographicDataAvailableException(f"No geographic data available for {alert_id}")
 
             # to build a valid polygon. we have to fulfill the right-hand-rule
             # there we build the polygon with min_lon, min_lat, max_lon, max_lat
@@ -496,5 +508,5 @@ class AbstractCAPParser(ABC):
             warnings.warn(f"Parameter error:[{self.feed_source.source_id}] - {str(e)} - skipping")
             logger.exception(f"Parameter error:[{self.feed_source.source_id}] skipping", exc_info=e)
         except NoGeographicDataAvailableException as e:
-            warnings.warn(f"Unknown geometry code:[{self.feed_source.source_id}] - {str(e)} - skipping")
+            #warnings.warn(f"Unknown geometry code:[{self.feed_source.source_id}] - {str(e)} - skipping")
             logger.exception(f"Unknown geometry code:[{self.feed_source.source_id}]- skipping", exc_info=e)

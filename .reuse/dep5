@@ -23,6 +23,6 @@ Files: foss_public_alert_server/aggregated_feeds.json foss_public_alert_server/s
 License: CC0-1.0
 Copyright: FOSS Public Alert Server
 
-Files: foss_public_alert_server/sourceFeedHandler/static/css/* foss_public_alert_server/sourceFeedHandler/templates/* foss_public_alert_server/sourceFeedHandler/fixtures/* foss_public_alert_server/configuration/templates/* foss_public_alert_server/configuration/fixtures/*
+Files: foss_public_alert_server/sourceFeedHandler/static/css/* foss_public_alert_server/sourceFeedHandler/static/js/* foss_public_alert_server/sourceFeedHandler/templates/* foss_public_alert_server/sourceFeedHandler/fixtures/* foss_public_alert_server/configuration/fixtures/* foss_public_alert_server/configuration/templates/*
 License: AGPL-3.0-or-later
 Copyright: FOSS Public Alert Server

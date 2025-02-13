@@ -8,6 +8,10 @@ import requests
 import xml.etree.ElementTree as ET
 import logging
 
+from django.http import HttpResponseNotModified, HttpResponseBase
+
+from .Exceptions import NothingChangedException
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -28,11 +32,10 @@ class MoWaSCapParser(AbstractCAPParser):
             "ETag": self.feed_source.last_e_tag, # what if None?
         }
         response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
-        if response.status_code == 304:
-            logging.debug(f"Nothing changed for {self.feed_source.source_id}")
-            return
-        elif response.status_code != 200:
-            raise "Feed status code is not 200"
+        if response.status_code == HttpResponseNotModified.status_code:
+            raise NothingChangedException("Nothing changed")
+        elif response.status_code != HttpResponseBase.status_code:
+            raise Exception("Feed status code is not 200")
 
         # update etag and store it in the database
         new_etag = response.headers.get("ETag")
