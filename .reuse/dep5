@@ -8,7 +8,7 @@ License: CC0-1.0
 Copyright: Meteoalarm / EUMETNET
 
 Files: foss_public_alert_server/alertHandler/data/SAME/*.geojson
-License: public domain
+License: CC-PDM-1.0
 Copyright: National Weather Service (NWS)
 
 Files: foss_public_alert_server/alertHandler/data/ISO3166-2/*.geojson
