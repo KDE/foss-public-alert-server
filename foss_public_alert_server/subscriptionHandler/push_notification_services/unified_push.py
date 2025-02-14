@@ -6,8 +6,8 @@ from django.http import HttpResponseBadRequest
 from requests import Response
 import json
 
-def send_notification(distributor_url, payload) -> Response:
-    request = requests.post(distributor_url, json.dumps(payload))
+def send_notification(distributor_url, payload:json) -> Response:
+    request = requests.post(distributor_url, payload)
     return request
 
 def update_subscription(data):

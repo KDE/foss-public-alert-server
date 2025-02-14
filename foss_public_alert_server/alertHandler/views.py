@@ -4,6 +4,7 @@
 import logging
 
 from celery import shared_task
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 
 from json import loads
@@ -43,7 +44,7 @@ def get_alerts_for_subscription_id(request):
         subscription = Subscription.objects.get(id=subscription_id)
         polygon = subscription.bounding_box
 
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, ObjectDoesNotExist):
         return HttpResponseBadRequest("no valid subscription")
 
     # filter and return all alerts which intersects with the subscribed polygone
