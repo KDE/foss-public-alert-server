@@ -98,32 +98,36 @@ def subscribe(request):
         return HttpResponseBadRequest('invalid bounding box')
 
     bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-    s = Subscription(token=token, bounding_box=bbox, push_service=push_service, last_heartbeat=datetime.datetime.now())
+    s = Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices['UNIFIED_PUSH'], last_heartbeat=datetime.datetime.now()) #@TODO fix eum selection
 
     # send confirmation message via the push system to verify it. Only store the new subscription,
     # if the push service is reachable
     test_push = None
-    match push_service:
-        case "UnifiedPush":
-            test_push = unified_push.send_notification(s.token, json.dumps("Successfully subscribed"))
-        case "UnifiedPush_encrypted":
-            test_push = unified_push_encrpted.send_notification(s.token,
-                                                                json.dumps("Successfully subscribed"),
-                                                                None)
-        case "APN":
-            test_push = apn.send_notification(s.token,
-                                              "Successfully subscribed",
-                                              "",
-                                              "",
-                                              "",
-                                              "")
-        case "Firebase":
-            test_push = firebase.send_notification(s.token, json.dumps("Successfully subscribed") )
+    try:
+        match push_service:
+            case "UnifiedPush":
+                test_push = unified_push.send_notification(s.token, json.dumps("Successfully subscribed"))
+            case "UnifiedPush_encrypted":
+                test_push = unified_push_encrpted.send_notification(s.token,
+                                                                    json.dumps("Successfully subscribed"),
+                                                                    None)
+            case "APN":
+                test_push = apn.send_notification(s.token,
+                                                  "Successfully subscribed",
+                                                  "",
+                                                  "",
+                                                  "",
+                                                  "")
+            case "Firebase":
+                test_push = firebase.send_notification(s.token, json.dumps("Successfully subscribed") )
 
-    if test_push is not None and 200 <= test_push.status_code <= 299:
-        s.save()
-    else:
-        return HttpResponseBadRequest('Distributor url is invalid or not reachable. Please check your unified push '
+        if test_push is not None and 200 <= test_push.status_code <= 299:
+            s.save()
+        else:
+            raise Exception("push config is invalid")
+    except Exception as e:
+        logger.debug(f"invalid push config: {e}")
+        return HttpResponseBadRequest('push service is invalid or not reachable. Please check your push notification '
                                       'server')
 
     # successfully subscribed, return success token and subscription id

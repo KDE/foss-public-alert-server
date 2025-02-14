@@ -47,7 +47,6 @@ class AppSetting(models.Model):
         :return: the stored value for `setting_name`
         """
         try:
-            if not AppSetting.objects.get(setting_name=setting_name).get_value():
-                return None
+            return AppSetting.objects.get(setting_name=setting_name).get_value()
         except ObjectDoesNotExist:
             return None
