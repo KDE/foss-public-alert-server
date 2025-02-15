@@ -18,6 +18,7 @@ tags:
   - name: Subscription
   - name: Alerts
   - name: Alert Sources
+  - name: Config
 
 paths:
   /subscription/subscribe:
@@ -49,9 +50,7 @@ paths:
                     description: The ID of the subscription to allow the client to unsubscribe. This ID should be stored by the client.
                     example: "exampleSubscriptionID"
         '400':
-          description: "Invalid input"
-        '422':
-          description: "Validation exception"
+          description: "invalid subscription id"
 
   /subscription/update_subscription:
     post:
@@ -167,18 +166,19 @@ paths:
           description: "Validation exception"
 
   /alert/all:
-    post:
+    get:
       summary: Get all alerts for a subscription ID
       description: Retrieve all alerts for a given subscription ID.
       tags:
         - Alerts
-      requestBody:
-        description: Request alerts for the given subscription ID
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/all_alerts_request'
-        required: true
+      parameters:
+        - in: query
+          name: subscription_id
+          required: true
+          schema:
+            type: string
+          description: "The subscription id"
+          example: "example-subscription-id"
       responses:
         '200':
           description: "All CAP alerts for the subscription"
@@ -267,6 +267,23 @@ paths:
         '422':
           description: "Validation exception"
 
+  /config/server_status:
+    get:
+      summary: server status
+      description: get information about the operator, urls to privacy police and terms of service, congestion state and supported push services
+      tags:
+        - Config
+      responses:
+        '200':
+          description: "get server status information"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/server_status_response'
+        '400':
+          description: "Invalid request"
+
+
 components:
   schemas:
     new_subscription:
@@ -280,7 +297,7 @@ components:
         push_service:
           type: string
           description: "Specifies the wanted push notification service"
-          example: ["UnifiedPush", "UnifiedPush_encrypted", "APN", "Firebase"]
+          example: ["UNIFIED_PUSH", "UNIFIED_PUSH_ENCRYPTED", "APN", "FIREBASE"]
         min_lat:
           type: number
           format: float
@@ -471,3 +488,38 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/alert_response'
+
+    server_status_response:
+      description: "information about the sever settings"
+      properties:
+        server_version:
+          type: string
+          description: "The installed server version and build revision"
+          example: "1.0.0 (abcde)"
+        server_operator:
+          type: string
+          description: "Information about how operates the server"
+          example: "Example Operator"
+        privacy_notice:
+          type: string
+          description: "URL to the privacy police"
+          example: "https://example.com/privacy"
+        terms_of_service:
+          type: string
+          description: "url to the terms of service"
+          example:  "https://example.com/tos"
+        congestion_state:
+          type: number
+          format: int
+          description: "overload indicator for the server 1: everything fine - 10: no more subscriptions possible"
+          example: 1
+        supported_push_services:
+          type: map
+          items:
+            type: {string, bool}
+          example: {
+              "UNIFIED_PUSH": true,
+              "UNIFIED_PUSH_ENCRYPTED": false,
+              "APN": false,
+              "FIREBASE": false
+            },
