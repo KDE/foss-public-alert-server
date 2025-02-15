@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class SubscriptionHandlerTestsCase(TestCase):
-    # @todo throws errors
+    fixtures = ["appSettingsDump.json"]
+
     client = Client()
 
     def test_successful_subscription(self):
@@ -26,12 +27,51 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lat': 52.789,
             'min_lon': 8.591,
             'max_lon': 12.063,
-            "push_service": "UnifiedPush",
-            'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('/subscription/subscribe', data, content_type="application/json")
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Successfully subscribed')
+        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        self.assertContains(response, 'successfully subscribed', status_code=200)
+
+    def test_successful_unsubscribe(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+        }
+        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        data = json.loads(response.content)
+        subscription_id = data["id"]
+
+        data = {
+            "subscription_id": subscription_id
+        }
+
+        response = self.client.post('/subscription/unsubscribe', json.dumps(data), content_type="application/json")
+        self.assertContains(response, 'successfully unsubscribed', status_code=200)
+
+    def test_unsuccessful_unsubscribe_invalid_subscription_id(self):
+        data = {
+            "subscription_id": "invalid_id"
+        }
+
+        response = self.client.post('/subscription/unsubscribe', json.dumps(data), content_type="application/json")
+        self.assertContains(response, 'invalid subscription id', status_code=400)
+
+    def test_push_service_not_supported(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "EXAMPLE_PUSH",
+            'token': 'https://example.com'
+        }
+        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        self.assertContains(response, b'push service is not available on this instance.', status_code=400)
 
     def test_invalid_parameters(self):
         data = {
@@ -39,12 +79,11 @@ class SubscriptionHandlerTestsCase(TestCase):
             'max_lat': 52.789,
             #'min_lon': 8.591, missing
             'max_lon': 12.063,
-            "push_service": "UnifiedPush",
-            'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
         response = self.client.post('/subscription/subscribe', data, content_type="application/json")
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.content, b'invalid or missing parameters')
+        self.assertContains(response, b'invalid or missing parameters', status_code=400)
 
     def test_send_notification(self):
         for alert in Alert.objects.all():
@@ -66,8 +105,8 @@ def test_successful_subscription():
         'max_lat': 52.789,
         'min_lon': 8.591,
         'max_lon': 12.063,
-        "push_service": "UnifiedPush",
-        'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+        "push_service": "UNIFIED_PUSH",
+        'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
     }
     response = make_http_request(url, data)
     return response.content
@@ -81,8 +120,8 @@ def test_subscription_missing_parameter():
         'max_lat': 52.789,
         #'min_lon': 8.591, missing
         'max_lon': 12.063,
-        "push_service": "UnifiedPush",
-        'distributor_url': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+        "push_service": "UNIFIED_PUSH",
+        'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
     }
     response = make_http_request(url, data)
     return response.content
