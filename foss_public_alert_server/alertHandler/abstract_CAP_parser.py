@@ -21,7 +21,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from celery import shared_task
 # from celery.contrib import rdb
 
-from .Exceptions import AlertExpiredException, DatabaseWritingException, AlertParameterException, \
+from .exceptions import AlertExpiredException, DatabaseWritingException, AlertParameterException, \
     NoGeographicDataAvailableException
 from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
