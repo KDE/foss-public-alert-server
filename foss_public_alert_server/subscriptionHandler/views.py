@@ -2,20 +2,18 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-import time
 import logging
 import datetime
-import requests
 import json
 from json import loads
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
 from django.contrib.gis.geos import Polygon
 
 from .models import Subscription
+from .exceptions import *
 from .push_notification_services import unified_push, unified_push_encrpted, apn, firebase
-from django.conf import settings
 from configuration.models import AppSetting
 
 logging.basicConfig(level=logging.INFO)
@@ -69,69 +67,75 @@ def subscribe(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('wrong HTTP method')
 
-    data = loads(request.body)
-
-    # check if request has the right parameter
-    if ('min_lat' not in data or
-            'max_lat' not in data or
-            'min_lon' not in data or
-            'max_lon' not in data or
-            'token' not in data or
-            'push_service' not in data):
-        return HttpResponseBadRequest('invalid or missing parameters')
-
-    # load data from request
-    min_lat = float(data['min_lat'])
-    max_lat = float(data['max_lat'])
-    min_lon = float(data['min_lon'])
-    max_lon = float(data['max_lon'])
-    push_service = data['push_service']
-    token = data['token']
-
-    if AppSetting.get(f"SUPPORT_{push_service}"):
-        logger.debug(f"Push Service {push_service} is supported by this server")
-    else:
-        return HttpResponseBadRequest('This Push Service is not available on this instance. '
-                                      'Please try a different service')
-
-    if not isValidBbox(min_lon, min_lat, max_lon, max_lat):
-        return HttpResponseBadRequest('invalid bounding box')
-
-    bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-    s = Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices['UNIFIED_PUSH'], last_heartbeat=datetime.datetime.now()) #@TODO fix eum selection
-
-    # send confirmation message via the push system to verify it. Only store the new subscription,
-    # if the push service is reachable
-    test_push = None
     try:
+        data = loads(request.body)
+
+        # check if request has the right parameter
+        if ('min_lat' not in data or
+                'max_lat' not in data or
+                'min_lon' not in data or
+                'max_lon' not in data or
+                'token' not in data or
+                'push_service' not in data):
+            return HttpResponseBadRequest('invalid or missing parameters')
+
+        # load data from request
+        min_lat = float(data['min_lat'])
+        max_lat = float(data['max_lat'])
+        min_lon = float(data['min_lon'])
+        max_lon = float(data['max_lon'])
+        push_service = data['push_service']
+        token = data['token']
+
+        if AppSetting.get(f"SUPPORT_{push_service}"):
+            logger.debug(f"Push Service {push_service} is supported by this server")
+        else:
+            return HttpResponseBadRequest('This push service is not available on this instance. '
+                                          'Please try a different service')
+
+        if not isValidBbox(min_lon, min_lat, max_lon, max_lat):
+            return HttpResponseBadRequest('invalid bounding box')
+
+        bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
+        s = Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices[push_service],
+                         last_heartbeat=datetime.datetime.now())
+
+        # send confirmation message via the push system to verify it. Only store the new subscription,
+        # if the push service is reachable
+        test_push = None
+
         match push_service:
-            case "UnifiedPush":
-                test_push = unified_push.send_notification(s.token, json.dumps("Successfully subscribed"))
-            case "UnifiedPush_encrypted":
+            case "UNIFIED_PUSH":
+                test_push = unified_push.send_notification(s.token, json.dumps("successfully subscribed"))
+            case "UNIFIED_PUSH_ENCRYPTED":
                 test_push = unified_push_encrpted.send_notification(s.token,
-                                                                    json.dumps("Successfully subscribed"),
+                                                                    json.dumps("successfully subscribed"),
                                                                     None)
             case "APN":
                 test_push = apn.send_notification(s.token,
-                                                  "Successfully subscribed",
+                                                  "successfully subscribed",
                                                   "",
                                                   "",
                                                   "",
                                                   "")
-            case "Firebase":
-                test_push = firebase.send_notification(s.token, json.dumps("Successfully subscribed") )
+            case "FIREBASE":
+                test_push = firebase.send_notification(s.token, json.dumps("successfully subscribed") )
 
         if test_push is not None and 200 <= test_push.status_code <= 299:
             s.save()
         else:
-            raise Exception("push config is invalid")
-    except Exception as e:
+            raise PushNotificationCheckFailed("push config is invalid")
+
+        # successfully subscribed, return success token and subscription id
+        return JsonResponse({'token': 'successfully subscribed', 'id': s.id})
+
+    except PushNotificationCheckFailed as e:
         logger.debug(f"invalid push config: {e}")
         return HttpResponseBadRequest('push service is invalid or not reachable. Please check your push notification '
                                       'server')
-
-    # successfully subscribed, return success token and subscription id
-    return JsonResponse({'token': 'Successfully subscribed', 'id': s.id})
+    except Exception as e:
+        logger.debug(f"invalid request: {e}")
+        return HttpResponseBadRequest('invalid request')
 
 
 def unsubscribe(request):
@@ -142,13 +146,16 @@ def unsubscribe(request):
     """
     if request.method != 'POST':
         return HttpResponseBadRequest('wrong HTTP method')
-    data = loads(request.body)
-    if "subscription_id" not in data:
-        return HttpResponseBadRequest('invalid or missing parameters')
-    subscription_id = data['subscription_id']
-    subscription = Subscription.objects.get(id=subscription_id)
-    subscription.delete()
-    return HttpResponse("Successfully unsubscribed")
+    try:
+        data = loads(request.body)
+        if "subscription_id" not in data:
+            return HttpResponseBadRequest('invalid or missing parameters')
+        subscription_id = data['subscription_id']
+        subscription = Subscription.objects.get(id=subscription_id)
+        subscription.delete()
+        return HttpResponse("successfully unsubscribed")
+    except ValidationError:
+        return HttpResponseBadRequest("invalid subscription id")
 
 def update_subscription(request):
     """
