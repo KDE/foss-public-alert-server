@@ -19,6 +19,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def get_alert_cap_data(request, identifier):
+    """
+    get the CAP alert data. Redirects to the CAP XML file for the given alert id
+    :param request:
+    :param identifier: the CAP alert ID
+    :return: redirect to the XML cap file
+    """
     logger.info(f"Get alert Data for {str(identifier)}")
     if request.method != 'GET':
         return HttpResponseBadRequest('wrong HTTP method')
@@ -35,12 +41,16 @@ def get_alert_cap_data(request, identifier):
 
 
 def get_alerts_for_subscription_id(request):
-    if request.method != 'POST':
+    """
+    get all alert for the given subscription id
+    :param request:
+    :return: json list with all alerts for the given area
+    """
+    if request.method != 'GET':
         return HttpResponseBadRequest('wrong HTTP method')
 
     try:
-        data = loads(request.body)
-        subscription_id = data['subscription_id']
+        subscription_id = request.GET.get('subscription_id')
         subscription = Subscription.objects.get(id=subscription_id)
         polygon = subscription.bounding_box
 
@@ -53,17 +63,6 @@ def get_alerts_for_subscription_id(request):
         result.append(str(alert.id))
 
     return JsonResponse(result, safe=False)
-
-
-def index(request):
-    """
-    print("Test push notification")
-    for alert in Alert.objects.all():
-        for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
-            print(f"Send notification for {subscription.id} to {subscription.distributor_url}")
-            requests.post(subscription.distributor_url, json.dumps(alert.alert_id))
-    """
-    return HttpResponse("Hello World") #@todo redirect user
 
 
 def get_alerts_for_area(request):
@@ -83,13 +82,13 @@ def get_alerts_for_area(request):
         if not isValidBbox(x1, y1, x2, y2):
             return HttpResponseBadRequest('invalid bounding box')
         request_bbox = Polygon.from_bbox((x1, y1, x2, y2))
+
+        res = []
+        for alert in Alert.objects.filter(bounding_box__intersects=request_bbox):
+            res.append(str(alert.id))
+        return JsonResponse(res, safe=False)
     except (ValueError, TypeError):
         return HttpResponseBadRequest('invalid bounding box')
-
-    res = []
-    for alert in Alert.objects.filter(bounding_box__intersects=request_bbox):
-        res.append(str(alert.id))
-    return JsonResponse(res, safe=False)
 
 
 def isValidBbox(x1, y1, x2, y2):
