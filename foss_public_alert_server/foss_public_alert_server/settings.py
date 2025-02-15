@@ -175,10 +175,10 @@ DEFAULT_SETTINGS = [
     ["TERMS_OF_SERVICE", "char", "https://example.com"],
 
     # defines which push services the server is capable of
-    ["SUPPORT_UnifiedPush", "bool", True],
-    ["SUPPORT_UnifiedPush_encrypted", "bool", False],
+    ["SUPPORT_UNIFIED_PUSH", "bool", True],
+    ["SUPPORT_UNIFIED_PUSH_ENCRYPTED", "bool", False],
     ["SUPPORT_APN", "bool", False],
-    ["SUPPORT_Firebase", "bool", False],
+    ["SUPPORT_FIREBASE", "bool", False],
 
     # is a metric for clients to see if this client is near its capacity limit
     # in the future this value will be automatically calculated.
