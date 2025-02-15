@@ -6,14 +6,8 @@ from django.http.request import HttpRequest
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
 
-from json import loads
 from .models import CAPFeedSource
 import datetime
-import os
-from django.conf import settings
-
-from configuration.models import AppSetting
-
 
 def generate_source_status_page(request:HttpRequest):
     """
@@ -44,7 +38,6 @@ def get_feed_status_for_area(request:HttpRequest):
     if request.method != "POST":
         return HttpResponseBadRequest("wrong HTTP method")
 
-
     try:
         data:list = request.POST.getlist('country_codes', None)
     except ValueError:
@@ -69,41 +62,5 @@ def get_feed_status_for_area(request:HttpRequest):
 
     return JsonResponse(result, safe=False)
 
-def version_string() -> str:
-    version = AppSetting.get("VERSION")
-    revision_file = os.path.join(settings.BASE_DIR, "build-revision")
-    with open(revision_file, 'r') as f:
-        rev = f.read()
-        version = f"{version} ({rev})"
-    return version
-
-def server_status(request:HttpRequest):
-    """
-    endpoint to check the server status
-    :param request:
-    :return:
-    """
-    if request.method != "GET":
-        return HttpResponseBadRequest("wrong HTTP method")
-
-    result = {
-        "server_version": version_string(),
-        "server_operator": AppSetting.get("OPERATOR"),
-        "privacy_notice": AppSetting.get("PRIVACY_NOTICE"),
-        "terms_of_service": AppSetting.get("TERMS_OF_SERVICE"),
-        "congestion_state": AppSetting.get("CONGESTION_STATE")
-    }
-    return JsonResponse(result)
-
 def index(request):
-    """
-    show server information page
-    """
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
-
-    context = {
-        'version': version_string()
-    }
-
-    return render(request, 'server_info.html', context=context)
+    return HttpResponseRedirect(redirect_to="../config")
