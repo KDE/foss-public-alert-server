@@ -26,7 +26,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('subscription/', include("subscriptionHandler.urls")),
     path('alert/', include("alertHandler.urls")),
-    path('sources/', include("sourceFeedHandler.urls"))
+    path('sources/', include("sourceFeedHandler.urls")),
+    path('config/', include("configuration.urls"))
 ]
 
 # needed to allow media access with the development server
