@@ -8,7 +8,7 @@ from django.conf import settings
 from django.test import TestCase
 from sourceFeedHandler.models import CAPFeedSource
 
-from .Exceptions import AlertExpiredException
+from .exceptions import AlertExpiredException
 from .models import Alert
 from .abstract_CAP_parser import AbstractCAPParser
 from .XML_CAP_parser import XMLCAPParser
