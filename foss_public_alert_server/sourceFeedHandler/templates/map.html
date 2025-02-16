@@ -4,9 +4,9 @@
     <title>CAP Alert Map View</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- TODO local copies -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    {% load static %}
+    <script src="{% static 'maplibre/maplibre-gl.js' %}"></script>
+    <link href="{% static 'maplibre/maplibre-gl.css' %}" rel="stylesheet" />
     <style>
     html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
     #map { width: 100%; height: 100%; }
@@ -15,48 +15,87 @@
   <body>
    <div id="map"></div>
    <script>
-    const map = L.map('map').setView([20, 0], 3);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-
-    const alertLayer = L.geoJSON(null, {
-        style: function(feature) {
-            if (feature.properties.msgType === 'Cancel' || feature.properties.urgency === 'Past') {
-                return {color: "#808080", weight: 1}
-            }
-            switch (feature.properties.severity) {
-                case 'Extreme': return {color: "#ff0000", weight: 2};
-                case 'Severe': return {color: "#ff8000", weight: 2};
-                case 'Moderate': return {color: "#f0c000", weight: 2};
-                case 'Minor': return {color: "#00c000", weight: 2};
-            }
-            return {color: "#0000ff", weight: 2};
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          bg: {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            minzoom: 0,
+            maxzoom: 19
+          },
+          alerts: {
+            type: 'vector',
+            tiles: [ '{{ request.scheme }}://{{ request.get_host }}/map/alerts/{z}/{x}/{y}.pbf' ],
+            minzoom: 0,
+            maxzoom: 19,
+          }
         },
-        onEachFeature: function(feature, layer) {
-            let tooltip = '<b>' + feature.properties.event + '</b><br/>';
-            tooltip += 'Category: ' + feature.properties.category + '<br/>';
-            tooltip += 'Severity: ' + feature.properties.severity + '<br/>';
-            tooltip += 'Urgency: ' + feature.properties.urgency + '<br/>';
-            tooltip += 'Status: ' + feature.properties.status + '<br/>';
-            tooltip += 'Message: ' + feature.properties.msgType + '<br/>';
-            tooltip += '<a href="' + feature.properties.url + '">CAP data</a>';
-            layer.bindPopup(tooltip);
-        }
-    }).addTo(map);
+        layers: [
+          {
+            id: 'background',
+            type: 'raster',
+            source: 'bg'
+          },
+          {
+            id: 'alert-outlines',
+            type: 'line',
+            paint: {
+                'line-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'line-width': 2,
+            },
+            'source-layer': 'public.alertHandler_alert',
+            source: 'alerts'
+          },
+          {
+            id: 'alert-areas',
+            type: 'fill',
+            paint: {
+                'fill-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'fill-opacity': 0.2,
+            },
+            'source-layer': 'public.alertHandler_alert',
+            source: 'alerts'
+          }
+        ]
+      },
+      center: [0, 0], // starting position [lng, lat]
+      zoom: 1 // starting zoom
+    });
 
-    async function update_alerts() {
-        const response = await fetch('../cap/full.geojson');
-        const geojson = await response.json();
+     map.on('load', () => {
+        map.on('click', 'alert-areas', (e) => {
+            let tooltip = '<b>' + e.features[0].properties.event + '</b><br/>';
+            tooltip += 'Category: ' + e.features[0].properties.category + '<br/>';
+            tooltip += 'Severity: ' + e.features[0].properties.severity + '<br/>';
+            tooltip += 'Urgency: ' + e.features[0].properties.urgency + '<br/>';
+            tooltip += 'Status: ' + e.features[0].properties.status + '<br/>';
+            tooltip += 'Message: ' + e.features[0].properties.msg_type + '<br/>';
+            tooltip += 'Sent: ' + e.features[0].properties.issue_time + '<br/>';
+            tooltip += 'Identifier: ' + e.features[0].properties.alert_id + '<br/>';
+            tooltip += '<a href="/alert/' + e.features[0].properties.id + '">CAP data</a><br/>';
+            if (e.features[0].properties.source_url) {
+                tooltip += '<a href="' + e.features[0].properties.source_url + '">Source CAP</a>';
+            }
 
-        alertLayer.clearLayers();
-        alertLayer.addData(geojson);
-        setTimeout(update_alerts, 300000);
-    }
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(tooltip)
+                .addTo(map);
+        });
 
-    update_alerts();
+        map.on('mouseenter', 'alert-areas', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'alert-areas', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
    </script>
+
   </body>
 </html>

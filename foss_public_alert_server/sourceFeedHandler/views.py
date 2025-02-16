@@ -95,6 +95,8 @@ def server_status(request:HttpRequest):
 
 
 def alert_map(request: HttpRequest):
+    if request.method != 'GET':
+        return HttpResponseBadRequest('wrong HTTP method')
     return render(request, 'map.html')
 
 

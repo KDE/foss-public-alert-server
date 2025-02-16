@@ -48,36 +48,6 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         return abstract_cap_parser, cap_tree
 
     # test every helper methode
-    def test_find_identifier(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-
-        cap_id = abstract_cap_parser.find_identifier(cap_tree)
-        self.assertEqual(cap_id, "urn:oid:1234.5678")
-
-    def test_find_sent_time(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-
-        sent_time = abstract_cap_parser.find_sent_time(cap_tree, "test_alert_id")
-        self.assertEqual(sent_time, "2024-04-21T11:51:29-03:00")
-
-    def test_find_expire_time_not_expired(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-
-        expire_time = abstract_cap_parser.find_expire_time(cap_tree, "test_alert_id")
-        self.assertEqual(expire_time, datetime.fromisoformat("2199-04-22T10:00:00-03:00"))
-
-    def test_find_expire_time_expired(self):
-        cap_data = self.create_test_cap_data('test_cap_data_expired_alert.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-
-        with self.assertRaises(AlertExpiredException) as CM:
-            abstract_cap_parser.find_expire_time(cap_tree, "test_alert_id")
-            self.assertEqual(CM.exception,
-                             AlertExpiredException(f"alert urn:oid:1234.5678 expired on 2024-04-22T10:00:00-03:00"))
-
     def test_geojson_polygon_to_cap(self):
         cap_data = self.create_test_cap_data('test_cap_data_1.xml')
         abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
@@ -243,7 +213,7 @@ class AlertHandlerCAPParserTestsCase(TestCase):
                          f" was {db_entry.latest_published_alert_datetime}")
 
         # test for with older sent_time and expect no change
-        sent_time_2 = "2023-04-21T11:51:29-03:00"
+        sent_time_2 = datetime.fromisoformat("2023-04-21T11:51:29-03:00")
         abstract_cap_parser.update_feed_source_entry(sent_time_2)
         self.assertEqual(CAPFeedSource.objects.count(), 1)
         db_entry: CAPFeedSource = CAPFeedSource.objects.first()

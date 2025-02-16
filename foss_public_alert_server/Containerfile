@@ -9,6 +9,9 @@ RUN apt-get update && apt-get -y install libgdal-dev
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 COPY . /app
+RUN mkdir -p /app/sourceFeedHandler/static/maplibre
+RUN curl -L https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css > /app/sourceFeedHandler/static/maplibre/maplibre-gl.css
+RUN curl -L https://unpkg.com/maplibre-gl@%5E5.1.0/dist/maplibre-gl.js > /app/sourceFeedHandler/static/maplibre/maplibre-gl.js
 
 ARG REVISION=""
 RUN echo -n "${REVISION}" > /app/build-revision

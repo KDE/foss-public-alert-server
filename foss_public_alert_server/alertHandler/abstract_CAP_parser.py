@@ -27,7 +27,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
-from lib import geomath
+from lib import cap, geomath, geometry
 
 # logging config
 logging.basicConfig(level=logging.INFO)
@@ -107,54 +107,6 @@ class AbstractCAPParser(ABC):
             warnings_list.append(str(e))
         # store warnings in database
         CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
-
-    def find_identifier(self, cap_tree: xml) -> str:
-        """
-        find the identifier of the alert in the xml data and return it
-        :param cap_tree: cap data of the alert
-        :return: the identifier of the alert or an empty string in case of failure
-        """
-        id_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}identifier')
-        if id_node is None or not id_node.text:
-            raise AlertParameterException("Couldn't find CAP alert message identifier, skipping")
-        return id_node.text
-
-    def find_sent_time(self, cap_tree, alert_id) -> str:
-        """
-        find the sent time of the alert in the xml data and return it
-        :param cap_tree: cap data of the alert
-        :param alert_id: the identifier of the alert
-        :return: the sent time of the alert
-        :raise: valueError if it can not find the sent time
-        """
-        sent_time_node = cap_tree.find('{urn:oasis:names:tc:emergency:cap:1.2}sent')
-        if sent_time_node is None or not sent_time_node.text:
-            raise AlertParameterException(
-                f"{self.feed_source.source_id} - Couldn't find CAP alert message sent time, skipping {alert_id}")
-        return sent_time_node.text
-
-    @staticmethod
-    def find_expire_time(cap_tree, alert_id) -> datetime:
-        """
-        find the expiry time in the CAP data and return it
-        :param cap_tree: cap data of the alert
-        :param alert_id: the identifier of the alert
-        :return: the expiry time of the alert or None we if it could not find one
-        :raise: ValueError if the alert is already expired
-        """
-        expire_time: datetime = None
-
-        for expireTimeNode in cap_tree.findall(
-                '{urn:oasis:names:tc:emergency:cap:1.2}info/{urn:oasis:names:tc:emergency:cap:1.2}expires'):
-            try:
-                datatime = parser.isoparse(expireTimeNode.text)
-            except ValueError:
-                continue
-            if expire_time is None or datatime > expire_time:
-                expire_time = datatime
-            if expire_time is not None and expire_time < datetime.now(timezone.utc):
-                raise AlertExpiredException(f"alert {alert_id} expired on {datatime}")
-        return expire_time
 
     @staticmethod
     def geojson_polygon_to_cap(coordinates) -> str:
@@ -384,17 +336,16 @@ class AbstractCAPParser(ABC):
         except Exception as e:
             raise DatabaseWritingException(str(e))
 
-    def update_feed_source_entry(self, sent_time:str) -> None:
+    def update_feed_source_entry(self, sent_time: datetime) -> None:
         """
         check if the sent_time is newer then the latest stored timestamps and if yes replace the old datetime with the new one
         :param sent_time: the sent time of the alert
         :return: None
         """
-        sent_time_datetime:datetime = parser.isoparse(sent_time)
         latest_entry = CAPFeedSource.objects.filter(id=self.feed_source.id).first()
         if latest_entry is None or latest_entry.latest_published_alert_datetime is None:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
-        elif sent_time_datetime > latest_entry.latest_published_alert_datetime:
+        elif sent_time > latest_entry.latest_published_alert_datetime:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
 
     def addAlert(self, cap_source_url: str = None, cap_data: xml = None) -> None:
@@ -418,27 +369,27 @@ class AbstractCAPParser(ABC):
                                             'urn:oasis:names:tc:emergency:cap:1.2')
                 cap_data_modified = True
 
-            ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')
-
-            cap_tree = ET.fromstring(cap_data)
+            cap_msg = cap.CAPAlertMessage.from_string(cap_data)
+            if cap_msg.is_expired():
+                return
 
             # find identifier
-            alert_id = self.find_identifier(cap_tree)
+            alert_id = cap_msg.identifier()
 
             # find sent time
-            sent_time = self.find_sent_time(cap_tree, alert_id)
+            sent_time = cap_msg.sent_time()
 
             # find expire time
-            expire_time = self.find_expire_time(cap_tree, alert_id)
+            expire_time = cap_msg.expire_time()
 
             # expand geocodes if necessary
-            cap_data_modified |= self.expand_geocode(cap_tree)
+            cap_data_modified |= self.expand_geocode(cap_msg.cap_root)
 
-            self.flatten_xml(cap_tree)
-            cap_data = ET.tostring(cap_tree, encoding='utf-8', xml_declaration=True).decode()
+            self.flatten_xml(cap_msg.cap_root)
+            cap_data = ET.tostring(cap_msg.cap_root, encoding='utf-8', xml_declaration=True).decode()
 
             # determine bounding box and drop elements without
-            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_tree, alert_id)
+            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_msg.cap_root, alert_id)
 
             # validate if the source country of the alert is allowed to send alerts for this area
             # self.validate_if_alert_is_in_country_borders()
@@ -451,12 +402,30 @@ class AbstractCAPParser(ABC):
             # there we build the polygon with min_lon, min_lat, max_lon, max_lat
             bound_box_polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
 
+            # find an english alert info, otherwise take the first one
+            # the resulting data is only used for the diagnostics map display, therefore
+            # this sloppy multi-language handling is good enough here
+            cap_info = None
+            for info in cap_msg.alert_infos():
+                if info.language().startswith("en"):
+                    cap_info = info
+                    break
+            if cap_info is None:
+                cap_info = cap_msg.alert_infos()[0]
+
             # self.alertIds.append(alertId) # @todo why?
             new_alert: Alert = Alert(
                 source_id=self.feed_source.source_id,
                 alert_id=alert_id,
                 bounding_box=bound_box_polygon,
                 issue_time=sent_time,
+                geometry=geometry.multipolygon_from_cap_info(cap_info.cap_info),
+                msg_type=cap_msg.msg_type(),
+                status=cap_msg.status(),
+                event=cap_info.event(),
+                severity=cap_info.severity(),
+                urgency=cap_info.urgency(),
+                category=cap_info.category()
             )
 
             if expire_time is not None:

@@ -44,6 +44,14 @@ class Alert(models.Model):
     issue_time = models.DateTimeField()
     expire_time = models.DateTimeField(null=True)
     source_url = models.CharField(max_length=255, null=True)
+    geometry = models.MultiPolygonField(null=True)
+    msg_type = models.CharField(max_length=255, null=True)
+    status = models.CharField(max_length=255, null=True)
+    event = models.CharField(max_length=255, null=True)
+    severity = models.CharField(max_length=255, null=True)
+    urgency = models.CharField(max_length=255, null=True)
+    category = models.CharField(max_length=255, null=True)
+
 
     class Meta:
         constraints = [models.UniqueConstraint('source_id', 'alert_id', name='source_id-alert_id-unique')]

@@ -28,6 +28,7 @@ autotest:
      - pip install -r foss_public_alert_server/requirements.txt
   script:
      - cd foss_public_alert_server
+     - cd lib && python3 test_*.py && cd ..
      - python3 manage.py test
 
 container:
