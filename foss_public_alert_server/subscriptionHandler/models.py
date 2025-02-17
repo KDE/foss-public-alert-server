@@ -12,10 +12,10 @@ import uuid
 
 class Subscription(models.Model):
     class PushServices(models.IntegerChoices):
-        UNIFIED_PUSH = 0, "UnifiedPush",
-        UNIFIED_PUSH_ENCRYPTED = 1, "UnifiedPush_encrypted"
+        UNIFIED_PUSH = 0, "UNIFIED_PUSH",
+        UNIFIED_PUSH_ENCRYPTED = 1, "UNIFIED_PUSH_ENCRYPTED"
         APN = 2, "APN"
-        FIREBASE = 3, "Firebase"
+        FIREBASE = 3, "FIREBASE"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bounding_box = models.PolygonField()

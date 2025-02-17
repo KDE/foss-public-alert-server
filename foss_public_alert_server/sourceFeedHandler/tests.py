@@ -3,7 +3,7 @@
 
 import logging
 
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from django.http.request import HttpRequest
 from .views import get_feed_status_for_area
 
@@ -12,18 +12,10 @@ logger = logging.getLogger(__name__)
 
 class SourceFeedHandlerTestsCase(TestCase):
     fixtures = ["sourceFeedHandlerDump.json"]
-
-    def setUp(self):
-        self.factory = RequestFactory()
+    client = Client()
 
     def test_get_feed_status_for_area(self):
-        data = {
-            'country_codes': ['de', 'fr']
-        }
-
-        request: HttpRequest = self.factory.post("/sources/area_status", data)
-
-        response = get_feed_status_for_area(request)
+        response =  self.client.get("/sources/area_status?country_codes=de&country_codes=fr")
 
         expected_response = (b'{"results": [{"name": "Deutschland: Landeshochwasserportal", "source_is_official": '
                              b'true, "cap_alert_feed_status": "operating", "authorityCountry": "de", "register_url": '
@@ -43,15 +35,26 @@ class SourceFeedHandlerTestsCase(TestCase):
 
         self.assertEqual(response.content, expected_response)
 
+    def test_get_feed_status_for_area_no_feeds_for_area(self):
+        response = self.client.get("/sources/area_status?country_codes=invalid")
+
+        self.assertContains(response, b'{"results": []}', status_code=200)
+
     def test_get_feed_status_for_area_invalid_parameter(self):
+        response = self.client.get("/sources/area_status?invalid=de")
+
+        self.assertContains(response,"invalid input", status_code=400)
+
+    def test_get_feed_status_for_area_invalid_parameter_empty_list(self):
+        response = self.client.get("/sources/area_status?country_codes=")
+
+        self.assertContains(response, "invalid input", status_code=400)
+
+    def test_get_feed_status_for_area_wrong_http_method(self):
         data = {
             'invalid': "None"
         }
 
-        request: HttpRequest = self.factory.post("/sources/area_status", data)
-        response = get_feed_status_for_area(request)
+        response = self.client.post("/sources/area_status", data)
 
-        logger.debug(response)
-
-        self.assertEqual(response.status_code, 400)
-
+        self.assertContains(response,"wrong HTTP method", status_code=400)

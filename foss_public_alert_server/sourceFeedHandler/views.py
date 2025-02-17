@@ -35,17 +35,16 @@ def get_feed_status_for_area(request:HttpRequest):
     :param request: the http POST request a list of country codes as parameter 'country_code': [list]
     :return: a list of feeds with this country code
     """
-    if request.method != "POST":
+    if request.method != "GET":
         return HttpResponseBadRequest("wrong HTTP method")
-
     try:
-        data:list = request.POST.getlist('country_codes', None)
+        data:list = request.GET.getlist('country_codes', None)
     except ValueError:
-        return HttpResponseBadRequest('invalid parameters')
+        return HttpResponseBadRequest('invalid input')
 
     # check if the request contained valid data
-    if len(data) == 0:
-        return HttpResponseBadRequest('invalid parameters')
+    if len(data) == 0 or data.__contains__(''):
+        return HttpResponseBadRequest('invalid input')
 
     result = {'results': []}
 
