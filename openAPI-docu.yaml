@@ -21,7 +21,7 @@ tags:
   - name: Config
 
 paths:
-  /subscription/subscribe:
+  /subscription/:
     post:
       summary: Subscribe for a new area
       description: Subscribe a client to a UnifiedPush endpoint for an area defined by a bounding box with coordinates.
@@ -45,55 +45,23 @@ paths:
                   token:
                     type: string
                     example: "successfully subscribed"
-                  id:
+                  subscription_id:
                     type: string
                     description: The ID of the subscription to allow the client to unsubscribe. This ID should be stored by the client.
                     example: "exampleSubscriptionID"
         '400':
           description: "invalid subscription id"
-
-  /subscription/update_subscription:
-    post:
-      summary: Update a subscription
-      description: Update a subscription and renew the used tokens
-      tags:
-        - Subscription
-      requestBody:
-        description: Update a subscription
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/update_subscription'
-        required: true
-      responses:
-        '200':
-          description: "Subscription successfully updated"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                    example: "successfully updated"
-        '400':
-          description: "Invalid input"
-        '422':
-          description: "Validation exception"
-
-  /subscription/unsubscribe:
-    post:
+    delete:
       summary: Unsubscribe from an area
       description: Unsubscribe a client from an area.
       tags:
         - Subscription
-      requestBody:
-        description: Remove the client from the area
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/delete_subscription'
-        required: true
+      parameters:
+        - in: query
+          name: subscription_id
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: "Client successfully removed"
@@ -110,22 +78,25 @@ paths:
         '422':
           description: "Validation exception"
 
-  /subscription/heartbeat:
-    post:
-      summary: Client's heartbeat
-      description: The client should send a heartbeat every day. If the client fails to send a heartbeat for a week, the registration will be deleted. If the client sends a heartbeat but its data has already been deleted, the server returns a 410 code, and the client must register again. Clients can also check with this request if the server is still online.
+    put:
+      summary: Update a subscription
+      description: Update a subscription and renew optionally the used tokens
       tags:
         - Subscription
-      requestBody:
-        description: Send heartbeat
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/heartbeat'
-        required: true
+      parameters:
+        - in: query
+          name: subscription_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: token
+          required: false
+          schema:
+            type: string
       responses:
         '200':
-          description: "Subscription still active and renewed"
+          description: "Subscription successfully updated"
           content:
             application/json:
               schema:
@@ -133,11 +104,9 @@ paths:
                 properties:
                   token:
                     type: string
-                    example: "Subscription successfully renewed"
+                    example: "successfully updated"
         '400':
           description: "Invalid input"
-        '404':
-          description: "The server no longer has data for this subscription_id"
         '422':
           description: "Validation exception"
 
@@ -178,7 +147,6 @@ paths:
           schema:
             type: string
           description: "The subscription id"
-          example: "example-subscription-id"
       responses:
         '200':
           description: "All CAP alerts for the subscription"
@@ -243,18 +211,21 @@ paths:
           description: "Validation exception"
 
   /source/area_status:
-    post:
+    get:
       summary: Area status check
       description: Check which feeds the server has for a list of country codes.
       tags:
         - Alert Sources
-      requestBody:
-        description: Request for area status based on country codes.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/area_status'
-        required: true
+      parameters:
+        - in: query
+          name: country_codes
+          description:  "A list of country codes in ISO 3166-1 format"
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+            example: [ "de", "fr" ]
       responses:
         '200':
           description: "List of all feeds for the country codes"
@@ -282,7 +253,6 @@ paths:
                 $ref: '#/components/schemas/server_status_response'
         '400':
           description: "Invalid request"
-
 
 components:
   schemas:
@@ -319,34 +289,6 @@ components:
           description: "The maximum longitude"
           example: 180.0
 
-    update_subscription:
-      description: Unsubscribe from a location
-      properties:
-        subscription_id:
-          type: string
-          description: "The ID of the subscription to be removed"
-        push_service:
-          type: string
-          description: "The push notification service"
-          example: ["UnifiedPush", "UnifiedPush_encrypted", "APN", "Firebase"]
-        token:
-          type: string
-          description: "The push notification token"
-
-    delete_subscription:
-      description: Unsubscribe from a location
-      properties:
-        subscription_id:
-          type: string
-          description: "The ID of the subscription to be removed"
-
-    heartbeat:
-      description: "A heartbeat to indicate the client is still online"
-      properties:
-        subscription_id:
-          type: string
-          description: "The subscription ID to check"
-          example: "subscription_id"
 
     alert_request:
       description: "Request a specific alert by ID"
@@ -439,14 +381,6 @@ components:
                   type: string
                   example: "45,-179.99 45,179.99 89.99,179.99 89.99,-179.99 45,-179.99"
 
-    area_status:
-      description: "A list of country codes in ISO 3166-1 format"
-      properties:
-        country_code:
-          type: array
-          items:
-            type: string
-          example: ["de", "fr"]
 
     area_status_response:
       type: object
@@ -474,14 +408,6 @@ components:
               latest_published_alert_datetime:
                 type: string
                 example: "2024-12-10T05:00:44Z"
-
-    all_alerts_request:
-      description: "Request all alerts for a specific subscription"
-      properties:
-        subscription_id:
-          type: string
-          description: "The ID of the subscription"
-          example: "example-subscription-id"
 
     all_alert_response:
       description: "All alerts for the given subscription"

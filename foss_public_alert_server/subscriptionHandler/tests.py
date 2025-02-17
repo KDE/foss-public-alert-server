@@ -30,7 +30,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             "push_service": "UNIFIED_PUSH",
             'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         self.assertContains(response, 'successfully subscribed', status_code=200)
 
     def test_successful_unsubscribe(self):
@@ -42,23 +42,15 @@ class SubscriptionHandlerTestsCase(TestCase):
             "push_service": "UNIFIED_PUSH",
             'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         data = json.loads(response.content)
-        subscription_id = data["id"]
+        subscription_id = data["subscription_id"]
 
-        data = {
-            "subscription_id": subscription_id
-        }
-
-        response = self.client.post('/subscription/unsubscribe', json.dumps(data), content_type="application/json")
+        response = self.client.delete(f'/subscription/?subscription_id={subscription_id}', content_type="application/json")
         self.assertContains(response, 'successfully unsubscribed', status_code=200)
 
     def test_unsuccessful_unsubscribe_invalid_subscription_id(self):
-        data = {
-            "subscription_id": "invalid_id"
-        }
-
-        response = self.client.post('/subscription/unsubscribe', json.dumps(data), content_type="application/json")
+        response = self.client.delete('/subscription/?subscription_id=invalid_id', content_type="application/json")
         self.assertContains(response, 'invalid subscription id', status_code=400)
 
     def test_push_service_not_supported(self):
@@ -70,7 +62,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             "push_service": "EXAMPLE_PUSH",
             'token': 'https://example.com'
         }
-        response = self.client.post('/subscription/subscribe', json.dumps(data), content_type="application/json")
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         self.assertContains(response, b'push service is not available on this instance.', status_code=400)
 
     def test_invalid_parameters(self):
@@ -82,7 +74,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             "push_service": "UNIFIED_PUSH",
             'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
         }
-        response = self.client.post('/subscription/subscribe', data, content_type="application/json")
+        response = self.client.post('/subscription/', data, content_type="application/json")
         self.assertContains(response, b'invalid or missing parameters', status_code=400)
 
     def test_send_notification(self):
@@ -92,38 +84,25 @@ class SubscriptionHandlerTestsCase(TestCase):
                 requests.post(subscription.token, json.dumps(alert.alert_id)) #@todo fix
         # @todo check performance
 
+    def test_update_subscription_sent_heartbeat(self):
+        # create subscription
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+        }
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
+        data = json.loads(response.content)
+        subscription_id = data["subscription_id"]
 
-def make_http_request(url, data):
-    headers = {'Content-Type': 'application/json'}
-    return requests.post(url, data=json.dumps(data), headers=headers)
+        # update subscription
+        response = self.client.put(f'/subscription/?subscription_id={subscription_id}')
+        self.assertContains(response, 'Subscription successfully updated', status_code=200)
 
-
-def test_successful_subscription():
-    url = 'http://127.0.0.1:8000/subscription/subscribe'
-    data = {
-        'min_lat': 52.295,
-        'max_lat': 52.789,
-        'min_lon': 8.591,
-        'max_lon': 12.063,
-        "push_service": "UNIFIED_PUSH",
-        'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
-    }
-    response = make_http_request(url, data)
-    return response.content
-
-
-# test for missing parameters
-def test_subscription_missing_parameter():
-    url = 'http://127.0.0.1:8000/subscription/subscribe'
-    data = {
-        'min_lat': 52.295,
-        'max_lat': 52.789,
-        #'min_lon': 8.591, missing
-        'max_lon': 12.063,
-        "push_service": "UNIFIED_PUSH",
-        'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
-    }
-    response = make_http_request(url, data)
-    return response.content
-
-# test_successful_subscription()
+    def test_update_subscription_invalid_subscription_id(self):
+        response = self.client.put(f'/subscription/?subscription_id=invalid',
+                                   content_type="application/json")
+        self.assertContains(response, 'Subscription has expired. You must register again!', status_code=400)
