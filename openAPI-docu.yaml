@@ -514,12 +514,20 @@ components:
           description: "overload indicator for the server 1: everything fine - 10: no more subscriptions possible"
           example: 1
         supported_push_services:
-          type: map
-          items:
-            type: {string, bool}
-          example: {
-              "UNIFIED_PUSH": true,
-              "UNIFIED_PUSH_ENCRYPTED": false,
-              "APN": false,
-              "FIREBASE": false
-            },
+          type: object
+          additionalProperties:
+            type: boolean
+          properties:
+            UNIFIED_PUSH:
+              type: boolean
+            UNIFIED_PUSH_ENCRYPTED:
+              type: boolean
+            APN:
+              type: boolean
+            FIREBASE:
+              type: boolean
+          example:
+              UNIFIED_PUSH: true
+              UNIFIED_PUSH_ENCRYPTED: false
+              APN: false
+              FIREBASE: false
