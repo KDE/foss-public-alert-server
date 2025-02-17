@@ -160,7 +160,6 @@ def unsubscribe(request):
     :param request:
     :return:
     """
-    print(request)
     if request.method != 'DELETE':
         return HttpResponseBadRequest('wrong HTTP method')
     try:
@@ -178,13 +177,12 @@ def update_subscription(request):
     :param request: the HTTP request
     :return: HTTP response
     """
-    print(request)
     if request.method != 'PUT':
         return HttpResponseBadRequest('wrong HTTP method')
 
     # check parameter of request
     subscription_id = request.GET.get('subscription_id')
-    print(subscription_id)
+
     if subscription_id is None:
         return HttpResponseBadRequest('invalid or missing parameters')
 
