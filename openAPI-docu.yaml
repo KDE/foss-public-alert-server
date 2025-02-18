@@ -107,6 +107,8 @@ paths:
                     example: "successfully updated"
         '400':
           description: "Invalid input"
+        '404':
+          description: "Subscription has expired. You must register again!"
         '422':
           description: "Validation exception"
 

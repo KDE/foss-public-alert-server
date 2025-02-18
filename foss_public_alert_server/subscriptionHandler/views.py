@@ -7,8 +7,8 @@ import datetime
 import json
 from json import loads
 
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, JsonResponse
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseNotFound
 from django.contrib.gis.geos import Polygon
 
 from .models import Subscription
@@ -35,28 +35,6 @@ def isValidBbox(x1, y1, x2, y2):
             -90.0 <= y2 <= 90.0 and
             x1 != x2 and
             y1 != y2)
-
-def is_active_subscription_update_heartbeat(subscription_id) -> bool:
-    """
-    check if the subscription is still active. If yes, update the last heartbeat for this subscription
-    :param subscription_id: the subscription id to check
-    :return: True if the subscription is active, False if the subscription is already deleted
-    """
-    try:
-        Subscription.objects.get(id=subscription_id)
-        # update last heartbeat
-        Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now())
-        return True
-    except ObjectDoesNotExist:
-        return False
-    except Exception as e:
-        logger.error(f"Can not update subscription: {e}")
-        return False
-
-
-def index(request):
-    return HttpResponse("Hello World")
-
 
 def subscribe(request):
     """
@@ -187,8 +165,12 @@ def update_subscription(request):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     # check if subscription is still active
-    if not is_active_subscription_update_heartbeat(subscription_id):
-        return HttpResponseBadRequest("Subscription has expired. You must register again!")
+    try:
+        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now()) == 0:
+            return HttpResponseNotFound("Subscription has expired. You must register again!")
+    except Exception as e:
+        logger.error(f"Can not update subscription: {e}")
+        return HttpResponseBadRequest("invalid input")
 
     # if request contains token, handle update request
     token = request.GET.get("token")
