@@ -12,7 +12,7 @@ import uuid
 
 class Subscription(models.Model):
     class PushServices(models.IntegerChoices):
-        UNIFIED_PUSH = 0, "UNIFIED_PUSH",
+        UNIFIED_PUSH = 0, "UNIFIED_PUSH"
         UNIFIED_PUSH_ENCRYPTED = 1, "UNIFIED_PUSH_ENCRYPTED"
         APN = 2, "APN"
         FIREBASE = 3, "FIREBASE"
