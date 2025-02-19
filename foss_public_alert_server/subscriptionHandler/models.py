@@ -20,5 +20,5 @@ class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bounding_box = models.PolygonField()
     token = models.CharField(max_length=255) # @todo 255 enough?
-    push_service = models.IntegerField(choices=PushServices.choices, default=None)
+    push_service = models.IntegerField(choices=PushServices.choices, default=PushServices.UNIFIED_PUSH)
     last_heartbeat = models.DateTimeField(default=datetime.now)
