@@ -55,6 +55,7 @@ app.conf.beat_schedule = {
     'remove_inactive_subscription_every_day_at_midnight': {
         'task': 'task.remove_old_subscriptions',
         'schedule': crontab(minute="0", hour="0"),
+        'enabled': False
     },
     'update_feed_sources_every_day_at_midnight': {
         'task': 'task.reload_feed_sources_and_update_database',
