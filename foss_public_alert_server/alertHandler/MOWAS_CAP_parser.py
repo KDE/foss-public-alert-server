@@ -10,7 +10,7 @@ import logging
 
 from django.http import HttpResponseNotModified, HttpResponseBase
 
-from .Exceptions import NothingChangedException
+from .exceptions import NothingChangedException
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

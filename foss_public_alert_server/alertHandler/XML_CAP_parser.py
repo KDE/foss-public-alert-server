@@ -14,7 +14,7 @@ from dateutil import parser
 from django.http import HttpResponseNotModified
 from django.conf import settings
 
-from .Exceptions import NothingChangedException
+from .exceptions import NothingChangedException
 from .abstract_CAP_parser import AbstractCAPParser
 from sourceFeedHandler.models import CAPFeedSource
 
