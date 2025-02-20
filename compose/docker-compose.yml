@@ -49,6 +49,14 @@ services:
       - app-static:/app/static
       - feeder-cache:/app/cache
 
+  pgtileserv:
+    image: docker.io/pramsey/pg_tileserv:latest
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db/foss-public-alert-server
+      - TS_BASEPATH=/tileserv/
+    depends_on:
+      - db
+
   httpd:
     image: httpd:2.4-bullseye
     depends_on:

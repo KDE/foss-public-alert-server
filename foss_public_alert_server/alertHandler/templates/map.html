@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<html lang="en">
+  <head>
+    <title>CAP Alert Map View</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% load static %}
+    <script src="{% static 'maplibre/maplibre-gl.js' %}"></script>
+    <link href="{% static 'maplibre/maplibre-gl.css' %}" rel="stylesheet" />
+    <style>
+    html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
+    #map { width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+   <div id="map"></div>
+   <script>
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: {
+          bg: {
+            type: 'raster',
+            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            minzoom: 0,
+            maxzoom: 19
+          },
+          alerts: {
+            type: 'vector',
+            tiles: [ '{{ request.scheme }}://{{ request.get_host }}/map/alerts/{z}/{x}/{y}.pbf' ],
+            minzoom: 0,
+            maxzoom: 19,
+          }
+        },
+        layers: [
+          {
+            id: 'background',
+            type: 'raster',
+            source: 'bg'
+          },
+          {
+            id: 'alert-outlines',
+            type: 'line',
+            paint: {
+                'line-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'line-width': 2,
+            },
+            'source-layer': 'public.alertHandler_alert',
+            source: 'alerts'
+          },
+          {
+            id: 'alert-areas',
+            type: 'fill',
+            paint: {
+                'fill-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'fill-opacity': 0.2,
+            },
+            'source-layer': 'public.alertHandler_alert',
+            source: 'alerts'
+          }
+        ]
+      },
+      center: [0, 0], // starting position [lon, lat]
+      zoom: 1 // starting zoom
+    });
+
+     map.on('load', () => {
+        map.on('click', 'alert-areas', (e) => {
+            let tooltip = '';
+            if (e.features[0].properties.event)
+                tooltip += '<b>' + e.features[0].properties.event + '</b><br/>';
+            if (e.features[0].properties.category)
+                tooltip += 'Category: ' + e.features[0].properties.category + '<br/>';
+            if (e.features[0].properties.severity)
+                tooltip += 'Severity: ' + e.features[0].properties.severity + '<br/>';
+            if (e.features[0].properties.urgency)
+                tooltip += 'Urgency: ' + e.features[0].properties.urgency + '<br/>';
+            if (e.features[0].properties.status)
+                tooltip += 'Status: ' + e.features[0].properties.status + '<br/>';
+            if (e.features[0].properties.msg_type)
+                tooltip += 'Message: ' + e.features[0].properties.msg_type + '<br/>';
+            tooltip += 'Sent: ' + e.features[0].properties.issue_time + '<br/>';
+            tooltip += 'Identifier: ' + e.features[0].properties.alert_id + '<br/>';
+            tooltip += '<a href="/alert/' + e.features[0].properties.id + '">CAP data</a><br/>';
+            if (e.features[0].properties.source_url) {
+                tooltip += '<a href="' + e.features[0].properties.source_url + '">Source CAP</a>';
+            }
+
+            new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(tooltip)
+                .setMaxWidth("400px")
+                .addTo(map);
+        });
+
+        map.on('mouseenter', 'alert-areas', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'alert-areas', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    });
+   </script>
+  </body>
+</html>

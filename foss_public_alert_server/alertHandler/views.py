@@ -5,6 +5,7 @@ import logging
 
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
+from django.http.request import HttpRequest
 from django.shortcuts import render
 
 from json import loads
@@ -106,3 +107,9 @@ def isValidBbox(x1, y1, x2, y2):
             -90.0 <= y2 <= 90.0 and
             x1 != x2 and
             y1 != y2)
+
+
+def alert_map(request: HttpRequest):
+    if request.method != 'GET':
+        return HttpResponseBadRequest('wrong HTTP method')
+    return render(request, 'map.html')
