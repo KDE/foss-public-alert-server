@@ -91,9 +91,9 @@ WSGI_APPLICATION = 'foss_public_alert_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('POSTGRES_DATABASE', 'postgisuser'), #kpublicalerts
-        'USER': os.environ.get('POSTGRES_USER', 'postgisuser'), # postgres
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '749475hgkdhg94zojh04ztnf'), #password
+        'NAME': os.environ.get('POSTGRES_DATABASE', 'postgisuser'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgisuser'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '749475hgkdhg94zojh04ztnf'),
         'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
         'POST': os.environ.get('POSTGRES_PORT', '5432'),
     },
@@ -183,7 +183,7 @@ DEFAULT_SETTINGS = [
     # is a metric for clients to see if this client is near its capacity limit
     # in the future this value will be automatically calculated.
     ["CONGESTION_STATE", "int",  1],
-    ["VERSION", "char", "1.0.0"]
+    ["VERSION", "char", "0.1.0"]
 ]
 
 # Logging config

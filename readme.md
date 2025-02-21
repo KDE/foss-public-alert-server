@@ -84,3 +84,21 @@ celery -A foss_public_alert_server worker --loglevel=INFO
 celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
 check out the official [manual](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html)
+
+## Docker setup
+This repo contains a docker compose file that you can quickly start by:
+```bash
+# clone or download the repository
+git clone https://invent.kde.org/webapps/foss-public-alert-server.git
+# change the directory
+cd foss-public-alert-server/compose 
+# make sure the docker demon
+# start the docker container in the background
+docker compose up -d
+# wait until the container is up, then create a django admin account
+docker exec -it foss-public-alert-server-aggregator-1 python manage.py createsuperuser
+# after that you should be able to visit the admin page
+# via http://localhost:8000/admin
+```
+**Notice**
+The default config is for _development only_, and not safely configured for deployments!
