@@ -412,12 +412,27 @@ class AbstractCAPParser(ABC):
             # there we build the polygon with min_lon, min_lat, max_lon, max_lat
             bound_box_polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
 
-            # self.alertIds.append(alertId) # @todo why?
+            # find an English alert info, otherwise take the first one
+            # the resulting data is only used for the diagnostics map display, therefore
+            # this sloppy multi-language handling is good enough here
+            cap_info = None
+            for info in cap_msg.alert_infos():
+                if info.language().startswith("en"):
+                    cap_info = info
+                    break
+            if cap_info is None:
+                cap_info = cap_msg.alert_infos()[0]
+
             new_alert: Alert = Alert(
                 source_id=self.feed_source.source_id,
                 alert_id=alert_id,
                 bounding_box=bound_box_polygon,
                 issue_time=sent_time,
+                msg_type=cap_msg.msg_type(),
+                status=cap_msg.status(),
+                event=cap_info.event()[:255],
+                severity=cap_info.severity(),
+                urgency=cap_info.urgency()
             )
 
             if expire_time is not None:

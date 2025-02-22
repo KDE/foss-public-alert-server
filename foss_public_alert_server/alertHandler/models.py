@@ -34,6 +34,7 @@ class Alert(models.Model):
     - issue_time: the time of creation of the alert
     - expire_time: time at which the alert expires
     - source_url: the url of the original CAP data
+    - msg_type, status, event, severity, urgency: the corresponding CAP fields, for use in the alert map
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     source_id = models.CharField(max_length=255)
@@ -44,6 +45,11 @@ class Alert(models.Model):
     issue_time = models.DateTimeField()
     expire_time = models.DateTimeField(null=True)
     source_url = models.CharField(max_length=255, null=True)
+    msg_type = models.CharField(max_length=255, null=True)
+    status = models.CharField(max_length=255, null=True)
+    event = models.CharField(max_length=255, null=True)
+    severity = models.CharField(max_length=255, null=True)
+    urgency = models.CharField(max_length=255, null=True)
 
     class Meta:
         constraints = [models.UniqueConstraint('source_id', 'alert_id', name='source_id-alert_id-unique')]
