@@ -13,7 +13,6 @@ import warnings
 import logging
 import socket
 
-from django.contrib.gis.geos import Polygon
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -26,7 +25,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
-from lib import cap, geomath
+from lib import cap, cap_geometry
 
 # logging config
 logging.basicConfig(level=logging.INFO)
@@ -201,112 +200,6 @@ class AbstractCAPParser(ABC):
 
         return expanded
 
-    @staticmethod
-    def bbox_for_polygon(poly, min_lat, min_lon, max_lat, max_lon) -> tuple[int, int, int, int]:
-        """
-        creates a bounding box from the given polygon.
-        Uses the min_lat, min_lon as lower bound and max_lat, max_lon as upper bound. Only updates the
-        values if the polygon exceeds these values
-        :param poly: the polygon
-        :param min_lat: the current minimal latitude
-        :param min_lon: the current minimal longitude
-        :param max_lat: the current maximal latitude
-        :param max_lon: the current maximal longitude
-        :return: new values of min_lat, min_lon, max_lat, max_lon if the polygon had lower/higher
-        values or the previous values if not
-        """
-        if not poly:
-            return min_lat, min_lon, max_lat, max_lon
-        for point in cap.CAPPolygon.parse_polygon(poly):
-            lat = point[1]
-            lon = point[0]
-            min_lat = min(min_lat, lat)
-            max_lat = max(max_lat, lat)
-            min_lon = min(min_lon, lon)
-            max_lon = max(max_lon, lon)
-        return min_lat, min_lon, max_lat, max_lon
-
-    @staticmethod
-    def bbox_for_circle(circle, min_lat, min_lon, max_lat, max_lon):
-        """
-        creates a bounding box from the given circle.
-        Uses the min_lat, min_lon as lower bound and max_lat, max_lon as upper bound. Only updates the
-        values if the circle exceeds these values
-        :param poly: the polygon
-        :param min_lat: the current minimal latitude
-        :param min_lon: the current minimal longitude
-        :param max_lat: the current maximal latitude
-        :param max_lon: the current maximal longitude
-        :return: new values of min_lat, min_lon, max_lat, max_lon if the polygon had lower/higher
-        values or the previous values if not
-        """
-        (center, radius) = circle.split(' ')
-        (lat, lon) = center.split(',')
-        try:
-            lat = float(lat)
-            lon = float(lon)
-            radius = float(radius) * 1000.0 # CAP specifies radius in kilometer, we need meter below
-        except ValueError:
-            return min_lat, min_lon, max_lat, max_lon
-
-        dlon = radius / geomath.distance(lat, 0.0, lat, 1.0)
-        dlat = radius / geomath.distance(0.0, lon, 1.0, lon)
-        min_lat = min(min_lat, lat - dlat)
-        max_lat = max(max_lat, lat + dlat)
-        min_lon = min(min_lon, lon - dlon)
-        max_lon = max(max_lon, lon + dlon)
-        return min_lat, min_lon, max_lat, max_lon
-
-    @staticmethod
-    def is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat) -> bool:
-        """
-        validate if the given bounding box is valid and does not except valid values.
-        :param min_lon: the minimal longitude of the bounding box (-180 - +180)
-        :param min_lat: the minimal latitude of the bounding box (-90 - +90)
-        :param max_lon: the maximal longitude of the bounding box (-180 - +180)
-        :param max_lat: the maximal latitude of the bounding box (-90 - +90)
-        :return: true if the bounding box if valid, false if not
-        """
-        polygon:Polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-        # I'm not sure what exactly this check tests, maybe it's not necessary
-        is_valid =  polygon.valid
-        is_in_lat_lon_range = (-180 <= min_lon <= 180 and
-                               -180 <= max_lon <= 180 and
-                               -90 <= min_lat <= 90 and
-                               -90 <= max_lat <= 90 and
-                                min_lon != min_lat and
-                               max_lon != max_lat)
-
-        if not is_valid or not is_in_lat_lon_range:
-            logger.debug(f"BBox is invalid because of: {polygon.valid_reason}")
-        return is_valid and is_in_lat_lon_range
-
-    def determine_bounding_box(self, cap_tree: xml, alert_id) -> (int, int, int, int):
-        min_lat = 90
-        min_lon = 180
-        max_lat = -90
-        max_lon = -180
-
-        try:
-            for polyNode in cap_tree.findall(
-                    '{urn:oasis:names:tc:emergency:cap:1.2}info/{urn:oasis:names:tc:emergency:cap:1.2}area/{urn:oasis:names:tc:emergency:cap:1.2}polygon'):
-                (min_lat, min_lon, max_lat, max_lon) = self.bbox_for_polygon(polyNode.text, min_lat, min_lon, max_lat,
-                                                                             max_lon)
-            for circleNode in cap_tree.findall(
-                    '{urn:oasis:names:tc:emergency:cap:1.2}info/{urn:oasis:names:tc:emergency:cap:1.2}area/{urn:oasis:names:tc:emergency:cap:1.2}circle'):
-                (min_lat, min_lon, max_lat, max_lon) = self.bbox_for_circle(circleNode.text, min_lat, min_lon,
-                                                                            max_lat, max_lon)
-
-            if not self.is_valid_bounding_box(min_lon=min_lon, min_lat=min_lat, max_lat=max_lat, max_lon=max_lon):
-                # @todo for dwd we do nto get an valid bounding box
-                raise AlertParameterException(f"{self.feed_source.source_id} - alert {alert_id} has no valid bounding box: {min_lat}, {min_lon}, "
-                                              f"{max_lat}, {max_lon}")
-
-
-        except Exception as e:
-            raise e
-        return min_lat, min_lon, max_lat, max_lon
-
     def validate_if_alert_is_in_country_borders(self) -> bool:
         """
         check if the B-box is inside the allowed area of the country
@@ -389,18 +282,14 @@ class AbstractCAPParser(ABC):
 
             cap_data = cap_msg.to_string()
 
-            # determine bounding box and drop elements without
-            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_msg.xml, alert_id)
+            polygon = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+            if polygon.empty or not polygon.valid:
+                raise NoGeographicDataAvailableException(f"No geographic data available for {alert_id}")
 
             # validate if the source country of the alert is allowed to send alerts for this area
             # self.validate_if_alert_is_in_country_borders()
 
-            if min_lat > max_lat or min_lon > max_lon:
-                raise NoGeographicDataAvailableException(f"No geographic data available for {alert_id}")
-
-            # to build a valid polygon. we have to fulfill the right-hand-rule
-            # there we build the polygon with min_lon, min_lat, max_lon, max_lat
-            bound_box_polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
+            bound_box_polygon = polygon.envelope
 
             # find an English alert info, otherwise take the first one
             # the resulting data is only used for the diagnostics map display, therefore

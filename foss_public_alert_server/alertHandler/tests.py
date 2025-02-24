@@ -157,45 +157,6 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         self.assertEqual(expand_geocode, True)
         self.assertEqual(added_polygon.text, expected_polygon)
 
-    def test_is_valid_bounding_box_is_valid(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-
-        min_lon, min_lat, max_lon, max_lat = -180, -90, 180, 90  # test extreme values
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertTrue(result, "failed to validate  -180, -90, 180, 90")
-
-        # min_lon, min_lat, max_lon, max_lat = 0, 0, 1, 1  # test center values
-        # result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        # self.assertTrue(result, "failed to validate 0, 0, 1, 1 ")
-
-        min_lon, min_lat, max_lon, max_lat = 179, 89, 180, 90  # test extreme values
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertTrue(result, "failed to validate 179, 89, 180, 90")
-
-        min_lon, min_lat, max_lon, max_lat = 90, 5.61001, 102.092216, 9.378039  # test real world data
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertTrue(result, "failed to validate 179, 89, 180, 90 ")
-
-    def test_is_valid_bounding_box_is_invalid(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-        min_lon, min_lat, max_lon, max_lat = -190, -90, 180, 90  # min_lon invalid
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertFalse(result, "wrong result with invalid bbox -190, -90, 180, 90")
-
-        min_lon, min_lat, max_lon, max_lat = -170, -91, 180, 90  # min_lat is invalid
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertFalse(result, "wrong result with invalid bbox -170, -91, 180, 90")
-
-        min_lon, min_lat, max_lon, max_lat = -170, -80, 181, 90  # max_lon is invalid
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertFalse(result, "wrong result with invalid bbox -170, -80, 181, 90")
-
-        min_lon, min_lat, max_lon, max_lat = -170, -80, 180, 91  # max_lon is invalid
-        result = abstract_cap_parser.is_valid_bounding_box(min_lon, min_lat, max_lon, max_lat)
-        self.assertFalse(result, "wrong result with invalid bbox -170, -80, 180, 91")
-
     def test_update_feed_source_entry(self):
         cap_data = self.create_test_cap_data('test_cap_data_1.xml')
         abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
@@ -234,7 +195,11 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         self.assertEqual(alert.alert_id, "urn:oid:1234.5678")
         self.assertEqual(alert.expire_time, datetime.fromisoformat("2199-04-22T10:00:00-03:00"))
         self.assertEqual(alert.issue_time, datetime.fromisoformat("2024-04-21T11:51:29-03:00"))
-        self.assertEqual(alert.bounding_box.coords, (((6.328, 49.182), (6.328, 52.843), (13.931, 52.843), (13.931, 49.182), (6.328, 49.182)),))
+        bbox = alert.bounding_box.envelope.extent
+        self.assertEqual(bbox[0], 6.328)
+        self.assertEqual(bbox[1], 49.182)
+        self.assertEqual(bbox[2], 13.931)
+        self.assertEqual(bbox[3], 52.843)
         self.assertEqual(alert.source_url, "https://OnlyForTesting.de")
         self.assertEqual(alert.cap_data_modified, False)
 
@@ -244,24 +209,3 @@ class AlertHandlerCAPParserTestsCase(TestCase):
 
         abstract_cap_parser.addAlert()
         self.assertEqual(Alert.objects.count(), 0)
-
-    def test_circle_area(self):
-        """
-        test circle bounding box computation
-        """
-        cap_data = self.create_test_cap_data('circle-area.xml')
-        abstract_cap_parser = self.create_test_class_instance()
-        ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')
-
-        try:
-            cap_tree = ET.fromstring(cap_data)
-        except ET.ParseError as e:
-            logger.debug(f"failed to parse CAP alert message XML: {e}")
-            return
-
-        (min_lat, min_lon, max_lat, max_lon) = abstract_cap_parser.determine_bounding_box(cap_tree, 'dummy')
-        self.assertTrue(AbstractCAPParser.is_valid_bounding_box(min_lon=min_lon, min_lat=min_lat, max_lat=max_lat, max_lon=max_lon))
-        self.assertAlmostEqual(min_lon, 120.180, delta=0.001)
-        self.assertAlmostEqual(min_lat, 23.821, delta=0.001)
-        self.assertAlmostEqual(max_lon, 120.190, delta=0.001)
-        self.assertAlmostEqual(max_lat, 23.830, delta=0.001)
