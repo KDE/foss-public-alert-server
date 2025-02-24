@@ -25,7 +25,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
-from lib import cap, geomath
+from lib import cap, cap_geometry, geomath
 
 # logging config
 logging.basicConfig(level=logging.INFO)
@@ -386,18 +386,14 @@ class AbstractCAPParser(ABC):
 
             cap_data = cap_msg.to_string()
 
-            # determine bounding box and drop elements without
-            (min_lat, min_lon, max_lat, max_lon) = self.determine_bounding_box(cap_msg.xml, alert_id)
+            polygon = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+            if polygon.empty or not polygon.valid:
+                raise NoGeographicDataAvailableException(f"No geographic data available for {alert_id}")
 
             # validate if the source country of the alert is allowed to send alerts for this area
             # self.validate_if_alert_is_in_country_borders()
 
-            if min_lat > max_lat or min_lon > max_lon:
-                raise NoGeographicDataAvailableException(f"No geographic data available for {alert_id}")
-
-            # to build a valid polygon. we have to fulfill the right-hand-rule
-            # there we build the polygon with min_lon, min_lat, max_lon, max_lat
-            bound_box_polygon = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
+            bound_box_polygon = polygon.envelope
 
             # find an English alert info, otherwise take the first one
             # the resulting data is only used for the diagnostics map display, therefore
