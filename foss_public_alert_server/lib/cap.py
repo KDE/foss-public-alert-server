@@ -61,6 +61,24 @@ class CAPAlertInfo:
     def urgency(self) -> str:
         return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}urgency').text
 
+    def polygons(self):
+        """
+        Returns a list of CAP polygon strings of the affected area of this alert.
+        """
+        polys = []
+        for poly_node in self.xml.findall('{urn:oasis:names:tc:emergency:cap:1.2}area/{urn:oasis:names:tc:emergency:cap:1.2}polygon'):
+            polys.append(poly_node.text)
+        return polys
+
+    def circles(self):
+        """
+        Retursn a list of CAP circle strings of the affected area of this alert.
+        """
+        circles = []
+        for circle_node in self.xml.findall('{urn:oasis:names:tc:emergency:cap:1.2}area/{urn:oasis:names:tc:emergency:cap:1.2}circle'):
+            circles.append(circle_node.text)
+        return circles
+
 
 class CAPAlertMessage:
     """
@@ -118,6 +136,26 @@ class CAPAlertMessage:
 
     def status(self):
         return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}status').text
+
+    def polygons(self):
+        """
+        Returns a list of CAP polygons of the affected areas of the alert infos of this CAP message.
+        Duplicates are removed.
+        """
+        polys = set()
+        for cap_info in self.alert_infos():
+            polys |= set(cap_info.polygons())
+        return list(polys)
+
+    def circles(self):
+        """
+        Returns a list of CAP circles of the affected areas of the alert infos of this CAP message.
+        Duplicates are removed.
+        """
+        circles = set()
+        for cap_info in self.alert_infos():
+            circles |= set(cap_info.circles())
+        return list(circles)
 
     @staticmethod
     def from_string(cap_data: str):
