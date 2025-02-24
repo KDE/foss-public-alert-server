@@ -6,12 +6,10 @@ import os
 import xml
 import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
-from dateutil import parser
 from datetime import datetime, timezone
 import requests_cache
 import json
 import warnings
-import math
 import logging
 
 from django.contrib.gis.geos import Polygon
@@ -27,7 +25,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
-from lib import cap
+from lib import cap, geomath
 
 # logging config
 logging.basicConfig(level=logging.INFO)
@@ -226,17 +224,6 @@ class AbstractCAPParser(ABC):
         return min_lat, min_lon, max_lat, max_lon
 
     @staticmethod
-    def distance(lat1, lon1, lat2, lon2):
-        """
-        Compoutes the distance in meters between two geographic coordinates.
-        """
-        earth_radius = 6371000.0; # in meters
-        d_lat = math.radians(lat1 - lat2)
-        d_lon = math.radians(lon1 - lon2)
-        a = math.pow(math.sin(d_lat / 2.0), 2) + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.pow(math.sin(d_lon / 2.0), 2)
-        return 2.0 * earth_radius * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))
-
-    @staticmethod
     def bbox_for_circle(circle, min_lat, min_lon, max_lat, max_lon):
         """
         creates a bounding box from the given circle.
@@ -259,8 +246,8 @@ class AbstractCAPParser(ABC):
         except ValueError:
             return min_lat, min_lon, max_lat, max_lon
 
-        dlon = radius / AbstractCAPParser.distance(lat, 0.0, lat, 1.0)
-        dlat = radius / AbstractCAPParser.distance(0.0, lon, 1.0, lon)
+        dlon = radius / geomath.distance(lat, 0.0, lat, 1.0)
+        dlat = radius / geomath.distance(0.0, lon, 1.0, lon)
         min_lat = min(min_lat, lat - dlat)
         max_lat = max(max_lat, lat + dlat)
         min_lon = min(min_lon, lon - dlon)
