@@ -48,7 +48,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             id: 'alert-outlines',
             type: 'line',
             paint: {
-                'line-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'line-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'status'], ['Test', 'Exercise'], '#00c0c0', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]]],
                 'line-width': 2,
             },
             'source-layer': 'public.alertHandler_alert',
@@ -58,7 +58,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             id: 'alert-areas',
             type: 'fill',
             paint: {
-                'fill-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]],
+                'fill-color': ['match', ['get', 'msg_type'], ['Cancel'], '#808080', ['match', ['get', 'status'], ['Test', 'Exercise'], '#00c0c0', ['match', ['get', 'urgency'], ['Past'], '#808080', ['match', ['get', 'severity'], ['Extreme'], '#ff0000', ['Severe'], "#ff8000", ['Moderate'], '#f0c000', ['Minor'], '#00c000', '#0000ff']]]],
                 'fill-opacity': 0.2,
             },
             'source-layer': 'public.alertHandler_alert',
