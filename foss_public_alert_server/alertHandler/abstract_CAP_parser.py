@@ -208,15 +208,9 @@ class AbstractCAPParser(ABC):
         """
         if not poly:
             return min_lat, min_lon, max_lat, max_lon
-        for point in poly.split(' '):
-            coordinates = point.split(',')
-            if len(coordinates) != 2:
-                continue
-            try:
-                lat = float(coordinates[0])
-                lon = float(coordinates[1])
-            except ValueError:
-                continue
+        for point in cap.CAPPolygon.parse_polygon(poly):
+            lat = point[1]
+            lon = point[0]
             min_lat = min(min_lat, lat)
             max_lat = max(max_lat, lat)
             min_lon = min(min_lon, lon)

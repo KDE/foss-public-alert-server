@@ -12,15 +12,8 @@ from lib import cap, geomath
 
 def cap_polygon_to_geojson(cap_polygon):
     poly = []
-    for cap_coord in cap_polygon.split(' '):
-        cap_point = cap_coord.split(',')
-        if len(cap_point) != 2:
-            continue
-        try:
-            coord = [float(cap_point[1]), float(cap_point[0])]
-        except Exception:
-            continue
-        poly.append(coord)
+    for cap_coord in cap.CAPPolygon.parse_polygon(cap_polygon):
+        poly.append([cap_coord[0], cap_coord[1]])
     return [poly]
 
 
