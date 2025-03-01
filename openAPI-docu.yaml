@@ -112,6 +112,34 @@ paths:
         '422':
           description: "Validation exception"
 
+    get:
+      summary: fetch push configuration
+      description: fetch config for push notifications e.g. the vapid key for webpush
+      tags:
+        - Subscription
+      parameters:
+        - in: query
+          name: type
+          required: true
+          schema:
+            type: string
+          example: "webpush"
+      responses:
+        '200':
+          description: "successfully fetch config"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vapid-key:
+                    type: string
+                    example: "<vapid key>"
+        '400':
+          description: "Invalid input"
+        '422':
+          description: "Validation exception"
+
   /alert/{UUID}:
     get:
       summary: Get one alert

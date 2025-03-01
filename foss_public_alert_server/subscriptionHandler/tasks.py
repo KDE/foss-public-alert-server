@@ -1,21 +1,17 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from celery import shared_task
-from .models import Subscription
-
 import json
 from datetime import timezone, datetime
 import requests
 import logging
 
 from celery import shared_task
-from django.conf import settings
 
 from alertHandler.models import Alert
 from .models import Subscription
 from configuration.models import AppSetting
-from subscriptionHandler.push_notification_services import unified_push, unified_push_encrpted, apn, firebase
+from .push_notification_services import unified_push, apn, firebase, unified_push_encrpted
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,13 +39,17 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
         # @todo is the distributor_url to sensitive to write it into logs?
         logger.debug(f"Send notification for {subscription.id} to {subscription.token}")
         match subscription.push_service:
-            case "UnifiedPush":
-                unified_push.send_notification(subscription.token, json.dumps(alert.alert_id))
-            case "UnifiedPush_encrypted":
-                unified_push_encrpted.send_notification(subscription.token,json.dumps(alert.alert_id), None)
-            case "APN":
+            case subscription.PushServices.UNIFIED_PUSH:
+                unified_push.send_notification(subscription.token,
+                                               json.dumps(alert.alert_id))
+            case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
+                unified_push_encrpted.send_notification(subscription.token,
+                                          json.dumps(alert.alert_id),
+                                          auth_key=subscription.auth_key,
+                                          p256dh_key=subscription.p256dh_key)
+            case subscription.PushServices.APN:
                 apn.send_notification(subscription.token, "", "", "", "", "")
-            case "Firebase":
+            case subscription.PushServices.FIREBASE:
                 firebase.send_notification(subscription.token, json.dumps(alert.alert_id))
 
             # @todo check performance

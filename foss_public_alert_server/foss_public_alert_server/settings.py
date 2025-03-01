@@ -178,7 +178,7 @@ DEFAULT_SETTINGS = [
 
     # defines which push services the server is capable of
     ["SUPPORT_UNIFIED_PUSH", "bool", True],
-    ["SUPPORT_UNIFIED_PUSH_ENCRYPTED", "bool", False],
+    ["SUPPORT_UNIFIED_PUSH_ENCRYPTED", "bool", True],
     ["SUPPORT_APN", "bool", False],
     ["SUPPORT_FIREBASE", "bool", False],
 
@@ -187,6 +187,13 @@ DEFAULT_SETTINGS = [
     ["CONGESTION_STATE", "int",  1],
     ["VERSION", "char", "0.1.0"]
 ]
+
+# webpush config
+# SECURITY WARNING: keep the private key used in production secret!
+WEB_PUSH_CONFIG_PRIVATE_KEY = os.environ.get('WEB_PUSH_CONFIG_PRIVATE_KEY', 'tiQpqhJBxAAEwxbDQ2OYiQoJ1j18NLEn-Qm09oxte0Q')
+WEB_PUSH_CONFIG_PUBLIC_KEY = os.environ.get('WEB_PUSH_CONFIG_PUBLIC_KEY', 'BHJnBOSvBJ9Vl0fF44dUFxmr3l-mNSjuAGvIsFKBSWUsBu2-v2dov1UcGgE2Ry_yjJsz38F3a0A-QrAjCr3OCA4')
+
+WEB_PUSH_CONTACT = "mailto:todo@example.com" # @TODO(Nucleus): add contact email address
 
 # Logging config
 

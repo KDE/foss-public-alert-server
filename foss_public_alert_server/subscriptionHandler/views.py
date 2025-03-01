@@ -10,6 +10,8 @@ from json import loads
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseNotFound
 from django.contrib.gis.geos import Polygon
+from django.views.decorators.http import require_http_methods
+from django.conf import settings
 
 from .models import Subscription
 from .exceptions import *
@@ -48,6 +50,8 @@ def subscribe(request):
         return unsubscribe(request)
     elif request.method == 'PUT':
         return update_subscription(request)
+    elif request.method == 'GET':
+        return handle_subscription_config_request(request)
     else:
         return HttpResponseBadRequest("Invalid HTTP method")
 
@@ -91,21 +95,24 @@ def add_new_subscription(request):
             return HttpResponseBadRequest('invalid bounding box')
 
         bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))
-        s = Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices[push_service],
-                         last_heartbeat=datetime.datetime.now())
 
         # send confirmation message via the push system to verify it. Only store the new subscription,
         # if the push service is reachable
         test_push = None
+        s = None
 
         match push_service:
             case "UNIFIED_PUSH":
+                s = unified_push.create_subscription(token, bbox)
                 test_push = unified_push.send_notification(s.token, json.dumps("successfully subscribed"))
             case "UNIFIED_PUSH_ENCRYPTED":
+                s = unified_push_encrpted.create_subscription(token, bbox, data)
                 test_push = unified_push_encrpted.send_notification(s.token,
-                                                                    json.dumps("successfully subscribed"),
-                                                                    None)
+                                                    json.dumps("successfully subscribed"),
+                                                    auth_key=s.auth_key,
+                                                    p256dh_key=s.p256dh_key)
             case "APN":
+                s = apn.create_subscription()
                 test_push = apn.send_notification(s.token,
                                                   "successfully subscribed",
                                                   "",
@@ -113,9 +120,10 @@ def add_new_subscription(request):
                                                   "",
                                                   "")
             case "FIREBASE":
+                s = firebase.create_subscription()
                 test_push = firebase.send_notification(s.token, json.dumps("successfully subscribed"))
 
-        if test_push is not None and 200 <= test_push.status_code <= 299:
+        if test_push is not None and 200 <= test_push.status_code <= 299 and s is not None:
             s.save()
         else:
             raise PushNotificationCheckFailed("push config is invalid")
@@ -199,3 +207,19 @@ def update_subscription(request):
             case _:
                 logger.debug("Not supported push service")
                 return HttpResponseBadRequest('something went wrong')
+
+@require_http_methods(["GET"])
+def handle_subscription_config_request(request):
+    if request.GET.get('type') == "webpush":
+        return vapid_key(request)
+    else:
+        return HttpResponseBadRequest("invalid input")
+
+@require_http_methods(["GET"])
+def vapid_key(request)-> HttpResponse:
+    """
+    Let clients fetch the VAOID key needed for webpush
+    :param request: the request of the client
+    :return: JsonResponse with the VAPID key
+    """
+    return JsonResponse({'vapid-key': settings.WEB_PUSH_CONFIG_PUBLIC_KEY})

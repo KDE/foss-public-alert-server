@@ -22,3 +22,5 @@ class Subscription(models.Model):
     token = models.CharField(max_length=255) # @todo 255 enough?
     push_service = models.IntegerField(choices=PushServices.choices, default=PushServices.UNIFIED_PUSH)
     last_heartbeat = models.DateTimeField(default=datetime.now)
+    auth_key = models.CharField(max_length=255, null=True) # used by web push
+    p256dh_key = models.CharField(max_length=255, null=True) # used by web push

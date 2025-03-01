@@ -12,6 +12,9 @@ from django.conf import settings
 apn_url_production = 'api.push.apple.com:443'
 apn_url_development = 'api.sandbox.push.apple.com:443'
 
+def create_subscription():
+    raise Exception("Not implemented yet")
+
 def send_notification(token, title, subtitle, body, category, provider_token):
     """
     @TODO implement

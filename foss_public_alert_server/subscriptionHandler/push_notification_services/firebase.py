@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 from django.http import HttpResponseBadRequest
 
+def create_subscription():
+    raise Exception("Not implemented yet")
 
 def send_notification(token,payload):
     """
