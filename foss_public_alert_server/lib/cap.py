@@ -14,6 +14,42 @@ class CAPException(BaseException):
     pass
 
 
+class CAPPolygon:
+    """
+    Methods for parsing CAP polygon data.
+    """
+
+    @staticmethod
+    def parse_polygon(cap_polygon: str):
+        """
+        Parses the given CAP polygon string and returns a list of (lon, lat) tuples.
+
+        Applies a number of fixes for common errors (open polygons, garbage in the polygon string).
+        Returns None if no valid polygon could be parsed.
+        """
+        coords = []
+        for cap_coord in cap_polygon.split(' '):
+            # remove garbage found in e.g. GDACS CAP files
+            cap_coord = cap_coord.translate(str.maketrans('', '', '()'))
+            cap_point = cap_coord.split(',')
+            if len(cap_point) != 2:
+                continue
+            try:
+                coord = (float(cap_point[1]), float(cap_point[0]))
+            except Exception:
+                continue
+            coords.append(coord)
+
+        if len(coords) < 4:
+            return None
+
+        # ensure polygon is closed
+        if coords[0] != coords[-1]:
+            coords.append(coords[0])
+
+        return coords
+
+
 class CAPAlertInfo:
     """
     Represents a CAP alert info element in a CAP alert message XML tree.
