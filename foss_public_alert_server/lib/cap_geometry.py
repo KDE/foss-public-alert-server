@@ -11,22 +11,7 @@ def polygon_from_cap_polygon(cap_polygon):
     """
     Create a GEOS Polygon from a CAP polygon description.
     """
-    coords = []
-    for cap_coord in cap_polygon.split(' '):
-        cap_point = cap_coord.split(',')
-        if len(cap_point) != 2:
-            continue
-        try:
-            coord = (float(cap_point[1]), float(cap_point[0]))
-        except Exception:
-            continue
-        coords.append(coord)
-
-    if len(coords) < 4:
-        return None
-    # ensure polygon is closed
-    if coords[0] != coords[-1]:
-        coords.append(coords[0])
+    coords = cap.CAPPolygon.parse_polygon(cap_polygon)
 
     poly = Polygon(coords)
     if not poly.valid:
