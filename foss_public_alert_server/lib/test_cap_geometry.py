@@ -1,0 +1,90 @@
+# SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+import unittest
+
+import cap
+import cap_geometry
+
+
+class TestCAP(unittest.TestCase):
+
+    def test_antimeridian_polygon(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/gdacs-cap_1001150.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        self.assertEqual(poly.geom_typeid, 6)  # multipolygon, consisting of two parts
+        self.assertEqual(poly.num_geom, 2)
+
+        if poly[0].envelope.extent[2] < 0:
+            westExtent = poly[0].envelope.extent
+            eastExtent = poly[1].envelope.extent
+        else:
+            westExtent = poly[1].envelope.extent
+            eastExtent = poly[0].envelope.extent
+
+        self.assertAlmostEqual(westExtent[1], -28.505)
+        self.assertAlmostEqual(westExtent[3], -18.495)
+        self.assertAlmostEqual(westExtent[0], -180)
+        self.assertAlmostEqual(westExtent[2], -172.74234227419)
+
+        self.assertAlmostEqual(eastExtent[1], -28.2242009)
+        self.assertAlmostEqual(eastExtent[3], -15.365)
+        self.assertAlmostEqual(eastExtent[0], 168.748971963339)
+        self.assertAlmostEqual(eastExtent[2], 180)
+
+    def test_antimeridian_polygon2(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/ru-20250301222516-0086037.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        self.assertEqual(poly.geom_typeid, 6)
+        self.assertGreaterEqual(poly.num_geom, 2)
+
+        for p in poly:
+            extent = p.envelope.extent
+            self.assertGreater(extent[1], 61.5)
+            self.assertLess(extent[3], 72.0)
+            if extent[0] < 0:
+                self.assertLess(extent[2], -169.5)
+            else:
+                self.assertGreater(extent[0], 157.7)
+
+    def test_broken_selfintersection(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/gdacs-cap_1023542.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[1], 8.72977)
+        self.assertAlmostEqual(extent[3], 8.83186)
+        self.assertAlmostEqual(extent[0], -68.19886)
+        self.assertAlmostEqual(extent[2], -68.06497)
+
+    def test_near_self_intersection(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/noaa-2.49.0.1.840.0.bde6c30c43ead9c23c42bea7977652a7de76d87d.002.1.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[1], 38.1143)
+        self.assertAlmostEqual(extent[3], 38.7042)
+        self.assertAlmostEqual(extent[0], -76.337)
+        self.assertAlmostEqual(extent[2], -75.7013)
+
+    def test_swapped_coordinates(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/TMD25680225051318_2.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        # TODO we don't handle/fix this yet!
+        print(poly.envelope)
+
+    def test_circle(self):
+        poly = cap_geometry.polygon_from_cap_circle("23.8262083333333,120.185488888889 0.5")
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[0], 120.180, delta=0.001)
+        self.assertAlmostEqual(extent[1], 23.821, delta=0.001)
+        self.assertAlmostEqual(extent[2], 120.190, delta=0.001)
+        self.assertAlmostEqual(extent[3], 23.830, delta=0.001)
+
+
+if __name__ == '__main__':
+    unittest.main()
