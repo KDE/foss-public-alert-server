@@ -20,9 +20,9 @@ def polygon_from_cap_polygon(cap_polygon):
     return poly
 
 
-def polygon_from_cap_circle(cap_circle):
+def polygon_from_cap_circle(cap_circle: str):
     """
-    Create a GEOS Polygon from a CAP circle description.
+    Create a list of GEOS Polygons from a CAP circle description.
     """
     (center, radius) = cap_circle.split(' ')
     (lat, lon) = center.split(',')
@@ -35,14 +35,17 @@ def polygon_from_cap_circle(cap_circle):
 
     dlon = radius / geomath.distance(lat, 0.0, lat, 1.0)
     dlat = radius / geomath.distance(0.0, lon, 1.0, lon)
-    poly = [
-        [lon - dlon, lat - dlat],
-        [lon - dlon, lat + dlat],
-        [lon + dlon, lat + dlat],
-        [lon + dlon, lat - dlat],
-        [lon - dlon, lat - dlat],
-    ]
-    return Polygon(poly)
+
+    # if the circle would cross the antimeridian, cut it into two parts
+    if lon - dlon >= -180 and lon + dlon <= 180:
+        return [Polygon.from_bbox((lon - dlon, lat - dlat, lon + dlon, lat + dlat))]
+
+    if lon - dlon < -180:
+        return [Polygon.from_bbox((lon - dlon + 360, lat - dlat, 180, lat + dlat)),
+                Polygon.from_bbox((-180, lat - dlat, lon + dlon, lat + dlat))]
+    if lon + dlon > 180:
+        return [Polygon.from_bbox((lon - dlon, lat - dlat, 180, lat + dlat)),
+                Polygon.from_bbox((-180, lat - dlat, lon + dlon - 360, lat + dlat))]
 
 
 def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage):
@@ -53,7 +56,7 @@ def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage):
     for cap_poly in cap_alert.polygons():
         polys.append(polygon_from_cap_polygon(cap_poly))
     for cap_circle in cap_alert.circles():
-        polys.append(polygon_from_cap_circle(cap_circle))
+        polys += polygon_from_cap_circle(cap_circle)
     polys = [p for p in polys if p is not None]
 
     # don't use MultiPolygon(polys), that assumes intersection-free
