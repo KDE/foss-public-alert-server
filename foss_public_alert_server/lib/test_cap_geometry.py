@@ -77,13 +77,55 @@ class TestCAP(unittest.TestCase):
         print(poly.envelope)
 
     def test_circle(self):
-        poly = cap_geometry.polygon_from_cap_circle("23.8262083333333,120.185488888889 0.5")
+        polys = cap_geometry.polygon_from_cap_circle("23.8262083333333,120.185488888889 0.5")
+        self.assertEqual(len(polys), 1)
+        poly = polys[0]
         self.assertTrue(poly.valid)
         extent = poly.envelope.extent
         self.assertAlmostEqual(extent[0], 120.180, delta=0.001)
         self.assertAlmostEqual(extent[1], 23.821, delta=0.001)
         self.assertAlmostEqual(extent[2], 120.190, delta=0.001)
         self.assertAlmostEqual(extent[3], 23.830, delta=0.001)
+
+    def test_circle_antimeridian_east(self):
+        polys = cap_geometry.polygon_from_cap_circle("25.0,175.0 1000")
+        self.assertEqual(len(polys), 2)
+
+        polyEast = polys[0]
+        self.assertTrue(polyEast.valid)
+        extentEast = polyEast.envelope.extent
+        self.assertAlmostEqual(extentEast[0], 165.07, delta=0.01)
+        self.assertAlmostEqual(extentEast[1], 16.006, delta=0.01)
+        self.assertAlmostEqual(extentEast[2], 180, delta=0.01)
+        self.assertAlmostEqual(extentEast[3], 33.99, delta=0.01)
+
+        polyWest = polys[1]
+        self.assertTrue(polyWest.valid)
+        extentWest = polyWest.envelope.extent
+        self.assertAlmostEqual(extentWest[0], -180, delta=0.01)
+        self.assertAlmostEqual(extentWest[1], 16.006, delta=0.01)
+        self.assertAlmostEqual(extentWest[2], -175.07, delta=0.01)
+        self.assertAlmostEqual(extentWest[3], 33.99, delta=0.01)
+
+    def test_circle_antimeridian_west(self):
+        polys = cap_geometry.polygon_from_cap_circle("-25.0,-175.0 1000")
+        self.assertEqual(len(polys), 2)
+
+        polyEast = polys[0]
+        self.assertTrue(polyEast.valid)
+        extentEast = polyEast.envelope.extent
+        self.assertAlmostEqual(extentEast[0], 175.07, delta=0.01)
+        self.assertAlmostEqual(extentEast[1], -33.99, delta=0.01)
+        self.assertAlmostEqual(extentEast[2], 180, delta=0.01)
+        self.assertAlmostEqual(extentEast[3], -16.006, delta=0.01)
+
+        polyWest = polys[1]
+        self.assertTrue(polyWest.valid)
+        extentWest = polyWest.envelope.extent
+        self.assertAlmostEqual(extentWest[0], -180, delta=0.01)
+        self.assertAlmostEqual(extentWest[1], -33.99, delta=0.01)
+        self.assertAlmostEqual(extentWest[2], -165.077, delta=0.01)
+        self.assertAlmostEqual(extentWest[3], -16.006, delta=0.01)
 
 
 if __name__ == '__main__':
