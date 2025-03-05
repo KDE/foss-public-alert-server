@@ -50,6 +50,7 @@ class Alert(models.Model):
     event = models.CharField(max_length=255, null=True)
     severity = models.CharField(max_length=255, null=True)
     urgency = models.CharField(max_length=255, null=True)
+    area = models.MultiPolygonField(null=True, spatial_index=True)
 
     class Meta:
         constraints = [models.UniqueConstraint('source_id', 'alert_id', name='source_id-alert_id-unique')]
