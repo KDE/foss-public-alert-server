@@ -316,7 +316,8 @@ class AbstractCAPParser(ABC):
                 status=cap_msg.status(),
                 event=cap_info.event()[:255],
                 severity=cap_info.severity(),
-                urgency=cap_info.urgency()
+                urgency=cap_info.urgency(),
+                area=polygon
             )
 
             if expire_time is not None:
