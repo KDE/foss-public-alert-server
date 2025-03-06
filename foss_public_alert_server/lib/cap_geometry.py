@@ -20,6 +20,39 @@ def polygon_from_cap_polygon(cap_polygon):
     return poly
 
 
+def __move_polygon(poly: Polygon, offset: float):
+    """
+    Internal. Moves the given polygon by a horizontal offset.
+    """
+
+    # Note: this assumes polygons have no inner rings. CAP doesn't support
+    # that either, so this case shouldn't happen here
+    outer_ring = []
+    for coord in poly[0]:
+        outer_ring.append((coord[0] + offset, coord[1]))
+    return Polygon(outer_ring)
+
+
+def normalize_polygon(poly: Polygon):
+    """
+    Ensures the given polygon is within the +/- 180° degree boundaries.
+    If necessary, the polygon is split accordingly.
+    """
+    extent = poly.extent
+    if extent[0] >= -180 and extent[2] <= 180:
+        return [poly]
+
+    polys = [poly.intersection(Polygon.from_bbox((-180, -90, 180, 90)))]
+    if extent[0] < -180:
+        p = poly.intersection(Polygon.from_bbox((-540, -90, -180, 90)))
+        polys.append(__move_polygon(p, 360))
+    if extent[2] > 180:
+        p = poly.intersection(Polygon.from_bbox((180, -90, 540, 90)))
+        polys.append(__move_polygon(p, -360))
+
+    return polys
+
+
 def polygon_from_cap_circle(cap_circle: str):
     """
     Create a list of GEOS Polygons from a CAP circle description.
@@ -54,7 +87,7 @@ def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage):
     """
     polys = []
     for cap_poly in cap_alert.polygons():
-        polys.append(polygon_from_cap_polygon(cap_poly))
+        polys += normalize_polygon(polygon_from_cap_polygon(cap_poly))
     for cap_circle in cap_alert.circles():
         polys += polygon_from_cap_circle(cap_circle)
     polys = [p for p in polys if p is not None]

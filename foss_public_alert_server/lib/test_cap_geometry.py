@@ -127,6 +127,13 @@ class TestCAP(unittest.TestCase):
         self.assertAlmostEqual(extentWest[2], -165.077, delta=0.01)
         self.assertAlmostEqual(extentWest[3], -16.006, delta=0.01)
 
+    def test_polygon_antimeridian_split(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/gdacs-cap_1470644.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        self.assertAlmostEqual(poly.extent[0], -180)
+        self.assertAlmostEqual(poly.extent[2], 180)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>GDACS_EQ_1470644_1625617</identifier>
+  <sender>info-gdacs@gdacs.org</sender>
+  <sent>2025-03-01T22:52:24-00:00</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <incidents>1470644</incidents>
+  <info>
+    <category>Geo</category>
+    <event>Earthquake</event>
+    <urgency>Past</urgency>
+    <severity>Moderate</severity>
+    <certainty>Observed</certainty>
+    <senderName>Global Disaster Alert and Coordination System</senderName>
+    <headline>Green earthquake alert (Magnitude 5M, Depth:596.851km) in [unknown] 01/03/2025 23:52 UTC, No people affected in 100km.</headline>
+    <description>On 3/1/2025 11:52:24 PM, an earthquake occurred in [unknown] potentially affecting No people affected in 100km. The earthquake had Magnitude 5M, Depth:596.851km.</description>
+    <web>https://www.gdacs.org/report.aspx?eventtype=EQ&amp;eventid=1470644</web>
+    <parameter>
+      <valueName>eventid</valueName>
+      <value>1470644</value>
+    </parameter>
+    <parameter>
+      <valueName>currentepisodeid</valueName>
+      <value>1625617</value>
+    </parameter>
+    <parameter>
+      <valueName>glide</valueName>
+      <value />
+    </parameter>
+    <parameter>
+      <valueName>version</valueName>
+      <value>1</value>
+    </parameter>
+    <parameter>
+      <valueName>fromdate</valueName>
+      <value>Sat, 01 Mar 2025 23:52:24 GMT</value>
+    </parameter>
+    <parameter>
+      <valueName>todate</valueName>
+      <value>Sat, 01 Mar 2025 23:52:24 GMT</value>
+    </parameter>
+    <parameter>
+      <valueName>eventtype</valueName>
+      <value>EQ</value>
+    </parameter>
+    <parameter>
+      <valueName>alertlevel</valueName>
+      <value>Green</value>
+    </parameter>
+    <parameter>
+      <valueName>alerttype</valueName>
+      <value>automatic</value>
+    </parameter>
+    <parameter>
+      <valueName>link</valueName>
+      <value>https://www.gdacs.org/report.aspx?eventtype=EQ&amp;amp;eventid=1470644</value>
+    </parameter>
+    <parameter>
+      <valueName>country</valueName>
+      <value />
+    </parameter>
+    <parameter>
+      <valueName>eventname</valueName>
+      <value />
+    </parameter>
+    <parameter>
+      <valueName>severity</valueName>
+      <value>Magnitude 5M, Depth:596.851km</value>
+    </parameter>
+    <parameter>
+      <valueName>population</valueName>
+      <value>No people affected in 100km</value>
+    </parameter>
+    <parameter>
+      <valueName>vulnerability</valueName>
+      <value />
+    </parameter>
+    <parameter>
+      <valueName>sourceid</valueName>
+      <value>NEIC</value>
+    </parameter>
+    <parameter>
+      <valueName>iso3</valueName>
+      <value />
+    </parameter>
+    <parameter>
+      <valueName>hazardcomponents</valueName>
+      <value>EQ,magnitude=5,depth=596.851,alertleveltype=SP;JETS=true</value>
+    </parameter>
+    <parameter>
+      <valueName>datemodified</valueName>
+      <value>Sun, 02 Mar 2025 00:07:43 GMT</value>
+    </parameter>
+    <area>
+      <areaDesc>Polygon</areaDesc>
+      <polygon>-22.106,-178.489 -22.075,-178.49 -22.043,-178.492 -22.012,-178.495 -21.981,-178.499 -21.95,-178.504 -21.919,-178.51 -21.888,-178.518 -21.858,-178.527 -21.828,-178.537 -21.798,-178.548 -21.769,-178.56 -21.74,-178.573 -21.711,-178.588 -21.683,-178.603 -21.656,-178.619 -21.629,-178.637 -21.602,-178.655 -21.577,-178.675 -21.551,-178.695 -21.527,-178.717 -21.503,-178.739 -21.48,-178.762 -21.458,-178.786 -21.437,-178.811 -21.416,-178.837 -21.396,-178.863 -21.377,-178.89 -21.359,-178.918 -21.342,-178.946 -21.326,-178.975 -21.311,-179.005 -21.296,-179.035 -21.283,-179.066 -21.271,-179.097 -21.26,-179.129 -21.249,-179.161 -21.24,-179.194 -21.232,-179.226 -21.225,-179.259 -21.219,-179.293 -21.214,-179.326 -21.21,-179.36 -21.207,-179.394 -21.206,-179.428 -21.205,-179.462 -21.206,-179.496 -21.207,-179.529 -21.21,-179.563 -21.214,-179.597 -21.219,-179.63 -21.225,-179.664 -21.232,-179.697 -21.24,-179.73 -21.249,-179.762 -21.26,-179.794 -21.271,-179.826 -21.283,-179.857 -21.296,-179.888 -21.311,-179.918 -21.326,-179.948 -21.342,-179.977 -21.359,-180.005 -21.377,-180.033 -21.396,-180.06 -21.416,-180.087 -21.437,-180.112 -21.458,-180.137 -21.48,-180.161 -21.503,-180.184 -21.527,-180.206 -21.551,-180.228 -21.577,-180.248 -21.602,-180.268 -21.629,-180.286 -21.656,-180.304 -21.683,-180.32 -21.711,-180.336 -21.74,-180.35 -21.769,-180.363 -21.798,-180.375 -21.828,-180.386 -21.858,-180.396 -21.888,-180.405 -21.919,-180.413 -21.95,-180.419 -21.981,-180.425 -22.012,-180.429 -22.043,-180.432 -22.075,-180.433 -22.106,-180.434 -22.138,-180.433 -22.169,-180.432 -22.2,-180.429 -22.231,-180.425 -22.263,-180.419 -22.293,-180.413 -22.324,-180.405 -22.354,-180.396 -22.384,-180.386 -22.414,-180.375 -22.444,-180.363 -22.473,-180.35 -22.501,-180.336 -22.529,-180.32 -22.557,-180.304 -22.584,-180.286 -22.61,-180.268 -22.636,-180.248 -22.661,-180.228 -22.685,-180.206 -22.709,-180.184 -22.732,-180.161 -22.754,-180.137 -22.776,-180.112 -22.796,-180.087 -22.816,-180.06 -22.835,-180.033 -22.853,-180.005 -22.87,-179.977 -22.886,-179.948 -22.902,-179.918 -22.916,-179.888 -22.929,-179.857 -22.941,-179.826 -22.953,-179.794 -22.963,-179.762 -22.972,-179.73 -22.98,-179.697 -22.987,-179.664 -22.993,-179.63 -22.998,-179.597 -23.002,-179.563 -23.005,-179.529 -23.006,-179.496 -23.007,-179.462 -23.006,-179.428 -23.005,-179.394 -23.002,-179.36 -22.998,-179.326 -22.993,-179.293 -22.987,-179.259 -22.98,-179.226 -22.972,-179.194 -22.963,-179.161 -22.953,-179.129 -22.941,-179.097 -22.929,-179.066 -22.916,-179.035 -22.902,-179.005 -22.886,-178.975 -22.87,-178.946 -22.853,-178.918 -22.835,-178.89 -22.816,-178.863 -22.796,-178.837 -22.776,-178.811 -22.754,-178.786 -22.732,-178.762 -22.709,-178.739 -22.685,-178.717 -22.661,-178.695 -22.636,-178.675 -22.61,-178.655 -22.584,-178.637 -22.557,-178.619 -22.529,-178.603 -22.501,-178.588 -22.473,-178.573 -22.444,-178.56 -22.414,-178.548 -22.384,-178.537 -22.354,-178.527 -22.324,-178.518 -22.293,-178.51 -22.263,-178.504 -22.231,-178.499 -22.2,-178.495 -22.169,-178.492 -22.138,-178.49 -22.106,-178.489</polygon>
+    </area>
+  </info>
+</alert>
