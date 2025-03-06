@@ -103,7 +103,8 @@ class CAPAlertInfo:
         """
         polys = []
         for poly_node in self.xml.findall('{urn:oasis:names:tc:emergency:cap:1.2}area/{urn:oasis:names:tc:emergency:cap:1.2}polygon'):
-            polys.append(poly_node.text)
+            if poly_node.text:
+                polys.append(poly_node.text)
         return polys
 
     def circles(self):

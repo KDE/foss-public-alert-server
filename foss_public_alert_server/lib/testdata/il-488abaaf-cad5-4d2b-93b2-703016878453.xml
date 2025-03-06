@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>2.49.0.0.376.0.250306145512.48636</identifier>
+  <sender>ims.gov.il</sender>
+  <sent>2025-03-06T14:55:12+02:00</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <info>
+    <language>en-GB</language>
+    <category>Met</category>
+    <event>FLOOD</event>
+    <urgency>Future</urgency>
+    <severity>Severe</severity>
+    <certainty>Possible</certainty>
+    <effective>2025-03-06T14:55:12+02:00</effective>
+    <onset>2025-03-06T22:00:00+02:00</onset>
+    <expires>2025-03-07T14:00:00+02:00</expires>
+    <senderName>Israel Meteorological Service</senderName>
+    <headline>Flash Floods</headline>
+    <description>Yellow Early Warning of FLASH FLOODS in Judea Desert  Dead Sea, in North Eastern Negev and in Northern Arava from 06/03 22 until 07/03 14 LT. For further details: https://ims.gov.il/he/IMSwarnings .</description>
+    <web>https://ims.gov.il/en/IMSWarnings</web>
+    <parameter>
+      <valueName>awareness_level</valueName>
+      <value>2; yellow; Moderate</value>
+    </parameter>
+    <parameter>
+      <valueName>awareness_type</valueName>
+      <value>12; flooding</value>
+    </parameter>
+    <area>
+      <areaDesc>South Judea Desert  Dead Sea</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL043</value>
+      </geocode>
+    </area>
+    <area>
+      <areaDesc>North Eastern Negev</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL042</value>
+      </geocode>
+    </area>
+    <area>
+      <areaDesc>Northern Arava</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL045</value>
+      </geocode>
+    </area>
+  </info>
+  <info>
+    <language>he-IL</language>
+    <category>Met</category>
+    <event>FLOOD</event>
+    <urgency>Future</urgency>
+    <severity>Severe</severity>
+    <certainty>Possible</certainty>
+    <effective>2025-03-06T14:55:12+02:00</effective>
+    <onset>2025-03-06T22:00:00+02:00</onset>
+    <expires>2025-03-07T14:00:00+02:00</expires>
+    <senderName>Israel Meteorological Service</senderName>
+    <headline>שטפונות בזק</headline>
+    <description>התראה מוקדמת צהובה על שטפונות בזק במדבר יהודה וים המלח, בצפון מזרח הנגב ובצפון הערבה מ-06/03 ב-22 עד 07/03 ב-14.   באזורים המצויינים קיים חשש משטפונות בזק מקומיים בשל ממטרים מקומיים בשעות המצויינות. לפרטים נוספים: https://ims.gov.il/he/IMSwarnings .</description>
+    <web>https://ims.gov.il/he/IMSWarnings</web>
+    <parameter>
+      <valueName>awareness_level</valueName>
+      <value>2; yellow; Moderate</value>
+    </parameter>
+    <parameter>
+      <valueName>awareness_type</valueName>
+      <value>12; flooding</value>
+    </parameter>
+    <area>
+      <areaDesc>South Judea Desert  Dead Sea</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL043</value>
+      </geocode>
+    </area>
+    <area>
+      <areaDesc>North Eastern Negev</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL042</value>
+      </geocode>
+    </area>
+    <area>
+      <areaDesc>Northern Arava</areaDesc>
+      <polygon/>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>IL045</value>
+      </geocode>
+    </area>
+  </info>
+</alert>

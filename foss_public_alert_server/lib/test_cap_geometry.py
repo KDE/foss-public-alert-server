@@ -89,6 +89,11 @@ class TestCAP(unittest.TestCase):
         self.assertAlmostEqual(extent[0], -134.4221)
         self.assertAlmostEqual(extent[2], -130.0051)
 
+    def test_empty_polygon_elemnts(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/il-488abaaf-cad5-4d2b-93b2-703016878453.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.empty)
+
     def test_swapped_coordinates(self):
         cap_msg = cap.CAPAlertMessage.from_file("testdata/TMD25680225051318_2.xml")
         poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
