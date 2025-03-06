@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>2.49.0.0.398.0-20250306-133701-0284797-00-EN</identifier>
+  <sender>kalmenova_a@meteo.kz</sender>
+  <sent>2025-03-06T13:37:01-00:00</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <info>
+    <language>en-US</language>
+    <category>Met</category>
+    <event>Freezing rain, icing</event>
+    <urgency>Future</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <eventCode>
+      <valueName>HMCEVE</valueName>
+      <value>216</value>
+    </eventCode>
+    <onset>2025-03-06T15:00:00-00:00</onset>
+    <expires>2025-03-07T16:00:00-00:00</expires>
+    <headline>Freezing rain, icing</headline>
+    <area>
+      <areaDesc>Kokpekti district (Abai oblysy)</areaDesc>
+      <polygon>49.245,82.599 49.266,82.382 49.231,82.257 49.191,82.299 49.112,82.21 49.1,82.263 49.057,82.163 49.021,82.232 48.994,82.055 48.757,81.883 48.634,81.62 48.514,81.553 48.51,81.607 48.425,82.363 48.171,82.435 48.151,82.777 48.216,83.307 48.23,83.396 48.235,83.43 48.238,83.461 48.257,83.472 48.259,83.485 48.289,83.483 48.338,83.558 48.348,83.596 48.391,83.616 48.471,83.438 48.541,83.423 48.562,83.235 48.774,83.07 48.937,83.114 48.964,82.919 48.923,82.815 49.105,82.716 49.196,82.805 49.197,82.804 49.21,82.797 49.214,82.801 49.215,82.801 49.216,82.801 49.224,82.798 49.224,82.792 49.223,82.79 49.224,82.792 49.228,82.793 49.229,82.774 49.231,82.771 49.226,82.737 49.229,82.733 49.23,82.73 49.233,82.726 49.232,82.723 49.237,82.714 49.24,82.705 49.224,82.667 49.221,82.665 49.215,82.661 49.211,82.658 49.211,82.652 49.212,82.647 49.211,82.638 49.212,82.635 49.213,82.634 49.219,82.629 49.222,82.627 49.228,82.634 49.232,82.631 49.234,82.631 49.236,82.628 49.238,82.623 49.244,82.603 49.245,82.599</polygon>
+      <geocode>
+        <valueName>KZSTD</valueName>
+        <value>304</value>
+      </geocode>
+    </area>
+  </info>
+</alert>

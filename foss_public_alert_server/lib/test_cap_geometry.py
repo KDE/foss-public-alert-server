@@ -69,6 +69,26 @@ class TestCAP(unittest.TestCase):
         self.assertAlmostEqual(extent[0], -76.337)
         self.assertAlmostEqual(extent[2], -75.7013)
 
+    def test_parallel_lines(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/kz-2.49.0.0.398.0-20250306-133701-0284797-00-EN.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[1], 48.151)
+        self.assertAlmostEqual(extent[3], 49.266)
+        self.assertAlmostEqual(extent[0], 81.553)
+        self.assertAlmostEqual(extent[2], 83.616)
+
+    def test_slow_polygon(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/noaa-2.49.0.1.840.0.9b5195e635069329b12a7c697fad5934d144784a.001.1.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[1], 54.6645)
+        self.assertAlmostEqual(extent[3], 57.0995)
+        self.assertAlmostEqual(extent[0], -134.4221)
+        self.assertAlmostEqual(extent[2], -130.0051)
+
     def test_swapped_coordinates(self):
         cap_msg = cap.CAPAlertMessage.from_file("testdata/TMD25680225051318_2.xml")
         poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)

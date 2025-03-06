@@ -17,6 +17,15 @@ def polygon_from_cap_polygon(cap_polygon):
     if not poly.valid:
         poly = poly.make_valid()  # try to fix self-intersections
 
+        # If fixing turned this into a GeometryCollection, discard stray
+        # non-polygon elements
+        if poly.geom_typeid == 7:
+            for g in poly:
+                if g.geom_typeid == 3 or g.geom_typeid == 6:
+                    return g
+            # broken beyond repaid
+            return None
+
     return poly
 
 
