@@ -41,6 +41,8 @@ class AbstractCAPParser(ABC):
     def __init__(self, feed_source, name: str):
         self.feed_source = feed_source
         self.session = requests_cache.session.CachedSession(cache_name='cache/' + self.feed_source.source_id, expire_after=60*60*24)
+        self.session.cache.delete(expired=True)
+        self.session.cache.delete(invalid=True)
         self.name = name
 
     @abstractmethod
