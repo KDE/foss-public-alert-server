@@ -11,6 +11,7 @@ import requests_cache
 import json
 import warnings
 import logging
+import socket
 
 from django.contrib.gis.geos import Polygon
 from django.conf import settings
@@ -30,6 +31,12 @@ from lib import cap, geomath
 # logging config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Reduce timeout for network operations to just 10 seconds
+# If a feed or CAP message doesn't reply in that time it's likely dead anyway
+# and potentially blocks other tasks for several minutes.
+socket.setdefaulttimeout(10)
+
 
 class AbstractCAPParser(ABC):
     feed_source: CAPFeedSource = None
