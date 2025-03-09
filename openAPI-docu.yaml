@@ -50,7 +50,9 @@ paths:
                     description: The ID of the subscription to allow the client to unsubscribe. This ID should be stored by the client.
                     example: "exampleSubscriptionID"
         '400':
-          description: "invalid subscription id"
+          description: "Invalid subscription id"
+        '405':
+          description: "Wrong http method"
     delete:
       summary: Unsubscribe from an area
       description: Unsubscribe a client from an area.
@@ -75,6 +77,8 @@ paths:
                     example: "successfully unsubscribed"
         '400':
           description: "Invalid input"
+        '405':
+          description: "Wrong http method"
         '422':
           description: "Validation exception"
 
@@ -109,6 +113,8 @@ paths:
           description: "Invalid input"
         '404':
           description: "Subscription has expired. You must register again!"
+        '405':
+          description: "Wrong http method"
         '422':
           description: "Validation exception"
 
@@ -137,6 +143,8 @@ paths:
                     example: "<vapid key>"
         '400':
           description: "Invalid input"
+        '405':
+          description: "Wrong http method"
         '422':
           description: "Validation exception"
 
@@ -161,6 +169,8 @@ paths:
                 $ref: '#/components/schemas/alert_response'
         '400':
           description: "Invalid input"
+        '405':
+          description: "Wrong http method"
         '422':
           description: "Validation exception"
 
@@ -186,6 +196,8 @@ paths:
                 $ref: '#/components/schemas/all_alert_response'
         '400':
           description: "No valid subscription"
+        '405':
+          description: "wrong http method"
         '422':
           description: "Validation exception"
 
@@ -237,6 +249,8 @@ paths:
                 $ref: '#/components/schemas/all_alert_response'
         '400':
           description: "No valid subscription"
+        '405':
+          description: "wrong http method"
         '422':
           description: "Validation exception"
 
@@ -265,6 +279,8 @@ paths:
                 $ref: '#/components/schemas/area_status_response'
         '400':
           description: "Invalid input"
+        '405':
+          description: "wrong http method"
         '422':
           description: "Validation exception"
 
@@ -283,6 +299,8 @@ paths:
                 $ref: '#/components/schemas/server_status_response'
         '400':
           description: "Invalid request"
+        '405':
+          description: "wrong http method"
 
 components:
   schemas:

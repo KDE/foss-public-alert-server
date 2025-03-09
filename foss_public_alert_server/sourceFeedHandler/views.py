@@ -5,18 +5,17 @@ from django.shortcuts import render
 from django.http.request import HttpRequest
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
                          HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
-
+from django.views.decorators.http import require_http_methods
 from .models import CAPFeedSource
 import datetime
 
+@require_http_methods(["GET"])
 def generate_source_status_page(request:HttpRequest):
     """
     generate a status page for every CapSource
     :param request:
     :return: a HTML page with an overview of all cap source feed and the last fetch status
     """
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
 
     number_of_source = CAPFeedSource.objects.all().count()
 
@@ -29,14 +28,13 @@ def generate_source_status_page(request:HttpRequest):
     return render(request, 'source_status_page.html', context=context)
 
 
+@require_http_methods(["GET"])
 def get_feed_status_for_area(request:HttpRequest):
     """
     return the feeds for the given country code
     :param request: the http POST request a list of country codes as parameter 'country_code': [list]
     :return: a list of feeds with this country code
     """
-    if request.method != "GET":
-        return HttpResponseBadRequest("wrong HTTP method")
     try:
         data:list = request.GET.getlist('country_codes', None)
     except ValueError:
