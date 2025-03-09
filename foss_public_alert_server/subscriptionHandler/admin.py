@@ -7,6 +7,7 @@ from .models import Subscription
 
 class SubscriptionAdmin(admin.GISModelAdmin):
     list_display = ('id', 'last_heartbeat')
+    search_fields = ['id']
 
 # Register your models here.
 admin.site.register(Subscription, SubscriptionAdmin)
