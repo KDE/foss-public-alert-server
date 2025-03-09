@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseNotFound
 from django.contrib.gis.geos import Polygon
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
 from .models import Subscription
@@ -38,6 +39,8 @@ def isValidBbox(x1, y1, x2, y2):
             x1 != x2 and
             y1 != y2)
 
+@csrf_exempt
+@require_http_methods(["POST", "DELETE", "PUT", "GET"])
 def subscribe(request):
     """
     call handler for POST, DELETE or PUT request
@@ -55,16 +58,13 @@ def subscribe(request):
     else:
         return HttpResponseBadRequest("Invalid HTTP method")
 
-
+@require_http_methods(["POST"])
 def add_new_subscription(request):
     """
-        subscribe to an area on the world to receive push notifications
-        :param request:
-        :return: HttpResponseBadRequest if request was not successful or JsonResponse if the subscription was successful
-        """
-    if request.method != 'POST':
-        return HttpResponseBadRequest('wrong HTTP method')
-
+    subscribe to an area on the world to receive push notifications
+    :param request:
+    :return: HttpResponseBadRequest if request was not successful or JsonResponse if the subscription was successful
+    """
     try:
         data = loads(request.body)
 
@@ -140,14 +140,13 @@ def add_new_subscription(request):
         return HttpResponseBadRequest('invalid request')
 
 
+@require_http_methods(['DELETE'])
 def unsubscribe(request):
     """
     deletes the subscriptions with the `subscription_id` from the database
     :param request:
     :return:
     """
-    if request.method != 'DELETE':
-        return HttpResponseBadRequest('wrong HTTP method')
     try:
         subscription_id = request.GET.get('subscription_id')
         subscription = Subscription.objects.get(id=subscription_id)
@@ -156,6 +155,7 @@ def unsubscribe(request):
     except ValidationError:
         return HttpResponseBadRequest("invalid subscription id")
 
+@require_http_methods(["PUT"])
 def update_subscription(request):
     """
     depending on the type of push_service they are different needs to maintain the push notification connection
@@ -163,9 +163,6 @@ def update_subscription(request):
     :param request: the HTTP request
     :return: HTTP response
     """
-    if request.method != 'PUT':
-        return HttpResponseBadRequest('wrong HTTP method')
-
     # check parameter of request
     subscription_id = request.GET.get('subscription_id')
 
@@ -207,6 +204,7 @@ def update_subscription(request):
             case _:
                 logger.debug("Not supported push service")
                 return HttpResponseBadRequest('something went wrong')
+
 
 @require_http_methods(["GET"])
 def handle_subscription_config_request(request):

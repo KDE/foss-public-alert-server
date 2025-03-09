@@ -57,4 +57,4 @@ class SourceFeedHandlerTestsCase(TestCase):
 
         response = self.client.post("/sources/area_status", data)
 
-        self.assertContains(response,"wrong HTTP method", status_code=400)
+        self.assertContains(response,b'', status_code=405)

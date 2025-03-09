@@ -3,15 +3,14 @@
 
 import logging
 
-from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django.http.request import HttpRequest
 from django.shortcuts import render
 
-from json import loads
-from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
-                         HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
+from django.http import (HttpResponseBadRequest, HttpResponseNotFound,
+                         HttpResponsePermanentRedirect, JsonResponse)
 from django.contrib.gis.geos import Polygon
+from django.views.decorators.http import require_http_methods
 
 from .models import Alert
 from subscriptionHandler.models import Subscription # has to be so because of django
@@ -19,6 +18,7 @@ from subscriptionHandler.models import Subscription # has to be so because of dj
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@require_http_methods(["GET"])
 def get_alert_cap_data(request, identifier):
     """
     get the CAP alert data. Redirects to the CAP XML file for the given alert id
@@ -26,9 +26,6 @@ def get_alert_cap_data(request, identifier):
     :param identifier: the CAP alert ID
     :return: redirect to the XML cap file
     """
-    logger.info(f"Get alert Data for {str(identifier)}")
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
     try:
         a = Alert.objects.get(id=identifier)
     except Exception as e: # @todo use other exception type
@@ -40,16 +37,13 @@ def get_alert_cap_data(request, identifier):
 
     return HttpResponseBadRequest('alert without CAP data?')
 
-
+@require_http_methods(["GET"])
 def get_alerts_for_subscription_id(request):
     """
     get all alert for the given subscription id
     :param request:
     :return: json list with all alerts for the given area
     """
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
-
     try:
         subscription_id = request.GET.get('subscription_id')
         subscription = Subscription.objects.get(id=subscription_id)
@@ -65,16 +59,13 @@ def get_alerts_for_subscription_id(request):
 
     return JsonResponse(result, safe=False)
 
-
+@require_http_methods(["GET"])
 def get_alerts_for_area(request):
     """
     get all alerts for the given area
     :param request:
     :return:
     """
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
-
     try:
         y1 = float(request.GET.get('min_lat'))
         y2 = float(request.GET.get('max_lat'))
@@ -109,7 +100,6 @@ def isValidBbox(x1, y1, x2, y2):
             y1 != y2)
 
 
+@require_http_methods(["GET"])
 def alert_map(request: HttpRequest):
-    if request.method != 'GET':
-        return HttpResponseBadRequest('wrong HTTP method')
     return render(request, 'map.html')

@@ -33,9 +33,7 @@ DEBUG = False
 if os.getenv('DJANGO_DEBUG', '') == 'True':
     DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.0.2.2', "*"]
-CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS', 'http://127.0.0.1:8000;http://10.0.2.2:8000').split(';')
-
+ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', ['localhost', '127.0.0.1', '10.0.2.2'])
 
 # Application definition
 
@@ -58,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware', # disable for post @todo
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
