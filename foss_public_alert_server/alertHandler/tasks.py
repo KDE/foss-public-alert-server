@@ -9,7 +9,6 @@ from time import sleep
 from celery import shared_task
 
 from .XML_CAP_parser import XMLCAPParser
-from .MOWAS_CAP_parser import MoWaSCapParser
 from .DWD_CAP_parser import DWDCAPParser
 from .models import Alert
 

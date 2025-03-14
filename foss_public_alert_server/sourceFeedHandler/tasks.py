@@ -10,7 +10,6 @@ from django_celery_beat.models import PeriodicTask
 
 from alertHandler import abstract_CAP_parser
 from alertHandler.XML_CAP_parser import XMLCAPParser
-from alertHandler.MOWAS_CAP_parser import MoWaSCapParser
 from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
 
@@ -137,9 +136,6 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
         case "rss or atom":
             # print("its atom")
             parser = XMLCAPParser(feed)
-        case "de-mowas":
-            # print("its mowas")
-            parser = MoWaSCapParser(feed)
         case "de-nina":
             parser = NinaCapParser(feed)
         case "DWD-Zip":
