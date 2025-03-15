@@ -12,13 +12,14 @@ from django.http import HttpResponseNotModified, HttpResponseBase
 
 from .exceptions import NothingChangedException
 
+from lib.bbk import BBK
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 from sourceFeedHandler.models import CAPFeedSource
 
 from .abstract_CAP_parser import AbstractCAPParser
-from .bbk import BBK
 
 # Parser for BBK's CAP-like JSON API
 # see https://nina.api.bund.dev/

@@ -27,6 +27,6 @@ Files: foss_public_alert_server/sourceFeedHandler/static/css/* foss_public_alert
 License: AGPL-3.0-or-later
 Copyright: FOSS Public Alert Server
 
-Files: foss_public_alert_server/lib/testdata/*.xml
+Files: foss_public_alert_server/lib/testdata/*.xml foss_public_alert_server/lib/testdata/*.json foss_public_alert_server/lib/testdata/*.geojson
 License: CC0-1.0
 Copyright: none

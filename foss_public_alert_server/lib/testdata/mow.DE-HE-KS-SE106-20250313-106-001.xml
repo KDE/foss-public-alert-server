@@ -1,0 +1,431 @@
+<?xml version='1.0' encoding='utf-8'?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+   <identifier>mow.DE-HE-KS-SE106-20250313-106-001</identifier>
+   <sender>DE-HE-KS-SE106</sender>
+   <sent>2025-03-13T10:50:25+01:00</sent>
+   <status>Actual</status>
+   <msgType>Cancel</msgType>
+   <scope>Public</scope>
+   <references>DE-HE-KS-SE106,mow.DE-HE-KS-SE106-20250313-106-000,2025-03-13T09:15:06-00:00</references>
+   <info lang="DE">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Entwarnung: Probealarm - Land Hessen</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Informieren Sie sich in den Medien, zum Beispiel im Lokalradio.&lt;br/&gt;Es besteht keine Gefahr.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <parameter>
+     <valueName>PHGEM</valueName>
+     <value>5995+14,6033+388,100001</value>
+    </parameter>
+    <parameter>
+     <valueName>ZGEM</valueName>
+     <value>5995+14,6033+388,100001</value>
+    </parameter>
+    <parameter>
+     <valueName>cellBroadcastId</valueName>
+     <value>1iz7qKA0tjiO</value>
+    </parameter>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+     <geocode>
+      <valueName>AreaId</valueName>
+      <value>0</value>
+     </geocode>
+    </area>
+   </info>
+   <info lang="DE-LS">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Warnung</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Informieren Sie sich in den Medien, zum Beispiel im Lokalradio. Es besteht keine Gefahr.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="EN">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Alert</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Get information from the media, for example on local radio. There is no danger.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="AR">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>تحذير</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>احصل على المعلومات من وسائل الإعلام، مثل الراديو المحلي. AR_SA</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="ES">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Advertencia</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Obtenga información de los medios de comunicación, por ejemplo, de la radio local. No hay ningún peligro.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="FR">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Avertissement</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Informez-vous dans les médias, par exemple sur la radio locale. Il n'y a pas de danger.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="PL">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Ostrzeżenie</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Zasięgnąć informacji w mediach, na przykład w radiu lokalnym. Zagrożenie nie występuje.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="RU">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Предупреждение</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Изучите информацию, предоставляемую средствами массовой информации, например, местными радиостанциями. Опасность отсутствует.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+   <info lang="TR">
+    <category>Geo</category>
+    <category>Rescue</category>
+    <category>Fire</category>
+    <category>Infra</category>
+    <category>CBRNE</category>
+    <category>Safety</category>
+    <category>Other</category>
+    <event>Gefahrendurchsage</event>
+    <urgency>Immediate</urgency>
+    <severity>Extreme</severity>
+    <certainty>Observed</certainty>
+    <headline>Uyarı</headline>
+    <description>Dies ist die Entwarnung zur Warnung &amp;quot;Probealarm - Land Hessen&amp;quot; vom 13.03.2025 10:15:06 gesendet durch LS Kassel, Land HE Red. (DEU, HE). Die Warnung ist aufgehoben.&lt;br/&gt;&lt;br/&gt;Landesweiter Warntag in Hessen - hessenweiter Probealarm</description>
+    <instruction>Medyadan bilgi edinin, örneğin yerel radyolardan. Tehlike yoktur.</instruction>
+    <expires>2025-03-13T16:50:25+01:00</expires>
+    <eventCode>
+     <valueName>profile:DE-BBK-EVENTCODE:01.00R</valueName>
+     <value>BBK-EVC-078</value>
+    </eventCode>
+    <parameter>
+     <valueName>warnVerwaltungsbereiche</valueName>
+     <value>066340000000,066320000000,064360000000,066350000000,066330000000,065350000000,064400000000,064370000000,065310000000,064320000000,064340000000,064350000000,064390000000,064120000000,065340000000,065320000000,064110000000,064380000000,066360000000,066310000000,065330000000,064330000000,064140000000,066110000000,064130000000</value>
+    </parameter>
+    <parameter>
+     <valueName>instructionCode</valueName>
+     <value>BBK-ISC-009 BBK-ISC-082 shortCode:BBK-ISC-011</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_langname</valueName>
+     <value>Leitfunkstelle Kassel</value>
+    </parameter>
+    <parameter>
+     <valueName>sender_signature</valueName>
+     <value>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</value>
+    </parameter>
+    <senderName>Leitfunkstelle Kassel
+Feuerwehr, Rettungsdienst, Katastrophenschutz
+Stadt und Landkreis Kassel</senderName>
+    <area>
+     <areaDesc>Land Hessen</areaDesc>
+    </area>
+   </info>
+  </alert>
