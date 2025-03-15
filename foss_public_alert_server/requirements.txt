@@ -5,6 +5,8 @@ Django>=4.1,<5.0
 psycopg2
 uwsgi
 
+# FIXME Downgrade kombu to 5.4.2 to fix a busy reconnect loop with RabbitMQ
+kombu==5.4.2
 celery
 django-celery-beat
 pywebpush
