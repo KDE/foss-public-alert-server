@@ -13,8 +13,10 @@ class TestBBK(unittest.TestCase):
     def test_to_cap(self):
         with open("testdata/mow.DE-HE-KS-SE106-20250313-106-001.json") as f:
             nina_json = json.load(f)
-
         cap_xml = BBK.json_to_cap(nina_json)
+        with open("testdata/mow.DE-HE-KS-SE106-20250313-106-001.geojson") as f:
+            nina_geojson = json.load(f)
+        BBK.resolve_area_geometry(cap_xml, nina_geojson)
 
         ET.indent(cap_xml, space=' ', level=2)
         cap_str = ET.tostring(cap_xml, encoding='utf-8', xml_declaration=True)

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import json
-import re
 import requests
 import xml.etree.ElementTree as ET
 import logging
@@ -43,19 +42,6 @@ class NinaCapParser(AbstractCAPParser):
             return None
         return req.json()
 
-    @staticmethod
-    def geojson_find_feature(geojson, key, value):
-        """
-        Fine a feature in a GeoJSON feature set containing the specified property.
-        :param geojson: A GeoJSON feature set
-        :param key: Feature proeprty name
-        :param value: Feature property value
-        """
-        for feature in geojson["features"]:
-            if key in feature and feature[key] == value:
-                return feature
-        return None
-
     def _load_alerts_from_feed(self):
         # use last e tag to reduce network usage
         # TODO fix cache handling and distinguish between empty result and no change for removing obsolete alerts
@@ -83,15 +69,6 @@ class NinaCapParser(AbstractCAPParser):
                 continue
 
             root = BBK.json_to_cap(alert)
-
-            # merge area geometry
-            for area in root.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
-                for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
-                    code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
-                    code_value = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value').text
-                    if code_name != 'AreaId' or not code_value:
-                        continue
-                    geo = NinaCapParser.geojson_find_feature(geojson, 'id', code_value)
-                    self.geojson_feature_to_cap(area, geo)
+            BBK.resolve_area_geometry(root, geojson)
 
             self.addAlert(cap_data=ET.tostring(root, encoding='utf-8', xml_declaration=True).decode())

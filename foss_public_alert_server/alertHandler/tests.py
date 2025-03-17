@@ -14,6 +14,8 @@ from .abstract_CAP_parser import AbstractCAPParser
 from .XML_CAP_parser import XMLCAPParser
 import xml.etree.ElementTree as ET
 
+from lib import cap_geojson
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -48,20 +50,6 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         return abstract_cap_parser, cap_tree
 
     # test every helper methode
-    def test_geojson_polygon_to_cap(self):
-        cap_data = self.create_test_cap_data('test_cap_data_1.xml')
-        abstract_cap_parser, cap_tree = self.create_test_xml_tree(cap_data)
-        coordinate_raw = {"geometry": {"coordinates": [
-            [[15.548333151546686, 48.91076750142937], [15.575068458831433, 48.905356266254856],
-             [15.820682797527303, 48.875127253584324], [16.038111270345468, 48.85303086511381],
-             [16.847072835710364, 48.39893923921197], [16.853133779614105, 48.341154686565595]]]},
-        }
-        expected_coordinates = ("48.9108,15.5483 48.9054,15.5751 "
-                                "48.8751,15.8207 48.8530,16.0381 "
-                                "48.3989,16.8471 48.3412,16.8531")
-        cap_polygon = abstract_cap_parser.geojson_polygon_to_cap(coordinate_raw['geometry']['coordinates'])
-        self.assertEqual(cap_polygon, expected_coordinates)
-
     def test_expand_geocode_polygon_exists(self):
         cap_data = self.create_test_cap_data('test_cap_data_1.xml')
         abstract_cap_parser = self.create_test_class_instance()
@@ -152,7 +140,7 @@ class AlertHandlerCAPParserTestsCase(TestCase):
             "type": "Polygon"},
             "properties": {"code": "AT001", "country": "AT", "name": "Nieder\u00f6sterreich",
                            "type": "EMMA_ID"}, "type": "Feature"}
-        expected_polygon = abstract_cap_parser.geojson_polygon_to_cap(expected_polygon_raw['geometry']['coordinates'])
+        expected_polygon = cap_geojson.geojson_polygon_to_cap(expected_polygon_raw['geometry']['coordinates'])
 
         self.assertEqual(expand_geocode, True)
         self.assertEqual(added_polygon.text, expected_polygon)

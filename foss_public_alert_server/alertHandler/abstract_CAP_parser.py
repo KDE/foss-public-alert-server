@@ -25,7 +25,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
-from lib import cap, cap_geometry
+from lib import cap, cap_geojson, cap_geometry
 
 # logging config
 logging.basicConfig(level=logging.INFO)
@@ -126,39 +126,6 @@ class AbstractCAPParser(ABC):
             # store warnings in database
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
-    @staticmethod
-    def geojson_polygon_to_cap(coordinates) -> str:
-        """
-        Converts a polygon to cap data
-        :param coordinates:
-        :return: a string with the coordinates
-        """
-        poly: str = ''
-        for coord in coordinates[0]:
-            poly += f"{coord[1]:.4f},{coord[0]:.4f} "
-        return poly.strip()
-
-    def geojson_feature_to_cap(self, area, geojson) -> bool:
-        """
-        Add a GeoJSON polygon from a GEoJSON feature to the CAP <area> element.
-        :param area: the CAP <area> element to add the geometry to
-        :param geojson: A GeoJSON feature object
-        :return: True if a viable polygon was found and could be added, False otherwise
-        """
-        if geojson['geometry']['type'] == 'Polygon':
-            poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-            poly.text = self.geojson_polygon_to_cap(geojson['geometry']['coordinates'])
-            return True
-        elif geojson['geometry']['type'] == 'MultiPolygon':
-            for coordinates in geojson['geometry']['coordinates']:
-                poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-                poly.text = self.geojson_polygon_to_cap(coordinates)
-            return True
-        else:
-            logger.warning(f"{self.feed_source.source_id} - unhandled geometry type: {geojson['geometry']['type']}")
-            return False
-
-
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
         Some sources do not contain the polygons of the area directly in the CAP file, but use geocodes instead.
@@ -184,7 +151,7 @@ class AbstractCAPParser(ABC):
                 if os.path.isfile(code_file):
                     geojson = json.load(open(code_file))
                     # append geojson to original file
-                    expanded = expanded or self.geojson_feature_to_cap(area, geojson)
+                    expanded = expanded or cap_geojson.geojson_feature_to_cap(area, geojson)
                 else:
                     if is_first_error_for_source:
                         is_first_error_for_source = False

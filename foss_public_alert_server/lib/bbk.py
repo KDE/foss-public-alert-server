@@ -6,6 +6,9 @@ import json
 import re
 import xml.etree.ElementTree as ET
 
+from lib import cap_geojson
+
+
 class BBK:
     """
     Utilities for consuming JSON data from Germany's BBK
@@ -13,7 +16,7 @@ class BBK:
 
     @staticmethod
     def convertProperty(xmlParent, mowasObj, propertyName):
-        if not propertyName in mowasObj:
+        if propertyName not in mowasObj:
             return
         node = ET.SubElement(xmlParent, '{urn:oasis:names:tc:emergency:cap:1.2}' + propertyName)
         node.text = mowasObj[propertyName]
@@ -37,14 +40,12 @@ class BBK:
             BBK.convertProperty(root, alert, prop)
 
         for alert_info in alert['info']:
-            info = ET.SubElement(root, '{urn:oasis:names:tc:emergency:cap:1.2}info',
-                                    {'lang': alert_info['language']})
+            info = ET.SubElement(root, '{urn:oasis:names:tc:emergency:cap:1.2}info', {'lang': alert_info['language']})
             for category in alert_info['category']:
                 cat = ET.SubElement(info, '{urn:oasis:names:tc:emergency:cap:1.2}category')
                 cat.text = category
 
-            for prop in ['event', 'urgency', 'severity', 'certainty', 'headline', 'description', 'instruction',
-                            'expires', 'web', 'contact']:
+            for prop in ['event', 'urgency', 'severity', 'certainty', 'headline', 'description', 'instruction', 'expires', 'web', 'contact']:
                 BBK.convertProperty(info, alert_info, prop)
 
             for event_code in alert_info.get('eventCode', []):
@@ -73,3 +74,18 @@ class BBK:
                 # TODO more area content
 
         return root
+
+    @staticmethod
+    def resolve_area_geometry(alert, geojson):
+        """
+        Merge GeoJSON affected area information into a CAP structure
+        converted from BBK CAP-like JSON.
+        """
+        for area in alert.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
+            for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
+                code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
+                code_value = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value').text
+                if code_name != 'AreaId' or not code_value:
+                    continue
+                geo = cap_geojson.geojson_find_features(geojson, 'areaId', int(code_value))
+                cap_geojson.geojson_features_to_cap(area, geo)
