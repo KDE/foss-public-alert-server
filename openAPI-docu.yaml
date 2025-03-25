@@ -336,6 +336,12 @@ components:
           format: float
           description: "The maximum longitude"
           example: 180.0
+        p256dh_key:
+          type: string
+          description: EDCH user agent public key according to RFC 8291, in Base64 URL encoding. (Only for UNIFIED_PUSH_ENCRYPTED).
+        auth_key:
+          type: string
+          description: 16 byte authentication secret according to RFC 8291, in Base64 URL encoding. (Only for UNIFIED_PUSH_ENCRYPTED).
 
 
     alert_request:
