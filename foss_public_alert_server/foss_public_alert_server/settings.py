@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'subscriptionHandler.apps.SubscriptionHandlerConfig',
     'alertHandler.apps.AlertHandlerConfig',
     'sourceFeedHandler.apps.SourcefeedhandlerConfig',
+    'alertTester.apps.AlertTesterConfig',
     'configuration.apps.ConfigurationConfig',
     'django.contrib.admin',
     'django.contrib.auth',

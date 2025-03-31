@@ -65,6 +65,16 @@ app.conf.beat_schedule = {
         'task': 'task.remove_expired_alerts',
         'schedule': crontab(minute="0", hour="*"),
     },
+    'create_test_alert_every_five_minutes': {
+        'task': 'task.create_test_alert',
+        'schedule': crontab(minute="*/5"),
+        'enabled': False
+    },
+    'delete_expired_test_alerts_every_five_minutes': {
+        'task': 'task.delete_expired_test_alerts',
+        'schedule': crontab(minute="*/5"),
+        'enabled': False
+    },
 }
 
 app.conf.timezone = 'UTC' # @todo fix timezone

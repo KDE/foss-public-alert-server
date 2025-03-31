@@ -10,7 +10,7 @@ from django.contrib.gis import admin
 
 class AlertAdmin(admin.GISModelAdmin):
     list_display = ('id', 'source_id', 'alert_id', 'issue_time', 'expire_time')
-    search_fields = ['source_id', 'alert_id']
+    search_fields = ['id', 'source_id', 'alert_id']
 
 admin.site.register(Alert, AlertAdmin)
 

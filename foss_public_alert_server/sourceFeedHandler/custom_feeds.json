@@ -324,6 +324,31 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+        "sourceId": "XX-FPAS-EN",
+        "byLanguage": [
+          {
+             "code": "EN",
+             "name": "FPAS: Test Alerts form the FOSS Public Alert Server",
+             "logo": ""
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.578.0",
+        "registerUrl": "",
+        "authorName": "FOSS Public Alert Server Team",
+        "authorEmail": "",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "http://127.0.0.1:8000/feed/de-FPAS-DE/rss.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "XX",
+        "authorityAbbrev": "FPAS",
+        "feedSource": "FAPS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
     }
   ]
 }
