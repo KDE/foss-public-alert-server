@@ -47,7 +47,7 @@ def create_test_alert():
         severity = TestAlert.Severity.Severe,
         certainty = TestAlert.Certainty.Observed,
         onset = datetime.now(timezone.utc),
-        expires = datetime.now(timezone.utc)+timedelta(minutes=30),
+        expires = datetime.now(timezone.utc)+timedelta(minutes=5),
         headline = "TEST Alert",
         description = "This is a test alert from the FOSS Public Alert Server. There is no real danger."
                       "You can safely ignore this alert.",
