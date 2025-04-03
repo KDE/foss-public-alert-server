@@ -1,0 +1,1 @@
+{"geometry": {"coordinates": [[[2.59227, 48.80744], [2.41634, 48.84923], [2.31989, 48.90046], [2.29607, 48.87781], [2.29097, 48.95097], [2.55306, 49.00982], [2.59227, 48.80744]]], "crs": {"properties": {"name": "EPSG:4326"}, "type": "name"}, "type": "Polygon"}, "properties": {"code": "FR106", "country": "FR", "name": "Seine-Saint-Denis", "type": "EMMA_ID"}, "type": "Feature"}
