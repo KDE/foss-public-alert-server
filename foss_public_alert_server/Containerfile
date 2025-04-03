@@ -11,10 +11,9 @@ RUN pip install -r requirements.txt
 COPY . /app
 RUN mkdir -p /app/alertHandler/static/maplibre
 
-# FIXME should be "latest" but that is currently broken
-ARG MAPLIBRE_VERSION="5.2.0"
-RUN curl -L https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css > /app/alertHandler/static/maplibre/maplibre-gl.css
-RUN curl -L https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js > /app/alertHandler/static/maplibre/maplibre-gl.js
+ARG MAPLIBRE_VERSION="latest"
+RUN curl --fail-with-body -L https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.css > /app/alertHandler/static/maplibre/maplibre-gl.css
+RUN curl --fail-with-body -L https://unpkg.com/maplibre-gl@${MAPLIBRE_VERSION}/dist/maplibre-gl.js > /app/alertHandler/static/maplibre/maplibre-gl.js
 
 ARG REVISION=""
 RUN echo -n "${REVISION}" > /app/build-revision
