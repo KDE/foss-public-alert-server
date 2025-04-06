@@ -1,20 +1,52 @@
 # SPDX-FileCopyrightText: 2025 Nucleus <nucleus-ffm@posteo.de>
+# SPDX-FileCopyrightText: 2022 Volker Krause <vkrause@kde.org>
 # SPDX-FileCopyrightText: 2025 applecuckoo <nufjoysb@duck.com>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import json
 import os
+import csv
+import gdown
 
-# download the geojson from MeteoAlarm's Google Drive (linked at https://meteoalarm.org/en/live/page/redistribution-hub#list)
-file_name_geojson = "data/EMMA_ID/geocodes.json"
-folder_name = "data/EMMA_ID/"
+# note: these are Google Drive IDs, but they will always point to the latest revision of the file.
+aliases_id = "1haP3_PFz9nYrEgLjCd_YvaCuMb9_5QC1"
+geocodes_id = "16s24hYHfYQhKMNcP1hpgQmg13Yb8j0hV"
+
+geocodes_filename = "data/EMMA_ID/geocodes.json"
+aliases_filename = "data/EMMA_ID/geocodes-aliases.csv"
+emma_folder = "data/EMMA_ID/"
+data_folder = "data/"
+
+include_aliases = [ 'FIPS', 'NUTS2', 'NUTS3' ]
 
 def write_to_file(geojson):
-    print(geojson)
-    path = os.path.join(os.path.dirname(__file__), folder_name, geojson['properties']['code'] + ".geojson")
+    path = os.path.join(os.path.dirname(__file__), emma_folder, geojson['properties']['code'] + ".geojson")
     with open(path, 'w') as f:
         f.write(json.dumps(geojson))
+        f.close()
 
-geojson = json.loads(open(file_name_geojson, 'r').read())
+# autofetch
+gdown.download(id=geocodes_id, output=geocodes_filename)
+gdown.download(id=aliases_id, output=aliases_filename)
+
+# load geojson data
+geojson = json.loads(open(geocodes_filename, 'r').read())
 for region in geojson['features']:
     write_to_file(region)
+
+# create symlinks
+with open(aliases_filename, newline='') as f:
+    geocodesAliases = list(csv.reader(f, delimiter=',', quotechar='"'))[1:]
+for alias in geocodesAliases:
+    if alias[2] not in include_aliases:
+        continue
+    destDir = os.path.join(data_folder, alias[2])
+    os.makedirs(os.path.join(destDir), exist_ok=True)
+    dest = os.path.join(destDir, f"{alias[1]}.geojson")
+
+    if os.path.isfile(dest):
+        os.remove(dest)
+
+    srcDir = os.path.join(data_folder, 'EMMA_ID')
+    src = os.path.join(os.path.relpath(srcDir, destDir), f"{alias[0]}.geojson")
+    os.symlink(src, dest)

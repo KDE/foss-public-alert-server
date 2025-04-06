@@ -19,3 +19,4 @@ requests-cache
 
 feedparser
 
+gdown
