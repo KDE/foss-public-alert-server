@@ -71,6 +71,30 @@
     },
     {
       "source": {
+        "sourceId": "de-dwd-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Germany: German Meteorological Office",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://www.dwd.de/DWD/warnungen/cap-feed/en/rss.xml",
+        "capAlertFeedStatus": "redundant to de-dwd-de",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "AlertHub",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note":  "This feed contains alerts in English that are already included in the <de-dwd-de> feed as multilingual alerts"
+      }
+    },
+    {
+      "source": {
         "sourceId": "de-lhp-de",
         "byLanguage": [
           {
