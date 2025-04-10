@@ -3,7 +3,9 @@
 
 import json
 import logging
+from datetime import datetime, timezone
 
+import celery
 from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 from django_celery_beat.models import PeriodicTask
@@ -115,12 +117,64 @@ def reload_feed_sources_and_update_database() -> None:
     store_feeds_in_database(feeds)
 
 
-@shared_task(name="task.create_parser_and_get_feed")
-def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
+class SourceFeedBaseTask(celery.Task):
+    """
+    Used as base task for the periodic celery tasks to fetch the CAP alerts
+    """
+
+    @staticmethod
+    def re_enable_task(self, feed_id, source_id) -> None:
+        """
+        enable the task again to allow the scheduler to add the task to the queue again
+        :param self:
+        :param feed_id: the id of the feed. Needed to determine the task name
+        :param source_id:the source id of the task to determine the task_name
+        :return: None
+        """
+        # @TODO this could break if the ever change the task name scheme
+        task_name = f'periodic feed updater for - {source_id} - {feed_id}'
+        try:
+            task = PeriodicTask.objects.get(name=task_name)
+            task.enabled = True
+            task.save()
+        except PeriodicTask.DoesNotExist:
+            pass
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        """
+        called if the celery task fails. We enable the task again to schedule this task again
+        :param exc:
+        :param task_id:
+        :param args:
+        :param kwargs:
+        :param einfo:
+        :return:
+        """
+        feed_id, _, source_id = args
+        # print(f"Task failed. Enable {source_id} queue again")
+        self.re_enable_task(self, id, source_id)
+
+    def on_success(self, retval, task_id, args, kwargs):
+        """
+        called if the celery task was successful executed. We enable the task again to schedule it again
+        :param retval:
+        :param task_id:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        feed_id, _, source_id = args
+        # print(f"Task was successful. Enable {source_id} queue again")
+        self.re_enable_task(self, feed_id, source_id)
+
+
+@shared_task(name="task.create_parser_and_get_feed", base=SourceFeedBaseTask)
+def create_parser_and_get_feed(feed_id: str, feed_format:str, source_id:str) -> None :
     """
     called from the periodic celery task. Creates a parser instance and get the feed
     :param feed_id: the id of the CAPFeedSource entry
     :param feed_format: the format field of the CAPFeedSource entry
+    :param source_id: needed for the on_success and on_failure method, not needed here
     :return: None
     """
     logger.debug("Current feed id: " + feed_id)
@@ -143,6 +197,7 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
             parser = DWDCAPParser(feed)
     if parser is not None:
         parser.get_feed(parser)
+        CAPFeedSource.objects.filter(id=feed_id).update(last_fetch_datetime=datetime.now(timezone.utc))
     else:
         logger.error(f"{feed.source_id}: Parser is None for {feed_format}")
 

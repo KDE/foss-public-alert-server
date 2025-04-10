@@ -33,6 +33,7 @@ class CAPFeedSource(models.Model):
 
     last_fetch_status = models.BooleanField(null=True, blank=True)
     last_fetch_duration = models.DurationField(null=True, blank=True)
+    last_fetch_datetime = models.DateTimeField(null=True, blank=True)
     missing_geo_information = models.BooleanField(null=True,blank=True)
     feed_warnings = models.CharField(max_length=255, null=True, blank=True)
     last_e_tag = models.CharField(max_length=255, null=True, blank=True)
@@ -58,7 +59,8 @@ class CAPFeedSource(models.Model):
                 interval=schedule,
                 name=task_name,
                 task='task.create_parser_and_get_feed',
-                args=f'["{self.id}", "{self.format}"]',
+                one_off=True,
+                args=f'["{self.id}", "{self.format}", "{self.source_id}"]',
             )
             task.save()
             self.periodic_task_name = task_name

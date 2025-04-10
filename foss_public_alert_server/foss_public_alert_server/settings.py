@@ -152,7 +152,7 @@ MEDIA_ROOT = os.getenv('DJANGO_MEDIA_ROOT', BASE_DIR.joinpath('cap'))
 USER_AGENT = "FOSS Public Alert Server"
 
 # timeperiod in seconds for feed updates used by the celery task scheduler
-DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS = 60
+DEFAULT_UPDATE_PERIOD_FOR_CAP_FEEDS = 15
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

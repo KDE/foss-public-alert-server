@@ -53,7 +53,8 @@ def get_feed_status_for_area(request:HttpRequest):
                            "cap_alert_feed_status": entry.cap_alert_feed_status,
                            "authorityCountry": entry.authorityCountry,
                            "register_url": entry.register_url,
-                           "latest_published_alert_datetime" : entry.latest_published_alert_datetime
+                           "latest_published_alert_datetime" : entry.latest_published_alert_datetime,
+                           "last_fetch_datetime": entry.last_fetch_datetime
                            }
             result['results'].append(temp_result)
 

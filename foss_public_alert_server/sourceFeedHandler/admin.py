@@ -13,7 +13,7 @@ import os
 class CAPSourceAdmin(admin.ModelAdmin):
     list_display = ('id', 'source_id', 'name')
     search_fields = ['source_id', 'cap_alert_feed']
-    actions = ['purge_dangling_cap_files']
+    actions = ['purge_dangling_cap_files', 'reset_last_fetch_status']
 
     @admin.action(description="Purge dangling CAP files")
     def purge_dangling_cap_files(self, request, queryset):
@@ -38,6 +38,14 @@ class CAPSourceAdmin(admin.ModelAdmin):
                     errors += 1
 
         self.message_user(request, f"Removed {count} file(s), {errors} error(s)", messages.SUCCESS if errors == 0 else messages.ERROR)
+
+    @admin.action(description="reset last fetch status")
+    def reset_last_fetch_status(self, request, queryset):
+        for source in queryset:
+            print(source.id)
+
+            CAPFeedSource.objects.filter(id=source.id).update(last_fetch_datetime=None)
+
 
     search_fields = ['source_id', 'cap_alert_feed']
 
