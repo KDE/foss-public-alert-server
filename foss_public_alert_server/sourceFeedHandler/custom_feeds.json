@@ -364,7 +364,7 @@
         "authorName": "FOSS Public Alert Server Team",
         "authorEmail": "",
         "sourceIsOfficial": false,
-        "capAlertFeed": "http://127.0.0.1:8000/feed/de-FPAS-DE/rss.xml",
+        "capAlertFeed": "https://alerts.kde.org/feed/XX-FPAS-EN/rss.xml",
         "capAlertFeedStatus": "operating",
         "authorityCountry": "XX",
         "authorityAbbrev": "FPAS",
