@@ -101,27 +101,31 @@ def add_new_subscription(request):
         test_push = None
         s = None
 
+        msg = {}
+        msg['type'] = 'subscribe'
+        msg['message'] = "successfully subscribed"
+
         match push_service:
             case "UNIFIED_PUSH":
                 s = unified_push.create_subscription(token, bbox)
-                test_push = unified_push.send_notification(s.token, json.dumps("successfully subscribed"))
+                test_push = unified_push.send_notification(s.token, json.dumps(msg))
             case "UNIFIED_PUSH_ENCRYPTED":
                 s = unified_push_encrpted.create_subscription(token, bbox, data)
                 test_push = unified_push_encrpted.send_notification(s.token,
-                                                    json.dumps("successfully subscribed"),
+                                                    json.dumps(msg),
                                                     auth_key=s.auth_key,
                                                     p256dh_key=s.p256dh_key)
             case "APN":
                 s = apn.create_subscription()
                 test_push = apn.send_notification(s.token,
-                                                  "successfully subscribed",
+                                                  json.dumps(msg),
                                                   "",
                                                   "",
                                                   "",
                                                   "")
             case "FIREBASE":
                 s = firebase.create_subscription()
-                test_push = firebase.send_notification(s.token, json.dumps("successfully subscribed"))
+                test_push = firebase.send_notification(s.token, json.dumps(msg))
 
         if test_push is not None and 200 <= test_push.status_code <= 299 and s is not None:
             s.save()

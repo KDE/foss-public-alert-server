@@ -21,10 +21,13 @@ def remove_old_subscription():
     """
     deletes all subscription which hasn't sent a heartbeat since the in the settings defined number of days
     """
+    msg = {}
+    msg['type'] = 'unsubscribe'
+    msg['message'] = "Subscription timed out and is deleted. please renew your subscription."
+
     for subscription in Subscription.objects.all():
         timedelta = datetime.now(timezone.utc) - subscription.last_heartbeat
         if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
-            msg = "Subscription timed out and is deleted. please renew your subscription."
             requests.post(subscription.distributor_url, json.dumps(msg))
             subscription.delete()
 
@@ -35,22 +38,25 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
     :return: None
     """
     logger.info("check for push notifications")
+    msg = {}
+    msg['type'] = 'added'
+    msg['alert_id'] = alert.alert_id
+
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
         # @todo is the distributor_url to sensitive to write it into logs?
         logger.debug(f"Send notification for {subscription.id} to {subscription.token}")
         match subscription.push_service:
             case subscription.PushServices.UNIFIED_PUSH:
-                unified_push.send_notification(subscription.token,
-                                               json.dumps(alert.alert_id))
+                unified_push.send_notification(subscription.token, json.dumps(msg))
             case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
                 unified_push_encrpted.send_notification(subscription.token,
-                                          json.dumps(alert.alert_id),
+                                          json.dumps(msg),
                                           auth_key=subscription.auth_key,
                                           p256dh_key=subscription.p256dh_key)
             case subscription.PushServices.APN:
                 apn.send_notification(subscription.token, "", "", "", "", "")
             case subscription.PushServices.FIREBASE:
-                firebase.send_notification(subscription.token, json.dumps(alert.alert_id))
+                firebase.send_notification(subscription.token, json.dumps(msg))
 
             # @todo check performance
     pass
