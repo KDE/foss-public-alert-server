@@ -25,6 +25,11 @@ paths:
     post:
       summary: Subscribe for a new area
       description: Subscribe a client to a UnifiedPush endpoint for an area defined by a bounding box with coordinates.
+        As part of subscribing a push notification is sent to the client with a JSON payload with the type set to 'subscribe'.
+        When new alerts appear in the subscribed area push notifications with a JSON payload with type 'added' are sent which
+        contain the identifier of the alert in the 'alert_id' field.
+        A subscriptions needs to be regularly updated to not expire. When a subscription expries a push notification is sent
+        with a JSON payload with type 'unsubscribe'.
       tags:
         - Subscription
       requestBody:
