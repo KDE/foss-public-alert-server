@@ -2,3 +2,4 @@
 # SPDX-FileCopyrightText: none
 
 foss_public_alert_server/alertHandler/data/EMMA_ID/geocodes.json binary
+foss_public_alert_server/alertHandler/data/EMMA_ID/*.geojson binary
