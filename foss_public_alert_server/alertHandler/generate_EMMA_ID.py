@@ -50,3 +50,7 @@ for alias in geocodesAliases:
     srcDir = os.path.join(data_folder, 'EMMA_ID')
     src = os.path.join(os.path.relpath(srcDir, destDir), f"{alias[0]}.geojson")
     os.symlink(src, dest)
+
+# clean up source files
+os.remove(geocodes_filename)
+os.remove(aliases_filename)
