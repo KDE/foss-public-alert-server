@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="https://cap.met.ie/cap-en-style.xsl"?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+  <identifier>2.49.0.1.372.0.250413231648.N_Norm002_SmallCraft</identifier>
+  <sender>forecasts@met.ie</sender>
+  <sent>2025-04-14T00:16:48+01:00</sent>
+  <status>Actual</status>
+  <msgType>Alert</msgType>
+  <scope>Public</scope>
+  <incidents></incidents>
+  <info>
+    <language>en-GB</language>
+    <category>Met</category>
+    <event>Small Craft</event>
+    <responseType>Monitor</responseType>
+    <urgency>Future</urgency>
+    <severity>Moderate</severity>
+    <certainty>Likely</certainty>
+    <effective>2025-04-14T00:16:48+01:00</effective>
+    <onset>2025-04-14T13:00:00+01:00</onset>
+    <expires>2025-04-14T20:00:00+01:00</expires>
+    <senderName>Met Éireann</senderName>
+    <headline>Small Craft warning from Fair Head to Strangford Lough to Howth Head</headline>
+    <description>Southerly winds will reach force 6 at times.</description>
+    <instruction></instruction>
+    <parameter>
+      <valueName>awareness_type</valueName>
+      <value>1; Wind</value>
+    </parameter>
+    <parameter>
+      <valueName>awareness_level</valueName>
+      <value>2; yellow; Moderate</value>
+    </parameter>
+    <area>
+      <areaDesc>from Fair Head to Strangford Lough to Howth Head</areaDesc>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>EI807</value>
+      </geocode>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>EI809</value>
+      </geocode>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>EI806</value>
+      </geocode>
+      <geocode>
+        <valueName>EMMA_ID</valueName>
+        <value>EI808</value>
+      </geocode>
+    </area>
+  </info>
+</alert>
