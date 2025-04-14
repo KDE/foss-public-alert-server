@@ -151,7 +151,7 @@ class AbstractCAPParser(ABC):
                 if os.path.isfile(code_file):
                     geojson = json.load(open(code_file))
                     # append geojson to original file
-                    expanded = expanded or cap_geojson.geojson_feature_to_cap(area, geojson)
+                    expanded = cap_geojson.geojson_feature_to_cap(area, geojson) or expanded
                 else:
                     if is_first_error_for_source:
                         is_first_error_for_source = False

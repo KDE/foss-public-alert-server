@@ -2,8 +2,11 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import json
+import os
 import unittest
 
+import cap
 import cap_geojson
 
 
@@ -19,6 +22,19 @@ class TestCAPGeoJson(unittest.TestCase):
                                 "48.3989,16.8471 48.3412,16.8531")
         cap_polygon = cap_geojson.geojson_polygon_to_cap(coordinate_raw['geometry']['coordinates'])
         self.assertEqual(cap_polygon, expected_coordinates)
+
+    def test_geojson_feature_to_cap(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/ie-2.49.0.1.372.0.250413231648.N_Norm002_SmallCraft.xml")
+        for area in cap_msg.xml.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
+            for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
+                code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
+                code_value = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value').text
+                code_file = os.path.join('../alertHandler/data', code_name, f"{code_value}.geojson")
+                self.assertTrue(os.path.isfile(code_file))
+                with open(code_file) as f:
+                    geojson = json.load(f)
+                self.assertTrue(cap_geojson.geojson_feature_to_cap(area, geojson))
+        self.assertEqual(len(cap_msg.xml.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}polygon')), 4)
 
 
 if __name__ == '__main__':
