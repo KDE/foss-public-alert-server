@@ -101,6 +101,16 @@ class TestCAP(unittest.TestCase):
         # TODO we don't handle/fix this yet!
         print(poly.envelope)
 
+    def test_tab_separated_coordinates(self):
+        cap_msg = cap.CAPAlertMessage.from_file("testdata/mo-cap_monsoon.xml")
+        poly = cap_geometry.multipolygon_from_cap_alert(cap_msg)
+        self.assertTrue(poly.valid)
+        extent = poly.envelope.extent
+        self.assertAlmostEqual(extent[1], 22.0766)
+        self.assertAlmostEqual(extent[3], 22.217)
+        self.assertAlmostEqual(extent[0], 113.5281)
+        self.assertAlmostEqual(extent[2], 113.6301)
+
     def test_circle(self):
         polys = cap_geometry.polygon_from_cap_circle("23.8262083333333,120.185488888889 0.5")
         self.assertEqual(len(polys), 1)

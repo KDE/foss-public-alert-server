@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import re
 import xml.etree.ElementTree as ET
 
 from dateutil import parser
@@ -28,7 +29,7 @@ class CAPPolygon:
         Returns None if no valid polygon could be parsed.
         """
         coords = []
-        for cap_coord in cap_polygon.split(' '):
+        for cap_coord in re.split(r'\s', cap_polygon):
             # remove garbage found in e.g. GDACS CAP files
             cap_coord = cap_coord.translate(str.maketrans('', '', '()'))
             cap_point = cap_coord.split(',')
