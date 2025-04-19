@@ -10,7 +10,7 @@ SPDX-FileCopyrightText = "Meteoalarm / EUMETNET"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = "foss_public_alert_server/alertHandler/data/SAME/**.geojson"
+path = ["foss_public_alert_server/alertHandler/data/SAME/**.geojson", "foss_public_alert_server/alertHandler/data/UGC/**.geojson"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "National Weather Service (NWS)"
 SPDX-License-Identifier = "CC0-1.0"
