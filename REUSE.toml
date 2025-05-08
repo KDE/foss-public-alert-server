@@ -46,7 +46,7 @@ SPDX-FileCopyrightText = "FOSS Public Alert Server"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = ["foss_public_alert_server/lib/testdata/**.xml", "foss_public_alert_server/lib/testdata/**.json", "foss_public_alert_server/lib/testdata/**.geojson", "REUSE.toml"]
+path = ["foss_public_alert_server/alertHandler/data/broken-chains.pem", "foss_public_alert_server/lib/testdata/**.xml", "foss_public_alert_server/lib/testdata/**.json", "foss_public_alert_server/lib/testdata/**.geojson", "REUSE.toml"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"

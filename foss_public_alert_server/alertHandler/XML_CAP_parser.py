@@ -21,6 +21,9 @@ from sourceFeedHandler.models import CAPFeedSource
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+BROKEN_CHAIN_FEEDS = ['sa-ncm-ar', 'sa-ncm-en', 'gh-gmet-en', 'za-saws-en']
+BROKEN_CHAIN_FILE = 'data/broken-chains.pem'
+
 class XMLCAPParser(AbstractCAPParser):
 
     def __init__(self, feed_source):
@@ -33,12 +36,20 @@ class XMLCAPParser(AbstractCAPParser):
         feed: FeedParserDict
 
         try:
-            # the etag can be none, so only use it, if it is not none
-            if last_e_tag is not None:
-                feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed, etag=last_e_tag,
-                                                         agent=settings.USER_AGENT)
+            if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+                # the etag can be none, so only use it, if it is not none
+                if last_e_tag is not None:
+                    feed_text = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'ETag': last_e_tag, 'User-Agent': settings.USER_AGENT}).text()
+                    feed: FeedParserDict = feedparser.parse(feed_text)
+                else:
+                    feed_text = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE).text()
+                    feed: FeedParserDict = feedparser.parse(feed_text)
             else:
-                feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed)
+                if last_e_tag is not None:
+                    feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed, etag=last_e_tag,
+                                                            agent=settings.USER_AGENT)
+                else:
+                    feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed)
 
             # check if the feed contains any error and raise Exception if so
             if feed.bozo:
@@ -86,7 +97,10 @@ class XMLCAPParser(AbstractCAPParser):
                 logger.exception("Type error", exc_info=e)
 
             try:
-                req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
+                if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT}, verify=BROKEN_CHAIN_FILE)
+                else:
+                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
                 if not req.ok:
                     logger.error(f"Fetch error {req.status_code}: {cap_source_url}")
                     continue
