@@ -4,10 +4,16 @@ SPDX-PackageSupplier = "Nucleus <nucleus-ffm@posteo.de>, Volker Krause <vkrause@
 SPDX-PackageDownloadLocation = "https://invent.kde.org/webapps/foss-public-warn-server"
 
 [[annotations]]
-path = ["foss_public_alert_server/alertHandler/data/EMMA_ID/**.geojson", "foss_public_alert_server/alertHandler/data/NUTS3/**.geojson", "foss_public_alert_server/alertHandler/data/FIPS/**.geojson"]
+path = ["foss_public_alert_server/alertHandler/data/EMMA_ID/**.geojson", "foss_public_alert_server/alertHandler/data/NUTS3/**.geojson", "foss_public_alert_server/alertHandler/data/FIPS/**.geojson", "foss_public_alert_server/alertHandler/data/WARNCELLID/5**.geojson"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Meteoalarm / EUMETNET"
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "foss_public_alert_server/alertHandler/data/WARNCELLID/2**.geojson"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "Source: Deutscher Wetterdienst"
+SPDX-License-Identifier = "CC-BY-4.0"
 
 [[annotations]]
 path = ["foss_public_alert_server/alertHandler/data/SAME/**.geojson", "foss_public_alert_server/alertHandler/data/UGC/**.geojson"]

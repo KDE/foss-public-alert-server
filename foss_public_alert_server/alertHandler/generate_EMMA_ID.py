@@ -17,7 +17,9 @@ aliases_filename = "data/EMMA_ID/geocodes-aliases.csv"
 emma_folder = "data/EMMA_ID/"
 data_folder = "data/"
 
-include_aliases = [ 'FIPS', 'NUTS2', 'NUTS3' ]
+include_aliases = [ 'FIPS', 'NUTS2', 'NUTS3', 'WARNCELLID' ]
+# only include coastal datasets, as DWD already includes polygons for alerts over land.
+include_warncellid_prefixes = [ '5' ]
 
 def write_to_file(geojson):
     path = os.path.join(os.path.dirname(__file__), emma_folder, geojson['properties']['code'] + ".geojson")
@@ -39,6 +41,9 @@ with open(aliases_filename, newline='') as f:
     geocodesAliases = list(csv.reader(f, delimiter=',', quotechar='"'))[1:]
 for alias in geocodesAliases:
     if alias[2] not in include_aliases:
+        continue
+    # check prefix for WARNCELLIDs
+    if alias[2] == 'WARNCELLID' and alias[1][:len(alias[1])-8] not in include_warncellid_prefixes:
         continue
     destDir = os.path.join(data_folder, alias[2])
     os.makedirs(os.path.join(destDir), exist_ok=True)
