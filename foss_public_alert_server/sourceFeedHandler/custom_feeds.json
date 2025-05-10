@@ -355,7 +355,7 @@
         "byLanguage": [
           {
              "code": "EN",
-             "name": "FPAS: Test Alerts form the FOSS Public Alert Server",
+             "name": "FPAS: Test Alerts from the FOSS Public Alert Server",
              "logo": ""
           }
         ],
@@ -368,7 +368,7 @@
         "capAlertFeedStatus": "operating",
         "authorityCountry": "XX",
         "authorityAbbrev": "FPAS",
-        "feedSource": "FAPS",
+        "feedSource": "FPAS",
         "format": "rss or atom",
         "override": true,
         "ignore": false
