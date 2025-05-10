@@ -202,7 +202,7 @@
         "capAlertFeed": "https://wcatwc.arh.noaa.gov/events/xml/PAAQAtom.xml",
         "capAlertFeedStatus": "no xml cap feed",
         "authorityCountry": "us",
-        "authorityAbbrev": "",
+        "authorityAbbrev": "ntwc",
         "feedSource": "AlertHub",
         "format": "rss or atom",
         "override": true,
@@ -372,6 +372,32 @@
         "format": "rss or atom",
         "override": true,
         "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "tw-ncdr-zh",
+        "byLanguage": [
+          {
+             "code": "tw",
+             "name": "Taiwan: National Center for Disaster Reduction",
+             "logo": "https://alert-hub.s3.amazonaws.com/images/tw-ncdr-zh.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.170.2",
+        "registerUrl": "",
+        "authorName": "Mei-Chun Kuo",
+        "authorEmail": "bettyk@ncdr.nat.gov.tw",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://alerts.ncdr.nat.gov.tw/RssAtomFeeds.ashx",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "tw",
+        "authorityAbbrev": "ncdr",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "endpoint on AlertHub contains all alerts, this one only has active alerts as per https://alerts.ncdr.nat.gov.tw/RSS.aspx"
       }
     }
   ]
