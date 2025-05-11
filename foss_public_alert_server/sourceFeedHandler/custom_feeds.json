@@ -399,6 +399,31 @@
         "ignore": false,
         "note": "endpoint on AlertHub contains all alerts, this one only has active alerts as per https://alerts.ncdr.nat.gov.tw/RSS.aspx"
       }
+    },
+    {
+      "source": {
+        "sourceId": "ca-alertable-xx",
+        "byLanguage": [
+          {
+             "code": "xx",
+             "name": "Canada: Alertable",
+             "logo": ""
+          }
+        ],
+        "guid": "",
+        "registerUrl": "",
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://feeds.alertable.ca/mobile/v2/feed.atom",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "ca",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
     }
   ]
 }
