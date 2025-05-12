@@ -7,6 +7,7 @@ import datetime
 import requests
 import logging
 import feedparser
+import os
 
 from feedparser import FeedParserDict
 from dateutil import parser
@@ -22,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 BROKEN_CHAIN_FEEDS = ['sa-ncm-ar', 'sa-ncm-en', 'gh-gmet-en', 'za-saws-en']
-BROKEN_CHAIN_FILE = 'data/broken-chains.pem'
+BROKEN_CHAIN_FILE = os.path.join(settings.BASE_DIR, 'alertHandler/data/broken-chains.pem')
 
 class XMLCAPParser(AbstractCAPParser):
 
@@ -39,11 +40,11 @@ class XMLCAPParser(AbstractCAPParser):
             if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
                 # the etag can be none, so only use it, if it is not none
                 if last_e_tag is not None:
-                    feed_text = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'ETag': last_e_tag, 'User-Agent': settings.USER_AGENT}).text()
-                    feed: FeedParserDict = feedparser.parse(feed_text)
+                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'ETag': last_e_tag, 'User-Agent': settings.USER_AGENT})
+                    feed: FeedParserDict = feedparser.parse(feed_request.content)
                 else:
-                    feed_text = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE).text()
-                    feed: FeedParserDict = feedparser.parse(feed_text)
+                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE)
+                    feed: FeedParserDict = feedparser.parse(feed_request.content)
             else:
                 if last_e_tag is not None:
                     feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed, etag=last_e_tag,
@@ -63,8 +64,12 @@ class XMLCAPParser(AbstractCAPParser):
             # feedparser tries to parse the feed anyway
             warnings.warn(f"NonXMLContentType - feed does not follow RFC 3023. Parse anyway. - {e}")
 
-        if feed.status == HttpResponseNotModified.status_code:
-            raise NothingChangedException("Nothing changed")
+        if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+            if feed_request.status_code == 304:
+                raise NothingChangedException("Nothing changed")
+        else:
+            if feed.status == HttpResponseNotModified.status_code:
+                raise NothingChangedException("Nothing changed")
 
         # check if header has en etag and if yes update the etag in the database
         if "etag" in feed.headers:
