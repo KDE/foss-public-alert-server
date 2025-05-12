@@ -72,9 +72,14 @@ class XMLCAPParser(AbstractCAPParser):
                 raise NothingChangedException("Nothing changed")
 
         # check if header has en etag and if yes update the etag in the database
-        if "etag" in feed.headers:
-            new_etag = feed.headers["etag"]
-            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
+        if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+            if "etag" in feed_request.headers:
+                new_etag = feed_request.headers["etag"]
+                CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
+        else:
+            if "etag" in feed.headers:
+                new_etag = feed.headers["etag"]
+                CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
 
         for entry in feed['entries']:
             # find the link to the CAP source
