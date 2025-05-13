@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 applecuckoo <nufjoysb@duck.com>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# note: marine SAME codes are symlinked to the marine zone UGCs and as such are created by generate_UGC.py
+# note: this file only generates state and partial county SAME codes. Everything else is symlinked to a UGC, see generate_UGC.py
 
 import json
 import os
@@ -34,5 +34,9 @@ for dataset_name, dataset_attributes in datasets.items():
     reader = shapefile.Reader(dataset_attributes['url'])
     collection = reader.shapeRecords()
     for region in collection.__geo_interface__['features']:
+        if dataset_name == 'county':
+            # partial counties only, everything else is symlinked to a UGC
+            if region['properties']['AREA_SAME'] == region['properties']['ENTIRESAME']:
+                continue
         # write every shape to a geojson file named by a function using the shape's attributes
         write_to_file(region, dataset_attributes['namefunc'](region))
