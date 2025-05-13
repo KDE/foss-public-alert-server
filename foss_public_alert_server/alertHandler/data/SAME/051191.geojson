@@ -1,1 +1,1 @@
-{"type": "Feature", "properties": {"STATE": "VA", "CWA": "MRX", "COUNTYNAME": "Washington", "FIPS": "51191", "TIME_ZONE": "E", "FE_AREA": "sw", "LON": -82.1217, "LAT": 36.6487, "ENTIRESAME": "051191", "AREA_SAME": "051191", "AREA_NAME": "Washington"}, "geometry": {"type": "Polygon", "coordinates": [[[-82.12189659999996, 36.64611216000003], [-82.12529659999996, 36.65011216000005], [-82.11799659999997, 36.64981216000007], [-82.12189659999996, 36.64611216000003]]]}}
+../UGC/VAC191.geojson
