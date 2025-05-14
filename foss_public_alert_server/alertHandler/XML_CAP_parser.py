@@ -108,6 +108,8 @@ class XMLCAPParser(AbstractCAPParser):
 
             try:
                 if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+                    # upgrade http to https as a workaround for za-saws-en
+                    cap_source_url = cap_source_url.replace('http://', 'https://')
                     req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT}, verify=BROKEN_CHAIN_FILE)
                 else:
                     req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
