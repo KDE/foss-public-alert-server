@@ -23,7 +23,7 @@ def polygon_from_cap_polygon(cap_polygon):
             for g in poly:
                 if g.geom_typeid == 3 or g.geom_typeid == 6:
                     return g
-            # broken beyond repaid
+            # broken beyond repair
             return None
 
     return poly
@@ -106,6 +106,9 @@ def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage):
     # overlapping polygons correctly.
     mp = MultiPolygon()
     for poly in polys:
+        if poly.geom_typeid in [1, 4, 5, 7]:
+            print(f"skipping invalid geometry type: {poly.json}")
+            continue
         mp = mp.union(poly)
 
     # normalize to a MultiPolygon, if the above simplified the geometry,

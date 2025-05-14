@@ -15,6 +15,8 @@ def geojson_polygon_to_cap(coordinates) -> str:
     :param coordinates:
     :return: a string with the coordinates
     """
+    if len(coordinates[0]) < 4:
+        return None
     poly: str = ''
     for coord in coordinates[0]:
         poly += f"{coord[1]:.4f},{coord[0]:.4f} "
@@ -35,6 +37,18 @@ def geojson_find_features(geojson, key, value):
     return result
 
 
+def geojson_add_polygon_cap_element(area, geojson_poly):
+    """
+    Internal. Add a given polygon as CAP element to area.
+    """
+    cap_poly = geojson_polygon_to_cap(geojson_poly)
+    if not cap_poly:
+        logger.warning(f"discarding too small polygon: {geojson_poly}")
+        return
+    poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
+    poly.text = cap_poly
+
+
 def geojson_feature_to_cap(area, geojson) -> bool:
     """
     Add a GeoJSON polygon from a GeoJSON feature to the CAP <area> element.
@@ -43,13 +57,11 @@ def geojson_feature_to_cap(area, geojson) -> bool:
     :return: True if a viable polygon was found and could be added, False otherwise
     """
     if geojson['geometry']['type'] == 'Polygon':
-        poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-        poly.text = geojson_polygon_to_cap(geojson['geometry']['coordinates'])
+        geojson_add_polygon_cap_element(area, geojson['geometry']['coordinates'])
         return True
     elif geojson['geometry']['type'] == 'MultiPolygon':
         for coordinates in geojson['geometry']['coordinates']:
-            poly = ET.SubElement(area, '{urn:oasis:names:tc:emergency:cap:1.2}polygon')
-            poly.text = geojson_polygon_to_cap(coordinates)
+            geojson_add_polygon_cap_element(area, coordinates)
         return True
     else:
         logger.warning(f"unhandled geometry type: {geojson['geometry']['type']}")
