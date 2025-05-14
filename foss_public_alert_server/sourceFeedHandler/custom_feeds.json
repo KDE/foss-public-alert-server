@@ -193,17 +193,17 @@
           {
             "code": "en",
             "name": "United States: National Oceanic and Atmospheric Administration (NOAA), National Tsunami Warning Center",
-            "logo": "https://alert-hub.s3.ama…ages/us-noaa-ntwc-en.png"
+            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-ntwc-en.png"
           }
         ],
-        "authorName": "",
-        "authorEmail": "",
+        "authorName": "Christa von Hillebrandt-Andrade",
+        "authorEmail": "christa.vonh@noaa.gov",
         "sourceIsOfficial": true,
-        "capAlertFeed": "https://wcatwc.arh.noaa.gov/events/xml/PAAQAtom.xml",
-        "capAlertFeedStatus": "no xml cap feed",
+        "capAlertFeed": "https://tsunami.gov/events/xml/PAAQAtom.xml",
+        "capAlertFeedStatus": "operating",
         "authorityCountry": "us",
-        "authorityAbbrev": "ntwc",
-        "feedSource": "AlertHub",
+        "authorityAbbrev": "noaa-ntwc",
+        "feedSource": "FPAS",
         "format": "rss or atom",
         "override": true,
         "ignore": false
@@ -419,6 +419,29 @@
         "capAlertFeedStatus": "operating",
         "authorityCountry": "ca",
         "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "us-noaa-ptwc-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), Pacific Tsunami Warning Center",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-ptwc-en.png"
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://tsunami.gov/events/xml/PHEBAtom.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "us",
+        "authorityAbbrev": "noaa-ptwc",
         "feedSource": "FPAS",
         "format": "rss or atom",
         "override": true,
