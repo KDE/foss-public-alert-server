@@ -502,7 +502,11 @@
           "capAlertFeed": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-austria",
           "capAlertFeedStatus": "redundant to at-zamg-xx",
           "authorityCountry": "at",
-          "authorityAbbrev": "ehyd"
+          "authorityAbbrev": "ehyd",
+          "feedSource": "FPAS",
+          "format": "rss or atom",
+          "override": true,
+          "ignore": false
       }
     }
   ]
