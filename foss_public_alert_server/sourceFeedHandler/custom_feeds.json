@@ -447,7 +447,63 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+          "sourceId": "ca-msp-xx",
+          "byLanguage": [
+            {
+              "code": "en",
+              "name": "Canada: Quebec Ministry of Public Safety",
+              "logo": "https://alert-hub.s3.amazonaws.com/images/ca-msp-en.png"
+            },
+            {
+              "code": "fr",
+              "name": "Canada: Ministère de la Sécurité publique du Québec",
+              "logo": "https://alert-hub.s3.amazonaws.com/images/ca-msp-fr.png"
+            }
+          ],
+          "guid": "urn:oid:2.49.0.0.124.3",
+          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=278",
+          "authorName": "Pascal Fortier",
+          "authorEmail": "Pascal.fortier@msp.gouv.qc.ca",
+          "sourceIsOfficial": true,
+          "capAlertFeed": "https://rss.naad-adna.pelmorex.com/",
+          "capAlertFeedStatus": "redundant to ca-msc-xx",
+          "authorityCountry": "ca",
+          "authorityAbbrev": "msp",
+          "feedSource": "FPAS",
+          "format": "rss or atom",
+          "override": true,
+          "ignore": false,
+          "note": "this and ca-msc-xx both point to the Pelmorex NAADS/Alert Ready platform"
+      }
+    },
+    {
+      "source": {
+          "sourceId": "at-ehyd-xx",
+          "byLanguage": [
+            {
+            "code": "de",
+            "name": "Austria: Abteilung Wasserhaushalt",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-de.png"
+          },
+          {
+            "code": "en",
+            "name": "Austria: Water Balance Department",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-en.png"
+          }
+        ],
+          "guid": "urn:oid:2.49.0.0.40.1",
+          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=8",
+          "authorName": "Petra Habersatter",
+          "authorEmail": "petra.habersatter@zamg.ac.at",
+          "sourceIsOfficial": true,
+          "capAlertFeed": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-austria",
+          "capAlertFeedStatus": "redundant to at-zamg-xx",
+          "authorityCountry": "at",
+          "authorityAbbrev": "ehyd"
+      }
     }
   ]
 }
-
