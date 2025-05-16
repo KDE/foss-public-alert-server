@@ -22,6 +22,7 @@ from sourceFeedHandler.models import CAPFeedSource
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+CAP_MIMETYPES = ['application/common-alerting-protocol+xml', 'application/cap+xml']
 BROKEN_CHAIN_FEEDS = ['sa-ncm-ar', 'sa-ncm-en', 'gh-gmet-en', 'za-saws-en']
 BROKEN_CHAIN_FILE = os.path.join(settings.BASE_DIR, 'alertHandler/data/broken-chains.pem')
 
@@ -85,7 +86,7 @@ class XMLCAPParser(AbstractCAPParser):
             # find the link to the CAP source
             cap_source_url = ''
             for link in entry['links']:
-                if link['type'] == 'application/cap+xml':  # TODO: may also application/rss+xml
+                if link['type'] in CAP_MIMETYPES:  # TODO: may also application/rss+xml
                     cap_source_url = link['href']
             if not cap_source_url and len(entry['links']) == 1:
                 cap_source_url = entry['links'][0]['href']
