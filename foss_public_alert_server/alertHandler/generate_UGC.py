@@ -23,7 +23,10 @@ lookup_data = list(csv.DictReader(StringIO(lookup_text), fieldnames=lookup_seque
 COASTAL_LINK = f'https://www.weather.gov/source/gis/Shapefiles/WSOM/mz{CURRENT_DATE}.zip'  # check https://www.weather.gov/gis/MarineZones for updates
 OFFSHORE_LINK = f'https://www.weather.gov/source/gis/Shapefiles/WSOM/oz{CURRENT_DATE}.zip' # check https://www.weather.gov/gis/MarineZones for updates
 ZONES_LINK = f'https://www.weather.gov/source/gis/Shapefiles/WSOM/z_{CURRENT_DATE}.zip'    # check https://www.weather.gov/gis/PublicZones for updates
+FIRE_LINK = f'https://www.weather.gov/source/gis/Shapefiles/WSOM/fz{CURRENT_DATE}.zip'     # check https://www.weather.gov/gis/FireZones for updates
 COUNTY_LINK = f'https://www.weather.gov/source/gis/Shapefiles/County/c_{CURRENT_DATE}.zip' # check https://www.weather.gov/gis/Counties for updates
+
+zones_list = [] # this will be used to ensure the fire zones don't overwrite the regular zones
 
 def write_to_file(geojson, name):
     path = os.path.join(os.path.dirname(__file__), UGC_FOLDER_NAME, name + '.geojson')
@@ -62,6 +65,7 @@ def symlink_same(same, ugc):
 datasets = {'coastal': {'url': COASTAL_LINK, 'namefunc': return_simple_ugc},
             'offshore': {'url': OFFSHORE_LINK, 'namefunc': return_simple_ugc},
             'zones': {'url': ZONES_LINK, 'namefunc': return_zone_ugc},
+            'fire': {'url': FIRE_LINK, 'namefunc': return_zone_ugc},
             'county': {'url': COUNTY_LINK, 'namefunc': return_county_ugc}}
 
 os.makedirs(SAME_FOLDER_NAME, exist_ok=True)
@@ -70,8 +74,14 @@ for dataset_name, dataset_attributes in datasets.items():
     reader = shapefile.Reader(dataset_attributes['url'])
     collection = reader.shapeRecords()
     for region in collection.__geo_interface__['features']:
+        if dataset_name == 'fire':
+            if region['properties']['STATE_ZONE'] in zones_list:
+                print(region['properties']['STATE_ZONE'])
+                continue
         write_to_file(region, dataset_attributes['namefunc'](region))
         # symlink coastal zones to a SAME code
+        if dataset_name == 'zones':
+            zones_list.append(region['properties']['STATE_ZONE'])
         if dataset_name in {'coastal', 'offshore'}:
             for rows in lookup_data:
                 # check the two-letter area code in the UGC against each row
