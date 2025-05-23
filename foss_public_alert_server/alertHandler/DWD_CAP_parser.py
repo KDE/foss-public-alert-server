@@ -27,7 +27,7 @@ class DWDCAPParser(AbstractCAPParser):
     def _load_alerts_from_feed(self):
         # use last e tag to reduce network usage
         headers = {
-        "ETag": self.feed_source.last_e_tag,  # what if None?
+            "If-None-Match": self.feed_source.last_e_tag,  # what if None?
         }
         response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
         if response.status_code == HttpResponseNotModified.status_code:
