@@ -40,7 +40,7 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
     logger.info("check for push notifications")
     msg = {}
     msg['type'] = 'added'
-    msg['alert_id'] = alert.alert_id
+    msg['alert_id'] = str(alert.id)
 
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
         # @todo is the distributor_url to sensitive to write it into logs?
