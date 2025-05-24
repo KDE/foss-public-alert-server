@@ -67,6 +67,7 @@ class AbstractCAPParser(ABC):
         """
         store_warnings = True
         warnings_list = []
+        self.list_of_current_alert_ids = []
 
         # configure warnings (aka error messages) to append every warning to our list of warnings
         def collect_warnings(message, category, filename, lineno, file=None, line=None):
