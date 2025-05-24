@@ -41,7 +41,7 @@ class XMLCAPParser(AbstractCAPParser):
             if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
                 # the etag can be none, so only use it, if it is not none
                 if last_e_tag is not None:
-                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'ETag': last_e_tag, 'User-Agent': settings.USER_AGENT})
+                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'If-None-Match': last_e_tag, 'User-Agent': settings.USER_AGENT})
                     feed: FeedParserDict = feedparser.parse(feed_request.content)
                 else:
                     feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE)
