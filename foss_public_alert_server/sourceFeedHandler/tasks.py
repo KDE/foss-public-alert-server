@@ -12,6 +12,7 @@ from alertHandler import abstract_CAP_parser
 from alertHandler.XML_CAP_parser import XMLCAPParser
 from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
+from alertHandler.EDXL_CAP_parser import EDXLCAPParser
 
 from . import source_feeds_aggegator
 from .models import CAPFeedSource
@@ -141,6 +142,8 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
         case "DWD-Zip":
             # print("its dwd")
             parser = DWDCAPParser(feed)
+        case "EDXL":
+            parser = EDXLCAPParser(feed)
     if parser is not None:
         parser.get_feed(parser)
     else:

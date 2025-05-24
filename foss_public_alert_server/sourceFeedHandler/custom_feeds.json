@@ -410,8 +410,6 @@
              "logo": ""
           }
         ],
-        "guid": "",
-        "registerUrl": "",
         "authorName": "",
         "authorEmail": "",
         "sourceIsOfficial": true,
@@ -484,15 +482,15 @@
           "sourceId": "at-ehyd-xx",
           "byLanguage": [
             {
-            "code": "de",
-            "name": "Austria: Abteilung Wasserhaushalt",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-de.png"
-          },
-          {
-            "code": "en",
-            "name": "Austria: Water Balance Department",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-en.png"
-          }
+              "code": "de",
+              "name": "Austria: Abteilung Wasserhaushalt",
+              "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-de.png"
+            },
+            {
+              "code": "en",
+              "name": "Austria: Water Balance Department",
+              "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-en.png"
+            }
         ],
           "guid": "urn:oid:2.49.0.0.40.1",
           "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=8",
@@ -507,6 +505,123 @@
           "format": "rss or atom",
           "override": true,
           "ignore": false
+      }
+    },
+    {
+      "source": {
+          "sourceId": "ba-rhmzrs-bs",
+          "byLanguage": [
+            {
+              "code": "bs",
+              "name": "Bosnia and Herzegovina: Republički hidrometeorološki zavod",
+              "logo": "https://alert-hub.s3.amazonaws.com/images/ba-rhmzrs-bs.png"
+            } 
+          ],
+          "guid": "urn:oid:2.49.0.0.70.1",
+          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=274",
+          "authorName": "Johannes Fleisch",
+          "authorEmail": "Johannes.Fleisch@geosphere.at",
+          "sourceIsOfficial": true,
+          "capAlertFeed": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina",
+          "capAlertFeedStatus": "redundant to ba-fhmzbih-bs",
+          "authorityCountry": "ba",
+          "authorityAbbrev": "rhmzrs",
+          "feedSource": "FPAS",
+          "format": "rss or atom",
+          "override": true,
+          "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "au-nsw-rfs-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: New South Wales Rural Fire Service",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "webmaster@rfs.nsw.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://www.rfs.nsw.gov.au/feeds/majorIncidentsCAP.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "rfs",
+        "feedSource": "FPAS",
+        "format": "EDXL",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "au-wa-dfes-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: Department of Fire and Emergency Services",
+            "logo": ""
+          }
+        ],
+        "authorName": "EmergencyWA",
+        "authorEmail": "emergencywa@dfes.wa.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://api.emergency.wa.gov.au/v1/capau",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "dfes",
+        "feedSource": "FPAS",
+        "format": "EDXL",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "au-act-esa-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: ACT Emergency Services Agency",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "esahaveyoursay@act.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://data.esa.act.gov.au/feeds/esa-cap-incidents.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "esa",
+        "feedSource": "FPAS",
+        "format": "EDXL",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "au-qld-qfd-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: Queensland Fire Department",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "giskedron@fire.qld.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://publiccontent-gis-psba-qld-gov-au.s3.amazonaws.com/content/Feeds/BushfireCurrentIncidents/bushfireAlert_capau.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "qfd",
+        "feedSource": "FPAS",
+        "format": "EDXL",
+        "override": true,
+        "ignore": false
       }
     }
   ]
