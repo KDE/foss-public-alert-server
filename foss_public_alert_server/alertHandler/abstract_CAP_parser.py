@@ -261,8 +261,8 @@ class AbstractCAPParser(ABC):
 
             # check for swapped coordinates in the input data
             if bound_box_polygon.extent[1] < -90 or bound_box_polygon.extent[3] > 90:
-                # TODO we could attempt to fix this here
-                raise NoGeographicDataAvailableException(f"Geometry out of bounds - swapped coordinates? {alert_id}")
+                polygon = cap_geometry.multipolygon_from_cap_alert(cap_msg, True)
+                
 
             # find an English alert info, otherwise take the first one
             # the resulting data is only used for the diagnostics map display, therefore
