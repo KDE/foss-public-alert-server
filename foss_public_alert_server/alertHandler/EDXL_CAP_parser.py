@@ -50,6 +50,14 @@ class EDXLCAPParser(AbstractCAPParser):
         feed: ET.Element = ET.fromstring(response.text)
         for entry in feed.findall('{urn:oasis:names:tc:emergency:EDXL:DE:1.0}contentObject'):
             alert_xml = entry.find('{urn:oasis:names:tc:emergency:EDXL:DE:1.0}xmlContent')[0][0]
+            info_xml = alert_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}info')
+            onset = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}onset')
+            expires = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}expires')
+            # make sure the onset exists before checking if we need the workaround
+            if not onset is None:
+                # workaround for au-wa-dfes-en. if the onset time matches the expiry time, just remove the expiry element
+                if onset.text == expires.text:
+                    info_xml.remove(expires)
             cap_data = ET.tostring(alert_xml, 'unicode')
             # add alert to database
             self.addAlert(cap_data=cap_data)
