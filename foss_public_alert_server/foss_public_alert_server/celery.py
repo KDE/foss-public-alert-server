@@ -68,12 +68,12 @@ app.conf.beat_schedule = {
     'create_test_alert_every_five_minutes': {
         'task': 'task.create_test_alert',
         'schedule': crontab(minute="*/5"),
-        'enabled': False
+        'enabled': True
     },
     'delete_expired_test_alerts_every_five_minutes': {
         'task': 'task.delete_expired_test_alerts',
         'schedule': crontab(minute="*/5"),
-        'enabled': False
+        'enabled': True
     },
 }
 
