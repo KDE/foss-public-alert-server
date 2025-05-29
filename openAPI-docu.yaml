@@ -25,7 +25,8 @@ paths:
     post:
       summary: Subscribe for a new area
       description: Subscribe a client to a UnifiedPush endpoint for an area defined by a bounding box with coordinates.
-        As part of subscribing a push notification is sent to the client with a JSON payload with the type set to 'subscribe'.
+        As part of subscribing a push notification is sent to the client with a JSON payload with the type set to 'subscribe'
+        and `confirmation_id` containing a unique identifier also included in the REST response.
         When new alerts appear in the subscribed area push notifications with a JSON payload with type 'added' are sent which
         contain the identifier of the alert in the 'alert_id' field.
         A subscriptions needs to be regularly updated to not expire. When a subscription expries a push notification is sent
@@ -41,7 +42,8 @@ paths:
         required: true
       responses:
         '200':
-          description: "Client successfully subscribed"
+          description: Client successfully subscribed.
+            This implies a successful submission of a push notification to the endpoint given in the request.
           content:
             application/json:
               schema:
@@ -54,8 +56,11 @@ paths:
                     type: string
                     description: The ID of the subscription to allow the client to unsubscribe. This ID should be stored by the client.
                     example: "exampleSubscriptionID"
+                  confirmation_id:
+                    type: string
+                    description: A unique identifier also present in the push notification sent as a response of this.
         '400':
-          description: "Invalid subscription id"
+          description: "Missing required parameters, unsupported or dysfunctional push endpoint, invalid geographic bounding box."
         '405':
           description: "Wrong http method"
     delete:
