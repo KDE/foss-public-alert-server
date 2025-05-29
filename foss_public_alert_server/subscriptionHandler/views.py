@@ -5,6 +5,7 @@
 import logging
 import datetime
 import json
+import uuid
 from json import loads
 
 from django.core.exceptions import ValidationError
@@ -101,9 +102,11 @@ def add_new_subscription(request):
         test_push = None
         s = None
 
+        confirmation_id = str(uuid.uuid4())
         msg = {}
         msg['type'] = 'subscribe'
         msg['message'] = "successfully subscribed"
+        msg['confirmation_id'] = confirmation_id
 
         match push_service:
             case "UNIFIED_PUSH":
@@ -133,7 +136,11 @@ def add_new_subscription(request):
             raise PushNotificationCheckFailed("push config is invalid")
 
         # successfully subscribed, return success token and subscription id
-        return JsonResponse({'token': 'successfully subscribed', 'subscription_id': s.id})
+        return JsonResponse({
+            'token': 'successfully subscribed',
+            'subscription_id': s.id,
+            'confirmation_id': confirmation_id
+        })
 
     except PushNotificationCheckFailed as e:
         logger.debug(f"invalid push config: {e}")
