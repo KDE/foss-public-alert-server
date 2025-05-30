@@ -152,7 +152,7 @@
         "authorName": "",
         "authorEmail": "",
         "sourceIsOfficial": true,
-        "capAlertFeed": "",
+        "capAlertFeed": "https://www.alert.swiss/content/alertswiss-internet/{LANG}/home/_jcr_content/polyalert.alertswiss_alerts.actual.json",
         "capAlertFeedStatus": "operating",
         "authorityCountry": "ch",
         "authorityAbbrev": "",
