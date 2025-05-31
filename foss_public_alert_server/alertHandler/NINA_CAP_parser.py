@@ -44,11 +44,10 @@ class NinaCapParser(AbstractCAPParser):
 
     def _load_alerts_from_feed(self):
         # use last e tag to reduce network usage
-        # TODO fix cache handling and distinguish between empty result and no change for removing obsolete alerts
         headers = {
-            "ETag": self.feed_source.last_e_tag, # what if None?
+            "If-None-Match": self.feed_source.last_e_tag,
         }
-        response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
+        response = requests.get(self.feed_source.cap_alert_feed, headers=headers)
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")
         elif response.status_code != HttpResponseBase.status_code:
