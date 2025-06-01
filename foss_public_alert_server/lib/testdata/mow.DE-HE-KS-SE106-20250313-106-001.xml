@@ -7,7 +7,8 @@
    <msgType>Cancel</msgType>
    <scope>Public</scope>
    <references>DE-HE-KS-SE106,mow.DE-HE-KS-SE106-20250313-106-000,2025-03-13T09:15:06-00:00</references>
-   <info lang="DE">
+   <info>
+    <language>de</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -93,7 +94,8 @@ Stadt und Landkreis Kassel</senderName>
      <polygon>49.8656,8.5204 49.8717,8.5211 49.8723,8.5212 49.8728,8.5217 49.8734,8.5231 49.8826,8.5529 49.9004,8.5546 49.9072,8.5512 49.9216,8.5498 49.9344,8.5660 49.9456,8.5841 49.9491,8.5842 49.9564,8.5805 49.9660,8.6022 49.9665,8.6207 49.9662,8.6230 49.9637,8.6328 49.9537,8.6569 49.9532,8.6589 49.9529,8.6608 49.9527,8.6667 49.9529,8.6708 49.9476,8.6667 49.9467,8.6659 49.9436,8.6551 49.9432,8.6404 49.9437,8.6333 49.9394,8.6318 49.9331,8.6298 49.9254,8.6278 49.9140,8.6263 49.8874,8.6196 49.8597,8.5946 49.8436,8.5693 49.8432,8.5625 49.8312,8.5668 49.8340,8.5744 49.8378,8.5900 49.8386,8.5989 49.8347,8.6128 49.8198,8.6201 49.8124,8.6222 49.8068,8.6235 49.7962,8.6454 49.7980,8.6573 49.8056,8.6748 49.8080,8.6775 49.8173,8.6795 49.8213,8.6789 49.8457,8.6930 49.8510,8.7042 49.8569,8.7110 49.8709,8.7267 49.9013,8.7494 49.9019,8.7496 49.9027,8.7497 49.9091,8.7483 49.9102,8.7480 49.9496,8.7343 49.9527,8.7315 49.9541,8.7244 49.9568,8.7283 49.9573,8.7294 49.9603,8.7443 49.9604,8.7465 49.9589,8.7806 49.9570,8.7908 49.9537,8.8059 49.9466,8.8134 49.9489,8.8322 49.9520,8.8423 49.9571,8.8527 49.9628,8.8607 49.9654,8.8730 49.9667,8.8886 49.9662,8.8985 49.9888,8.9330 49.9976,8.9439 49.9979,8.9526 49.9958,8.9993 49.9924,9.0084 49.9851,9.0212 49.9764,9.0193 49.9094,9.0314 49.8919,9.0375 49.8717,9.0458 49.8661,9.0497 49.8673,9.0429 49.8674,9.0354 49.8660,9.0331 49.8593,9.0345 49.8549,9.0427 49.8502,9.0434 49.8459,9.0368 49.8528,9.0182 49.8567,9.0050 49.8563,9.0043 49.8471,9.0055 49.7974,8.9694 49.7938,8.9574 49.7871,8.9177 49.7881,8.8823 49.7887,8.8753 49.7890,8.8715 49.7966,8.8761 49.7987,8.8665 49.7914,8.8593 49.7809,8.8496 49.7685,8.8401 49.7670,8.8430 49.7615,8.8381 49.7541,8.8293 49.7406,8.8130 49.7383,8.7971 49.7284,8.7827 49.7262,8.7793 49.7256,8.7755 49.7227,8.7499 49.7234,8.7390 49.7256,8.7344 49.7326,8.7295 49.7403,8.7246 49.7419,8.7211 49.7429,8.7096 49.7536,8.7024 49.7537,8.6981 49.7444,8.6813 49.7371,8.6822 49.7312,8.6862 49.7277,8.6793 49.7244,8.6729 49.7269,8.6465 49.7290,8.6226 49.7263,8.5866 49.7258,8.5747 49.7258,8.5603 49.7285,8.5596 49.7485,8.5572 49.7730,8.5445 49.7823,8.5361 49.7960,8.5374 49.8028,8.5442 49.8031,8.5491 49.8058,8.5497 49.8226,8.5499 49.8256,8.5487 49.8522,8.5301 49.8656,8.5204</polygon>
     </area>
    </info>
-   <info lang="DE-LS">
+   <info>
+    <language>de-LS</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -138,7 +140,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="EN">
+   <info>
+    <language>en</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -183,7 +186,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="AR">
+   <info>
+    <language>ar</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -228,7 +232,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="ES">
+   <info>
+    <language>es</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -273,7 +278,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="FR">
+   <info>
+    <language>fr</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -318,7 +324,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="PL">
+   <info>
+    <language>pl</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -363,7 +370,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="RU">
+   <info>
+    <language>ru</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>
@@ -408,7 +416,8 @@ Stadt und Landkreis Kassel</senderName>
      <areaDesc>Land Hessen</areaDesc>
     </area>
    </info>
-   <info lang="TR">
+   <info>
+    <language>tr</language>
     <category>Geo</category>
     <category>Rescue</category>
     <category>Fire</category>

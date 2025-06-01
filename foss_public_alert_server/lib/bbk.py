@@ -40,7 +40,9 @@ class BBK:
             BBK.convertProperty(root, alert, prop)
 
         for alert_info in alert['info']:
-            info = ET.SubElement(root, '{urn:oasis:names:tc:emergency:cap:1.2}info', {'lang': alert_info['language']})
+            info = ET.SubElement(root, '{urn:oasis:names:tc:emergency:cap:1.2}info')
+            node = ET.SubElement(info, '{urn:oasis:names:tc:emergency:cap:1.2}language')
+            node.text = alert_info['language'][:2].lower() + alert_info['language'][2:]
             for category in alert_info['category']:
                 cat = ET.SubElement(info, '{urn:oasis:names:tc:emergency:cap:1.2}category')
                 cat.text = category
