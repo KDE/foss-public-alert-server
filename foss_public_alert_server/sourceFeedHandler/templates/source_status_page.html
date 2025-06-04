@@ -12,6 +12,8 @@
   <h3>How to read this table</h3>
      <ul>
        <li>
+         <strong>last fetch duration</strong><br/>
+         The time it took to check whether a feed has updates and retrieve all (new) alerts.<br/>
          <strong>warnings</strong> <br>
          Shows warnings for this feed. <br>
          If the parser faced any issues while parsing the feed, here is a short version of the warnings. Warnings for a feed
@@ -39,7 +41,7 @@ do not consequently mean that we were unable to parse that feed.
 
 
   <p> This list contains {{ number_of_sources }} CAP providers</p>
- <p> last refresh:  {{ datetime }}</p>
+ <p> last refresh on {{ datetime }} took {{ total_fetch_duration|floatformat:1 }}s over all workers.</p>
 
 {% if list_of_sources %}
       <table id="source_feed_status_table">
@@ -67,7 +69,10 @@ do not consequently mean that we were unable to parse that feed.
             <td><a href={{ source.cap_alert_feed }}>Feed</a> </td>
             <td>{{ source.cap_alert_feed_status }} </td>
             <td>{{ source.latest_published_alert_datetime }} </td>
-            <td>{{ source.last_fetch_duration }} </td>
+            <td {% if source.last_fetch_duration.total_seconds < 10 %}class="last_fetch_duration_ok"
+                {% elif source.last_fetch_duration.total_seconds < 60 %}class="last_fetch_duration_warn"
+                {% else %}class="last_fetch_duration_slow"{% endif %}>
+                {{ source.last_fetch_duration.total_seconds|floatformat:3 }}{% if source.last_fetch_duration %}s{% endif %}</td>
              <td>{{ source.feed_warnings }} </td>
             <td {% if source.missing_geo_information == False %} class="last_fetch_status_success"
                 {% elif source.missing_geo_information == None %} class="last_fetch_status_unknown" {% else %}

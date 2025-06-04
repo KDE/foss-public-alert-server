@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+from django.db.models import Sum
 from django.shortcuts import render
 from django.http.request import HttpRequest
 from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
@@ -9,8 +10,9 @@ from django.views.decorators.http import require_http_methods
 from .models import CAPFeedSource
 import datetime
 
+
 @require_http_methods(["GET"])
-def generate_source_status_page(request:HttpRequest):
+def generate_source_status_page(request: HttpRequest):
     """
     generate a status page for every CapSource
     :param request:
@@ -22,7 +24,8 @@ def generate_source_status_page(request:HttpRequest):
     context = {
         'number_of_sources': number_of_source,
         'list_of_sources': CAPFeedSource.objects.filter(cap_alert_feed_status="operating").order_by('source_id'),
-        'datetime':  datetime.datetime.now() #@todo fix timezone
+        'datetime':  datetime.datetime.now(),  # @todo fix timezone
+        'total_fetch_duration': CAPFeedSource.objects.aggregate(Sum('last_fetch_duration'))['last_fetch_duration__sum'].total_seconds()
     }
 
     return render(request, 'source_status_page.html', context=context)
