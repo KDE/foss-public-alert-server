@@ -30,6 +30,9 @@ from lib import cap, cap_geojson, cap_geometry
 # logging config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+# Disable extremely noisy GEOS warnings about self-intersecting polygons
+if not settings.DEBUG:
+    logging.getLogger('django.contrib.gis').setLevel(logging.ERROR)
 
 # Reduce timeout for network operations to just 10 seconds
 # If a feed or CAP message doesn't reply in that time it's likely dead anyway
