@@ -81,11 +81,6 @@ class AbstractCAPParser(ABC):
             start_time = datetime.now()
             # load and process the feed
             self._load_alerts_from_feed()
-            # store the end time
-            end_time = datetime.now()
-
-            # store duration as last fetch duration
-            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=end_time - start_time)
 
             # update feed status information
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=True)
@@ -126,6 +121,9 @@ class AbstractCAPParser(ABC):
         if store_warnings:
             # store warnings in database
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
+
+        # store duration as last fetch duration
+        CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=datetime.now() - start_time)
 
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
