@@ -797,6 +797,128 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+        "sourceId": "cn-cma-xx",
+        "byLanguage": [ {
+          "code": "en",
+          "name": "China: China Meteorological Administration",
+          "logo": "https://alert-hub.s3.amazonaws.com/images/cn-cma-en.png"
+        },
+        {
+          "code": "zh",
+          "name": "China: 中国气象局",
+          "logo": "https://alert-hub.s3.amazonaws.com/images/cn-cma-zh.png"
+        } ],
+        "guid": "urn:oid:2.49.0.0.156.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=30",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://alert-feed-worldweather-org.s3.amazonaws.com/cn-cma-xx/rss.xml",
+        "capAlertFeedStatus": "missing geo codes",
+        "authorityCountry": "cn",
+        "authorityAbbrev": "cma",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "id-bmkg-id",
+        "byLanguage": [
+          {
+            "code": "id",
+            "name": "Indonesia: Badan Klimatologi dan Geofisika Meteorologi (BMKG)",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/id-bmkg-id.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.360.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=183",
+        "authorName": "Mulyono Prabowo",
+        "authorEmail": "m.prabowo@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://signature.bmkg.go.id/alert/public/rss.xml",
+        "capAlertFeedStatus": "feed times out",
+        "authorityCountry": "id",
+        "authorityAbbrev": "bmkg",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
     }
+  },
+  {
+    "source": {
+        "sourceId": "id-bmkg-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Indonesia: Agency for Meteorology Climatology and Geophysics of Republic Indonesia (BMKG)",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/id-bmkg-en.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.360.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=183",
+        "authorName": "Mulyono Prabowo",
+        "authorEmail": "m.prabowo@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://signature.bmkg.go.id/alert/public/en/rss.xml",
+        "capAlertFeedStatus": "feed times out",
+        "authorityCountry": "id",
+        "authorityAbbrev": "bmkg",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+    }
+  },
+  {
+    "source": {
+        "sourceId": "vc-ms-en",
+        "byLanguage": [ {
+          "code": "en",
+          "name": "Saint Vincent and the Grenadines: Meteorological Services",
+          "logo": "https://alert-hub.s3.amazonaws.com/images/vc-ms-en.png"
+        } ],
+        "guid": "urn:oid:2.49.0.0.670.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=303",
+        "authorName": "Michelle Forbes",
+        "authorEmail": "nemosvg@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://vct-primary.capews.com/capews/public/atom?type=cap",
+        "capAlertFeedStatus": "feed times out",
+        "authorityCountry": "vc",
+        "authorityAbbrev": "ms",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+    }
+  },
+  {
+    "source": {
+        "sourceId": "ws-smd-en",
+        "byLanguage": [ {
+          "code": "en",
+          "name": "Samoa: Meteorology Division",
+          "logo": "https://alert-hub.s3.amazonaws.com/images/ws-smd-en.png"
+        } ],
+        "guid": "urn:oid:2.49.0.0.882.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=139",
+        "authorName": "Bernie Tauaanae",
+        "authorEmail": "bernie.tauaanae@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "http://alert.samet.gov.ws/capfeed.php",
+        "capAlertFeedStatus": "feed times out",
+        "authorityCountry": "ws",
+        "authorityAbbrev": "smd",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+    }
+  }
   ]
 }
