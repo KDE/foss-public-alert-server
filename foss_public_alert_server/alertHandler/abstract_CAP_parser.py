@@ -318,3 +318,11 @@ class AbstractCAPParser(ABC):
         except NoGeographicDataAvailableException as e:
             #warnings.warn(f"Unknown geometry code:[{self.feed_source.source_id}] - {str(e)} - skipping")
             logger.exception(f"Unknown geometry code:[{self.feed_source.source_id}]- skipping", exc_info=e)
+
+    def record_unchanged_alert(self, alert_id: str):
+        """
+        Record a still active but unchanged alert as part of a fetch.
+        Either addAlert or this have to be called to prevent alerts from
+        being automatically rmeoved.
+        """
+        self.list_of_current_alert_ids.append(alert_id)

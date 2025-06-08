@@ -17,6 +17,7 @@ from django.conf import settings
 
 from .exceptions import NothingChangedException
 from .abstract_CAP_parser import AbstractCAPParser
+from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 
 logging.basicConfig(level=logging.INFO)
@@ -99,13 +100,26 @@ class XMLCAPParser(AbstractCAPParser):
                 if entry.get('cap_expires') is not None:
                     expire_time = parser.isoparse(entry.get('cap_expires'))
                     if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                        logger.info(f"Alert Expired: {self.feed_source.source_id} - not downloading alert "
-                                    f"{cap_source_url} expired on {expire_time} - skipping")
+                        logger.debug(f"Alert Expired: {self.feed_source.source_id} - not downloading alert "
+                                     f"{cap_source_url} expired on {expire_time} - skipping")
                         continue
             except ValueError as e:
                 logger.exception(f"Failed to parse expiry time: {entry.get('cap_expires')}", exc_info=e)
             except TypeError as e:
                 logger.exception("Type error", exc_info=e)
+
+            # if we have an identifier and sent time available here, check whether we
+            # know the alert already
+            try:
+                cap_ident = entry.get('cap_identifier')
+                cap_sent = entry.get('cap_sent')
+                if cap_ident is not None and cap_sent is not None:
+                    sent_time = parser.isoparse(cap_sent)
+                if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=cap_ident, issue_time=sent_time)) == 1:
+                    self.record_unchanged_alert(cap_ident)
+                    continue
+            except Exception:
+                pass
 
             try:
                 if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
