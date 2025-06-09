@@ -69,8 +69,8 @@ do not consequently mean that we were unable to parse that feed.
             <td><a href={{ source.cap_alert_feed }}>Feed</a> </td>
             <td>{{ source.cap_alert_feed_status }} </td>
             <td>{{ source.latest_published_alert_datetime }} </td>
-            <td {% if source.last_fetch_duration.total_seconds < 10 %}class="last_fetch_duration_ok"
-                {% elif source.last_fetch_duration.total_seconds < 60 %}class="last_fetch_duration_warn"
+            <td {% if source.last_fetch_duration.total_seconds < 5 %}class="last_fetch_duration_ok"
+                {% elif source.last_fetch_duration.total_seconds < 30 %}class="last_fetch_duration_warn"
                 {% else %}class="last_fetch_duration_slow"{% endif %}>
                 {{ source.last_fetch_duration.total_seconds|floatformat:3 }}{% if source.last_fetch_duration %}s{% endif %}</td>
              <td>{{ source.feed_warnings }} </td>
