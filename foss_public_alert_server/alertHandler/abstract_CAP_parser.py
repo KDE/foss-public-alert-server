@@ -243,6 +243,10 @@ class AbstractCAPParser(ABC):
             # find sent time
             sent_time = cap_msg.sent_time()
 
+            if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=alert_id, issue_time=sent_time)) == 1:
+                self.record_unchanged_alert(alert_id)
+                return
+
             # find expire time
             expire_time = cap_msg.expire_time()
 
