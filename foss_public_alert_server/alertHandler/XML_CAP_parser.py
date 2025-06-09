@@ -135,6 +135,10 @@ class XMLCAPParser(AbstractCAPParser):
                 logger.error(f"Connection error: {cap_source_url}")
                 continue
 
+            if req.from_cache and cap_ident:
+                self.record_unchanged_alert(cap_ident)
+                continue
+
             cap_data = req.content.decode('utf-8')
             # add alert to database
             self.addAlert(cap_source_url=cap_source_url, cap_data=cap_data)
