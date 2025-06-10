@@ -58,7 +58,7 @@ SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path ["logo.png"]
+path = ["logo.png"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "FOSS Public Alert Server"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
