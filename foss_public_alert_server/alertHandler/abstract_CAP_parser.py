@@ -211,6 +211,26 @@ class AbstractCAPParser(ABC):
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
         elif sent_time > latest_entry.latest_published_alert_datetime:
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(latest_published_alert_datetime=sent_time)
+    
+    def check_thai_year(self, cap_tree: xml) -> bool:
+        """
+        Alerts from Thailand use the Thai epoch for the year. If the year in the alert matches the current year relative to the epoch, replace it
+        :param cap_tree: the original cap xml tree
+        :return: true if the dates has been fixed, false if not
+        """
+        date_fixed: bool = False
+        try:
+            for dates_tuple in zip(cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}sent'), cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}effective'), cap_tree.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}expires')):
+                for dates in dates_tuple:
+                    date_object = datetime.fromisoformat(dates.text)
+                    if date_object.year in range(datetime.now().year + 542, datetime.now().year + 545):
+                        date_object = date_object.replace(year=date_object.year - 543)
+                        dates.text = date_object.isoformat()
+                        date_fixed = True
+        except TypeError:
+            pass
+        return date_fixed
+
 
     def addAlert(self, cap_source_url: str = None, cap_data: xml = None) -> None:
         """
@@ -239,6 +259,9 @@ class AbstractCAPParser(ABC):
 
             # find identifier
             alert_id = cap_msg.identifier()
+
+            # check for Thai epoch
+            cap_data_modified |= self.check_thai_year(cap_msg.xml)
 
             # find sent time
             sent_time = cap_msg.sent_time()
