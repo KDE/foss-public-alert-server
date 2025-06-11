@@ -101,8 +101,9 @@ class AbstractCAPParser(ABC):
                     logger.info(f"{alert.alert_id} is no longer in the feed. Deleting...")
                     alert.delete()
 
-        except NothingChangedException as e:
+        except NothingChangedException:
             logger.info(f"{self.feed_source.source_id} - nothing changed")
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=True)
             # do not store empty warnings if we just checked for changes
             store_warnings = False
         except ET.ParseError as e:
