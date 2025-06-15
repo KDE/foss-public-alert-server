@@ -77,8 +77,25 @@ pip install django-celery-beat
 # start rabbitmq docker container
 docker run -d -p 5672:5672 rabbitmq
 
-# start celery 
-celery -A foss_public_alert_server worker --loglevel=INFO
+# if you need more monitoring tools you can start rabbitmq with enabled management UI instead
+docker run -d -p 5672:5672 rabbitmq:3-management 
+# you can now vist the UI under http://container-IP:15672
+# the default username is "guest" with the default password "guest"
+# you can find the container IP if you run `docker inspect <container-id>`
+# the container-id is displayed if you run `docker ps`
+
+# to inspect the rabbitmq queue manually in a shell you can do
+sudo docker exec -it [ccontainer-id] rabbitmqctl list_queues name messages messages_ready messages_unacknowledged
+
+# start celery worker for alert parsing
+celery -A foss_public_alert_server worker --loglevel=INFO -n alerts --concurrency 3
+
+# start celery worker for sending push notifications
+celery -A foss_public_alert_server worker  --loglevel=INFO -Q push_notifications -n notifications --concurrency 1
+
+# if you have flower installed, you can start the celery monitoring tool with
+celery -A foss_public_alert_server flower --port=5556
+# you can now visit the flower under http://localhost:5556
 
 # start celery beat
 celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
