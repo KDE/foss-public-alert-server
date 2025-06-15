@@ -28,7 +28,8 @@ paths:
         As part of subscribing a push notification is sent to the client with a JSON payload with the type set to 'subscribe'
         and `confirmation_id` containing a unique identifier also included in the REST response.
         When new alerts appear in the subscribed area push notifications with a JSON payload with type 'added' are sent which
-        contain the identifier of the alert in the 'alert_id' field.
+        contain the identifier of the alert in the 'alert_id' field. Similarly, when an alerts changes in the subscribed area
+        a notification with type 'update' is sent.
         A subscriptions needs to be regularly updated to not expire. When a subscription expries a push notification is sent
         with a JSON payload with type 'unsubscribe'.
       tags:
