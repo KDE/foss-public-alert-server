@@ -173,6 +173,10 @@ DEFAULT_SETTINGS = [
     # timeperiod after which an inactive subscription without heartbeats will be deleted from the database
     ["DAYS_INACTIVE_TIMEOUT", "int", 10],
 
+    # for every failed push notification for a subscription, we increase a counter.
+    # If the counter reaches the limit, the subscription is deleted
+    ["NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING", "int", 36],
+
     # server config for clients
     ["OPERATOR", "char", "Example"],
     ["PRIVACY_NOTICE", "char", "https://example.com"],

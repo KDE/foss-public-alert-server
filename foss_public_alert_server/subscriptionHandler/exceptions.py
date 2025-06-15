@@ -3,3 +3,6 @@
 
 class PushNotificationCheckFailed(BaseException):
     pass
+
+class PushNotificationException(BaseException):
+    pass
