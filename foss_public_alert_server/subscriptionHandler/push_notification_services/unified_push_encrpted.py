@@ -10,6 +10,8 @@ from datetime import datetime
 
 from subscriptionHandler.models import Subscription
 
+from ..exceptions import PushNotificationException
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -23,7 +25,7 @@ def create_subscription(token, bbox, data):
     :return: a new subscription of type UNIFIED_PUSH_ENCRYPTED
     """
     if ('p256dh_key' not in data or
-        'auth_key' not in data):
+            'auth_key' not in data):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     # load data from request
@@ -34,9 +36,19 @@ def create_subscription(token, bbox, data):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED,
-                 last_heartbeat=datetime.now(), p256dh_key=p256dh_key, auth_key=auth_key)
+                        last_heartbeat=datetime.now(), p256dh_key=p256dh_key, auth_key=auth_key)
+
 
 def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or None:
+    """
+    Send a webpush notification to the given endpoint with the given payload
+    :param endpoint: the webpush endpoint
+    :param payload: the message to encrypt and send
+    :param auth_key: the key to authorize ourselves against the webpush server
+    :param p256dh_key: encryption key
+    :return: Response if successful
+    :raise: PushNotificationException if the request failed
+    """
     try:
         subscription_info = {
             "endpoint": endpoint,
@@ -52,15 +64,17 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
         # sub: The “subscriber” is the primary contact email for this subscription.
         claims = {
             "sub": settings.WEB_PUSH_CONTACT,
-            "exp": round(datetime.now().second + 86400) # now + 24h
+            "exp": round(datetime.now().second + 86400)  # now + 24h
         }
 
-
-        return webpush(subscription_info, payload, vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY, vapid_claims=claims)
+        return webpush(subscription_info,
+                       payload,
+                       vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY,
+                       vapid_claims=claims,
+                       timeout=10)
     except WebPushException as e:
-        print(f"Failed to send web push notification: {e}")
         logger.error("Failed to send web push notification")
-        return None
+        raise PushNotificationException()
 
 
 def update_subscription(data):

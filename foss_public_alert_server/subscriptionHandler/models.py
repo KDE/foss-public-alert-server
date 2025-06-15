@@ -2,8 +2,6 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from django.db import models
-from django.dispatch import receiver
 from django.contrib.gis.db import models
 
 from datetime import datetime
@@ -24,3 +22,5 @@ class Subscription(models.Model):
     last_heartbeat = models.DateTimeField(default=datetime.now)
     auth_key = models.CharField(max_length=255, null=True) # used by web push
     p256dh_key = models.CharField(max_length=255, null=True) # used by web push
+    error_counter = models.IntegerField(default=0)
+    error_messages = models.CharField(max_length=255, null=True)
