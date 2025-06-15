@@ -8,6 +8,7 @@ import logging
 from celery import shared_task
 
 from alertHandler.models import Alert
+from requests import ReadTimeout, RequestException, HTTPError, ConnectionError
 
 from .exceptions import PushNotificationException
 from .models import Subscription
@@ -24,26 +25,34 @@ def remove_old_subscription():
     or have a push error counter above the defined limit
     """
     msg = {'type': 'unsubscribe',
-           'message': "Subscription timed out, or we couldn't send you push notifications. Your subscription has been deleted."
+           'message': "Your subscription timed out and has been deleted."
                       " Please renew your subscription."}
 
     for subscription in Subscription.objects.all():
         timedelta = datetime.now(timezone.utc) - subscription.last_heartbeat
-        # check if the subscription is expired or if the error counter reached the limit
-        if (timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT")
-                or subscription.error_counter > AppSetting.get("NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING")):
-            match subscription.push_service:
-                case subscription.PushServices.UNIFIED_PUSH:
-                    unified_push.send_notification(subscription.token, json.dumps(msg))
-                case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
-                    unified_push_encrpted.send_notification(subscription.token,
-                                                            json.dumps(msg),
-                                                            auth_key=subscription.auth_key,
-                                                            p256dh_key=subscription.p256dh_key)
-                case subscription.PushServices.APN:
-                    apn.send_notification(subscription.token, "", "", "", "", "")
-                case subscription.PushServices.FIREBASE:
-                    firebase.send_notification(subscription.token, json.dumps(msg))
+        #  check if the error counter reached the limit
+        if subscription.error_counter > AppSetting.get("NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING"):
+            # as we have a broken push config for this subscription, there is no reason to send a last notification to it
+            subscription.delete()
+            continue
+        # @TODO(Nucleus): We should move this to a celery task with a retry policy and only delete the subscription after all tries failed or if the subscription was successfully sent.
+        # check if the subscription is expired
+        if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
+            try:
+                match subscription.push_service:
+                    case subscription.PushServices.UNIFIED_PUSH:
+                        unified_push.send_notification(subscription.token, json.dumps(msg))
+                    case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
+                        unified_push_encrpted.send_notification(subscription.token,
+                                                                json.dumps(msg),
+                                                                auth_key=subscription.auth_key,
+                                                                p256dh_key=subscription.p256dh_key)
+                    case subscription.PushServices.APN:
+                        apn.send_notification(subscription.token, "", "", "", "", "")
+                    case subscription.PushServices.FIREBASE:
+                        firebase.send_notification(subscription.token, json.dumps(msg))
+            except (PushNotificationException, ConnectionError, HTTPError, ReadTimeout, RequestException):
+                 pass
             subscription.delete()
 
 
@@ -93,7 +102,6 @@ def send_one_notification(self, subscription_id, msg)  -> None:
         # reraise exception to make the task fail, to use the retry policy
         raise PushNotificationException
 
-
 def check_for_alerts_and_send_notifications(alert:Alert) -> None:
     """
     check for the given alert if there is a subscription that wants to get a notification
@@ -104,9 +112,6 @@ def check_for_alerts_and_send_notifications(alert:Alert) -> None:
         'alert_id': str(alert.id)
         }
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
-        # @TODO(Nucleus): is the distributor_url to sensitive to write it into logs?
-        # logger.info(f"Send notification for {subscription.id} to {subscription.token}")
-
         # send push notification task to celery to free the alert parsing worker
         send_one_notification.apply_async(
             args=[subscription.id, msg],
