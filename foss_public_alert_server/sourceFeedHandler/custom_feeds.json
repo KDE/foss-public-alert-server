@@ -991,12 +991,90 @@
         "sourceIsOfficial": true,
         "capAlertFeed": "https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/rss.xml",
         "capAlertFeedStatus": "operating",
-        "authorityCountry": "en",
-        "authorityAbbrev": "",
+        "authorityCountry": "au",
+        "authorityAbbrev": "bom",
         "feedSource": "FPAS",
         "format": "rss or atom",
         "override": true,
         "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "no-met-no",
+        "byLanguage": [
+          {
+            "code": "no",
+            "name": "Norway: Norsk Meteorologisk Institutt",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/no-met-no.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.578.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=121",
+        "authorName": "Gjermund Haugen",
+        "authorEmail": "gjermundmh@met.no",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://alert.met.no/feed?lang=no",
+        "capAlertFeedStatus": "redundant to no-met-en",
+        "authorityCountry": "no",
+        "authorityAbbrev": "met",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
+      }
+    },
+    {
+      "source": {
+        "sourceId": "fi-fmi-fi",
+        "byLanguage": [
+          {
+            "code": "fi",
+            "name": "Finland: Ilmatieteen laitos",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/fi-fmi-fi.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.246.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=51",
+        "authorName": "FMI Open Data helpdesk",
+        "authorEmail": "avoin-data@fmi.fi",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://alerts.fmi.fi/cap/feed/rss_fi-FI.rss",
+        "capAlertFeedStatus": "redundant to fi-fmi-en",
+        "authorityCountry": "fi",
+        "authorityAbbrev": "fmi",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
+      }
+    },
+    {
+      "source": {
+        "sourceId": "fi-fmi-sv",
+        "byLanguage": [
+          {
+            "code": "sv",
+            "name": "Finland: Meteorologiska institutet",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/fi-fmi-sv.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.246.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=51",
+        "authorName": "FMI Open Data helpdesk",
+        "authorEmail": "avoin-data@fmi.fi",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://alerts.fmi.fi/cap/feed/rss_sv-FI.rss",
+        "capAlertFeedStatus": "redundant to fi-fmi-en",
+        "authorityCountry": "fi",
+        "authorityAbbrev": "fmi",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
       }
     }
   ]
