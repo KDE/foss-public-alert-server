@@ -1,0 +1,34 @@
+{
+    "identifier": "TEST-1163",
+    "sent": "Sat, 21.06.2025, 08:07",
+    "title": {
+    "title": "*** Test Message *** This is a test of the Alertswiss system"
+    },
+    "description": {
+    "description": ""
+    },
+    "nationWide": false,
+    "banner": false,
+    "instructions": [
+    {
+        "text": "No measures necessary"
+    }
+    ],
+    "sender": "info@alertswiss.ch",
+    "links": [],
+    "contact": {
+    "contact": ""
+    },
+    "event": "Cap Test Event",
+    "allClear": false,
+    "severity": "unknown",
+    "testAlert": false,
+    "technicalTestAlert": true,
+    "publishDate": "Sat, 21.06.2025, 08:07",
+    "areas": [],
+    "images": [],
+    "imageTitles": [],
+    "imageDescriptions": [],
+    "eventIconPath": "/content/alertswiss-internet/_jcr_content/alertswissconfig/testDefaultIcon.spoolimage.1717592818918/noresize/image.technischerTestAlert.svg",
+    "reference": "info@alertswiss.ch,TEST-1163,2025-06-21T08:07:50+02:00"
+}

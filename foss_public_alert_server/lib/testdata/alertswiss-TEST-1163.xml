@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+   <identifier>TEST-1163</identifier>
+   <sent>2025-06-21T08:07:00+02:00</sent>
+   <sender>info@alertswiss.ch</sender>
+   <references>info@alertswiss.ch,TEST-1163,2025-06-21T08:07:50+02:00</references>
+   <scope>Public</scope>
+   <msgType>Alert</msgType>
+   <status>Test</status>
+   <info>
+    <language>en</language>
+    <headline>*** Test Message *** This is a test of the Alertswiss system</headline>
+    <instruction>No measures necessary</instruction>
+    <event>Cap Test Event</event>
+    <severity>Unknown</severity>
+    <urgency>Unknown</urgency>
+   </info>
+  </alert>
