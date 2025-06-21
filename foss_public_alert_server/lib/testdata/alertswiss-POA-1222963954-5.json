@@ -1,0 +1,149 @@
+{
+    "identifier": "POA-1222963954-5",
+    "gtransOrigin": "en-x-mtfrom-it",
+    "sent": "Tue, 20.05.2025, 12:41",
+    "title": {
+    "title": "Landslide",
+    "titleGtransOrigin": "Frana"
+    },
+    "description": {
+    "description": "\n\nThere have been falling rocks / landslides in the affected area.\n\nFalling rocks / landslides are expected in the affected area.",
+    "descriptionOrigin": "\n\nNella zona interessata si è verificata una frana / uno scoscendimento.\n\nNella zona interessata sono previste frane / scoscendimenti."
+    },
+    "nationWide": false,
+    "banner": false,
+    "instructions": [
+    {
+        "text": "Make a large detour to avoid the affected area.",
+        "textOrigin": "Aggirate a largo raggio la zona interessata.",
+        "imageUrl": "/content/alertswiss-internet/en/_jcr_content/i18nGeneral/pictograms/374_1538033385715/image.spoolimage.1538033385716/noresize/image.6321.gif"
+    },
+    {
+        "text": "Follow the instructions given by emergency services and the authorities.",
+        "textOrigin": "Seguite le istruzioni dei servizi d’emergenza e delle autorità.",
+        "imageUrl": "/content/alertswiss-internet/en/_jcr_content/i18nGeneral/pictograms/370_1538033337045/image.spoolimage.1538033337046/noresize/image.6309.gif"
+    }
+    ],
+    "sender": "info@alertswiss.ch",
+    "publisherName": "Canton Ticino",
+    "link": "https://www.alert.swiss",
+    "links": [
+    {
+        "href": "https://www.alert.swiss",
+        "text": "www.alert.swiss"
+    }
+    ],
+    "contact": {
+    "contact": "General emergency calls : <a href=\"tel:112\">112</a><br/>Police: <a href=\"tel:117\">117</a>",
+    "contactOrigin": "Numero di emergenza generale : <a href=\"tel:112\">112</a><br/>Numero di emergenza della polizia: <a href=\"tel:117\">117</a>"
+    },
+    "event": "Falling rocks, landslide",
+    "allClear": false,
+    "severity": "moderate",
+    "testAlert": false,
+    "technicalTestAlert": false,
+    "publishDate": "Tue, 20.05.2025, 12:41",
+    "areas": [
+    {
+        "description": {
+        "description": "Sonvico - Denti della vecchia",
+        "descriptionOrigin": "Sonvico - Denti della vecchia"
+        },
+        "polygons": [
+        {
+            "coordinates": [
+            [
+                "46.05360",
+                "9.00866"
+            ],
+            [
+                "46.05337",
+                "9.00852"
+            ],
+            [
+                "46.05277",
+                "9.00870"
+            ],
+            [
+                "46.05168",
+                "9.00977"
+            ],
+            [
+                "46.05075",
+                "9.01078"
+            ],
+            [
+                "46.04976",
+                "9.01409"
+            ],
+            [
+                "46.04987",
+                "9.01479"
+            ],
+            [
+                "46.04997",
+                "9.01664"
+            ],
+            [
+                "46.05096",
+                "9.01744"
+            ],
+            [
+                "46.05240",
+                "9.01787"
+            ],
+            [
+                "46.05356",
+                "9.01662"
+            ],
+            [
+                "46.05432",
+                "9.01538"
+            ],
+            [
+                "46.05464",
+                "9.01445"
+            ],
+            [
+                "46.05508",
+                "9.01373"
+            ],
+            [
+                "46.05533",
+                "9.01089"
+            ],
+            [
+                "46.05539",
+                "9.00916"
+            ],
+            [
+                "46.05501",
+                "9.00851"
+            ],
+            [
+                "46.05439",
+                "9.00805"
+            ],
+            [
+                "46.05360",
+                "9.00866"
+            ]
+            ],
+            "excludes": []
+        }
+        ],
+        "circles": [],
+        "regions": [
+        {
+            "region": "TI"
+        }
+        ],
+        "regionType": "one"
+    }
+    ],
+    "images": [],
+    "imageTitles": [],
+    "imageDescriptions": [],
+    "eventIconPath": "/content/alertswiss-internet/_jcr_content/alertswissconfig/moderateDefaultIcon.spoolimage.1717592818918/noresize/image.7200.svg",
+    "reference": "info@alertswiss.ch,POA-1222963954-5,2025-05-20T12:41:48+02:00"
+}

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<alert xmlns="urn:oasis:names:tc:emergency:cap:1.2">
+   <identifier>POA-1222963954-5</identifier>
+   <sent>2025-05-20T12:41:00+02:00</sent>
+   <sender>info@alertswiss.ch</sender>
+   <references>info@alertswiss.ch,POA-1222963954-5,2025-05-20T12:41:48+02:00</references>
+   <scope>Public</scope>
+   <msgType>Alert</msgType>
+   <status>Actual</status>
+   <info>
+    <language>en</language>
+    <senderName>Canton Ticino</senderName>
+    <headline>Landslide</headline>
+    <description>
+
+There have been falling rocks / landslides in the affected area.
+
+Falling rocks / landslides are expected in the affected area.</description>
+    <instruction>Make a large detour to avoid the affected area.</instruction>
+    <instruction>Follow the instructions given by emergency services and the authorities.</instruction>
+    <web>https://www.alert.swiss</web>
+    <contact>General emergency calls : &lt;a href="tel:112"&gt;112&lt;/a&gt;&lt;br/&gt;Police: &lt;a href="tel:117"&gt;117&lt;/a&gt;</contact>
+    <event>Falling rocks, landslide</event>
+    <severity>Moderate</severity>
+    <urgency>Unknown</urgency>
+    <area>
+     <areaDesc>Sonvico - Denti della vecchia</areaDesc>
+     <polygon>46.05360,9.00866 46.05337,9.00852 46.05277,9.00870 46.05168,9.00977 46.05075,9.01078 46.04976,9.01409 46.04987,9.01479 46.04997,9.01664 46.05096,9.01744 46.05240,9.01787 46.05356,9.01662 46.05432,9.01538 46.05464,9.01445 46.05508,9.01373 46.05533,9.01089 46.05539,9.00916 46.05501,9.00851 46.05439,9.00805 46.05360,9.00866</polygon>
+    </area>
+   </info>
+  </alert>
