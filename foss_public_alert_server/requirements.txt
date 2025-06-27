@@ -22,3 +22,6 @@ feedparser
 gdown
 
 pyshp
+
+# celery monitoring
+flower
