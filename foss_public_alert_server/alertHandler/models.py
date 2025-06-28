@@ -36,14 +36,17 @@ class Alert(models.Model):
     - source_url: the url of the original CAP data
     - msg_type, status, event, severity, urgency: the corresponding CAP fields, for use in the alert map
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # default value for primary key handed manually in save() below, due to
+    # https://docs.djangoproject.com/en/4.0/releases/3.0/#model-save-when-providing-a-default-for-the-primary-key
+    id = models.UUIDField(primary_key=True, editable=False)
     source_id = models.CharField(max_length=255)
     alert_id = models.CharField(max_length=255)
     bounding_box = models.PolygonField()
     cap_data = models.FileField(upload_to=alert_upload_path, null=True)
     cap_data_modified = models.BooleanField(null=True)
     issue_time = models.DateTimeField()
-    expire_time = models.DateTimeField(null=True)
+    expire_time = models.DateTimeField(null=True, blank=True)
     source_url = models.CharField(max_length=255, null=True)
     msg_type = models.CharField(max_length=255, null=True)
     status = models.CharField(max_length=255, null=True)
@@ -61,6 +64,11 @@ class Alert(models.Model):
         result += "source id:" + str(self.alert_id) + "\n"
         # @todo
         return result
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = uuid.uuid4()
+        super(Alert, self).save(*args, **kwargs)
 
 
 @receiver(models.signals.post_delete, sender=Alert)

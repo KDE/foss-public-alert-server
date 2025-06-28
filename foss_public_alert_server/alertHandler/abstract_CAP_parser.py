@@ -192,8 +192,9 @@ class AbstractCAPParser(ABC):
             # check if alert is already in database
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
-                alert = alerts[0]
-                # TODO look for changes and update/notify if needed
+                new_alert.id = alerts[0].id
+                new_alert.save(force_update=True)
+                check_for_alerts_and_send_notifications(new_alert, True)
             else:
                 new_alert.save()
                 # check if there are subscription
