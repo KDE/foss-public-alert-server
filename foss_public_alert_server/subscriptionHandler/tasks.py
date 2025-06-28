@@ -103,13 +103,14 @@ def send_one_notification(self, subscription_id, msg)  -> None:
         # reraise exception to make the task fail, to use the retry policy
         raise PushNotificationException
 
-def check_for_alerts_and_send_notifications(alert:Alert) -> None:
+
+def check_for_alerts_and_send_notifications(alert: Alert, is_update: bool = False) -> None:
     """
     check for the given alert if there is a subscription that wants to get a notification
     :return: None
     """
     msg = {
-        'type': 'added',
+        'type': 'added' if not is_update else 'update',
         'alert_id': str(alert.id)
         }
     for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):

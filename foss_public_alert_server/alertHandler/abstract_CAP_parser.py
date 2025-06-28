@@ -189,11 +189,13 @@ class AbstractCAPParser(ABC):
         :return: None
         """
         try:
-            # check if alert is already in database
+            # If the alert id is already in the database we got an update and need to notify accordingly.
+            # The calling code ensures we don't get here for unchanged alerts.
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
-                alert = alerts[0]
-                # TODO look for changes and update/notify if needed
+                new_alert.id = alerts[0].id
+                new_alert.save(force_update=True)
+                check_for_alerts_and_send_notifications(new_alert, True)
             else:
                 new_alert.save()
                 # check if there are subscription
@@ -267,6 +269,8 @@ class AbstractCAPParser(ABC):
             # find sent time
             sent_time = cap_msg.sent_time()
 
+            # if we already know the alert and it's sent time matches we assume nothing changed
+            # if the sent time did change we got an update
             if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=alert_id, issue_time=sent_time)) == 1:
                 self.record_unchanged_alert(alert_id)
                 return
