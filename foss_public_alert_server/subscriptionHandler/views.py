@@ -142,7 +142,7 @@ def add_new_subscription(request):
             'confirmation_id': confirmation_id
         })
 
-    except PushNotificationCheckFailed as e:
+    except (PushNotificationCheckFailed, PushNotificationException) as e:
         logger.debug(f"invalid push config: {e}")
         return HttpResponseBadRequest('push service is invalid or not reachable. Please check your push notification '
                                       'server')

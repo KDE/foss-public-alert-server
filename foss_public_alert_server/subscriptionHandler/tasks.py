@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import json
-from datetime import timezone, datetime
 import logging
 
-from celery import shared_task
+from datetime import timezone, datetime
+from celery import shared_task, Task
 
 from alertHandler.models import Alert
 from requests import ReadTimeout, RequestException, HTTPError, ConnectionError
@@ -30,12 +30,6 @@ def remove_old_subscription():
 
     for subscription in Subscription.objects.all():
         timedelta = datetime.now(timezone.utc) - subscription.last_heartbeat
-        #  check if the error counter reached the limit
-        if subscription.error_counter > AppSetting.get("NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING"):
-            # as we have a broken push config for this subscription, there is no reason to send a last notification to it
-            subscription.delete()
-            continue
-        # @TODO(Nucleus): We should move this to a celery task with a retry policy and only delete the subscription after all tries failed or if the subscription was successfully sent.
         # check if the subscription is expired
         if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
             try:
@@ -55,19 +49,35 @@ def remove_old_subscription():
                  pass
             subscription.delete()
 
+class NotificationBaseTask(Task):
+    def on_failure(self, exc, task_id, args, kwargs, einfo) -> None:
+        """
+        This handler will be executed after a task has failed. In our case after all 12 retries have failed.
+        As we can not deliver any push notifications, we delete the subscription to enforce a resubscribe from the client
+        :param exc: (Exception) - The exception raised by the task.
+        :param task_id:
+        :param args: (Tuple) - Original arguments for the task that failed.
+        :param kwargs: (Dict) - Original keyword arguments for the task that failed.
+        :param einfo:
+        :return: None
+        """
+        # get the subscription and delete it
+        subscription_id = args[0]
+        logger.debug(f"delete subscription {subscription_id}")
+        Subscription.objects.get(id=subscription_id).delete()
 
 @shared_task(name="task.send_notification",
              bind=True,
              autoretry_for=(PushNotificationException,),
              retry_backoff=True,
-             retry_kwargs={'max_retries': 12})
+             retry_kwargs={'max_retries': 12},
+             base=NotificationBaseTask)
 def send_one_notification(self, subscription_id, msg)  -> None:
     """
     send one push notification.
 
     As these requests can fail, we use a retry policy with 12 tries and an exponential backoff.
     The last try wil be after ~34min
-    With every failed try, we increase the error counter. This error counter gets reset if we successfully send a push notification
     :param self:
     :param subscription_id: the id of the subscription
     :param msg: the payload to send via the push notification
@@ -89,16 +99,7 @@ def send_one_notification(self, subscription_id, msg)  -> None:
                 apn.send_notification(subscription.token, "", "", "", "", "")
             case subscription.PushServices.FIREBASE:
                 firebase.send_notification(subscription.token, json.dumps(msg))
-
-        # we successfully delivered a push notification, reset the error counter and clear the error messages
-        subscription.error_counter = 0
-        subscription.error_messages = ""
-        subscription.save()
     except PushNotificationException as e:
-        # increase error counter and store error message in database
-        subscription.error_counter = subscription.error_counter +1
-        subscription.error_messages = e
-        subscription.save()
         # reraise exception to make the task fail, to use the retry policy
         raise PushNotificationException
 

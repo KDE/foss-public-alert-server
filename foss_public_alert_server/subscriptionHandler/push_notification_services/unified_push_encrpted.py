@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from requests import Response
 from django.http import HttpResponseBadRequest
 from pywebpush import webpush, WebPushException
 from django.conf import settings
 import logging
 from datetime import datetime
+from requests import Response, HTTPError, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
 
 from subscriptionHandler.models import Subscription
 
@@ -72,7 +72,7 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                        vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY,
                        vapid_claims=claims,
                        timeout=10)
-    except WebPushException as e:
+    except (WebPushException, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, ConnectionError):
         logger.error("Failed to send web push notification")
         raise PushNotificationException()
 
