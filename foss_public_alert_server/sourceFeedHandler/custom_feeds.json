@@ -1076,6 +1076,54 @@
         "ignore": false,
         "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
       }
+    },
+    {
+      "source": {
+        "sourceId": "km-anacm-fr",
+        "byLanguage": [
+          {
+            "code": "fr",
+            "name": "Comoros: Agence Nationale de l'Aviation Civile et de la Météorologie",
+            "logo": ""
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.174.269",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=337",
+        "authorName": "Mohamed Hamid",
+        "authorEmail": "sidido20013@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://meteocomores.km/api/cap/rss.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "cm",
+        "authorityAbbrev": "anacm",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "au-qld-gov-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: Queensland Government",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "giskedron@fire.qld.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://publiccontent-gis-psba-qld-gov-au.s3.ap-southeast-2.amazonaws.com/content/Feeds/StormFloodCycloneWarnings/StormWarnings_capau.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "gov",
+        "feedSource": "FPAS",
+        "format": "EDXL",
+        "override": true,
+        "ignore": false
+      }
     }
   ]
 }
