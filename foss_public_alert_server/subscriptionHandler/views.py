@@ -7,6 +7,7 @@ import datetime
 import json
 import uuid
 from json import loads
+import tldextract
 
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseNotFound
@@ -59,6 +60,25 @@ def subscribe(request):
     else:
         return HttpResponseBadRequest("Invalid HTTP method")
 
+def isUnifiedPushServerBlacklisted(token):
+    """
+    check if the given UnifiedPush token is from a blacklisted server
+    :param token: the UnifiedPush endpoint to check
+    :return: None
+    :raise UnifiedPushServerIsBlacklisted if the url is blacklisted
+    """
+    # ntfy.sh allows us to publish 250 msg per day and stops sending acks afterward
+    # which results in a timeout exceptions after 10s
+    blacklisted_server = ["ntfy.sh"]
+    extracted_domain = tldextract.extract(token)
+    if extracted_domain.subdomain:
+        push_server_url = f"{extracted_domain.subdomain}.{extracted_domain.domain}.{extracted_domain.suffix}"
+    else:
+        push_server_url = f"{extracted_domain.domain}.{extracted_domain.suffix}"
+    logger.debug(push_server_url)
+    if blacklisted_server.__contains__(push_server_url):
+        raise UnifiedPushServerIsBlacklisted(push_server_url)
+
 @require_http_methods(["POST"])
 def add_new_subscription(request):
     """
@@ -110,9 +130,11 @@ def add_new_subscription(request):
 
         match push_service:
             case "UNIFIED_PUSH":
+                isUnifiedPushServerBlacklisted(token)
                 s = unified_push.create_subscription(token, bbox)
                 test_push = unified_push.send_notification(s.token, json.dumps(msg))
             case "UNIFIED_PUSH_ENCRYPTED":
+                isUnifiedPushServerBlacklisted(token)
                 s = unified_push_encrpted.create_subscription(token, bbox, data)
                 test_push = unified_push_encrpted.send_notification(s.token,
                                                     json.dumps(msg),
@@ -144,8 +166,12 @@ def add_new_subscription(request):
 
     except (PushNotificationCheckFailed, PushNotificationException) as e:
         logger.debug(f"invalid push config: {e}")
-        return HttpResponseBadRequest('push service is invalid or not reachable. Please check your push notification '
+        return HttpResponseBadRequest('Your push service is invalid or not reachable. Please check your push notification '
                                       'server')
+    except UnifiedPushServerIsBlacklisted as domainname:
+        logger.debug("Push service is blocked and the subscription denied")
+        return HttpResponseBadRequest(f"Your UnifiedPush Server {domainname} is blocked. We can not reliably"
+                                      f" deliver push notifications to this server. Please choose another one.")
     except Exception as e:
         logger.debug(f"invalid request: {e}")
         return HttpResponseBadRequest('invalid request')

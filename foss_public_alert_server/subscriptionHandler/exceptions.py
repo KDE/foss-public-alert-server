@@ -6,3 +6,10 @@ class PushNotificationCheckFailed(Exception):
 
 class PushNotificationException(Exception):
     pass
+
+class PushNotificationTimeoutException(Exception):
+    pass
+
+class UnifiedPushServerIsBlacklisted(Exception):
+    def __init__(self, domainname):
+        self.domainname = domainname

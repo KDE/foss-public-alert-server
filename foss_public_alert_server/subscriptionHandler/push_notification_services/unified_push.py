@@ -8,8 +8,9 @@ import json
 import logging
 from datetime import datetime
 
-from subscriptionHandler.models import Subscription
-from subscriptionHandler.exceptions import PushNotificationException
+from subscriptionHandler.models import Subscription, ConnectionFlag
+from subscriptionHandler.exceptions import PushNotificationException, PushNotificationTimeoutException
+from .push_tools import checkTimeoutFlag, setTimeoutFlag
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,10 +25,13 @@ def send_notification(distributor_url, payload:json) -> Response:
     :raise PushNotificationException if the request failed
     """
     try:
-        request = requests.post(distributor_url, payload, timeout=10)
-        return request
-    except (ConnectionError, HTTPError, ReadTimeout, RequestException, Timeout, ConnectTimeout):
-        logger.error("Failed to send push notification")
+        checkTimeoutFlag(distributor_url)
+        return requests.post(distributor_url, payload, timeout=10)
+    except (ConnectTimeout, Timeout):
+        setTimeoutFlag(distributor_url)
+        raise PushNotificationException
+    except (ConnectionError, HTTPError, ReadTimeout, RequestException, PushNotificationTimeoutException) as e:
+        logger.error(f"Failed to send push notification due to {e}")
         raise PushNotificationException
 
 def update_subscription(data):

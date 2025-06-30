@@ -28,7 +28,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'min_lon': 8.591,
             'max_lon': 12.063,
             "push_service": "UNIFIED_PUSH",
-            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
         }
         response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         self.assertContains(response, 'successfully subscribed', status_code=200)
@@ -40,7 +40,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'min_lon': 8.591,
             'max_lon': 12.063,
             "push_service": "UNIFIED_PUSH",
-            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
         }
         response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         data = json.loads(response.content)
@@ -65,6 +65,18 @@ class SubscriptionHandlerTestsCase(TestCase):
         response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         self.assertContains(response, b'push service is not available on this instance.', status_code=400)
 
+    def test_blocked_unifiedPush(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://ntfy.sh/J9gTXxwbOEKNfeJW'
+        }
+        response = self.client.post('/subscription/', data, content_type="application/json")
+        self.assertContains(response, b'Your UnifiedPush Server ntfy.sh is blocked. We can not reliably deliver push notifications to this server. Please choose another one.', status_code=400)
+
     def test_invalid_parameters(self):
         data = {
             'min_lat': 52.295,
@@ -72,7 +84,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             #'min_lon': 8.591, missing
             'max_lon': 12.063,
             "push_service": "UNIFIED_PUSH",
-            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
         }
         response = self.client.post('/subscription/', data, content_type="application/json")
         self.assertContains(response, b'invalid or missing parameters', status_code=400)
@@ -92,7 +104,7 @@ class SubscriptionHandlerTestsCase(TestCase):
             'min_lon': 8.591,
             'max_lon': 12.063,
             "push_service": "UNIFIED_PUSH",
-            'token': 'https://ntfy.sh/Fg4FZIJsPe5f4nzC'
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
         }
         response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
         data = json.loads(response.content)
