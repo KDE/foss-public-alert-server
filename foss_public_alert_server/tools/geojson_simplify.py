@@ -50,7 +50,7 @@ def simplify_multi_polygon(multi_poly):
     if arguments.expand < arguments.shrink:
         print("WARNING: shrinking more than expanding, result will likely not include the original area!")
     offset1 = dist * arguments.expand
-    threshold = offset1 * arguments.threshold
+    threshold = dist * arguments.threshold
     offset2 = dist * arguments.shrink
 
     # use enough decimals to fit 1/10th of the simplification threshold
