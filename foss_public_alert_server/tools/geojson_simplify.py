@@ -44,6 +44,9 @@ def simplify_multi_polygon(multi_poly):
     lat_center = (bbox[0][1] + bbox[1][1]) / 2.0
     bbox_width = round(geojson.geojson_distance([bbox[0][0], lat_center], [bbox[1][0], lat_center]), 0)
     bbox_height = round(geojson.geojson_distance(bbox[0], [bbox[0][0], bbox[1][1]]), 0)
+    if bbox_width < 10:
+        print("WARNING: geometry crossing the antimeridian is not supported!")
+        return multi_poly
     dist = round(max(bbox_width, bbox_height))
     print(f"Area size: {bbox_width} x {bbox_height}m")
 
@@ -67,6 +70,12 @@ def simplify_multi_polygon(multi_poly):
     r = geojson.geojson_multipolygon_offset(r, -offset2)
     print(f"Rounding to {decimals} decimals…")
     r = geojson.geojson_multipolygon_round_coordinates(r, decimals)
+
+    # sanity-check the result
+    bboxAfter = geojson.geojson_multipolygon_bounding_box(r)
+    if bboxAfter[0][0] < -180 or bboxAfter[1][0] > 180 or bboxAfter[0][1] < -90 or bboxAfter[1][1] > 90:
+        print(f"WARNING: possibly suspicious bounding box after simplification: {bboxAfter}")
+
     return r
 
 
