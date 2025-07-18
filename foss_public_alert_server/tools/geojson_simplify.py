@@ -5,6 +5,7 @@ import argparse
 import json
 import math
 import os
+import pathlib
 import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -13,8 +14,7 @@ from lib import geojson
 
 
 parser = argparse.ArgumentParser(description='Simplify GeoJSON polygons for use in CAP alerts.')
-parser.add_argument('--input', type=str, required=True, help='Input GeoGJSON file to simplify')
-parser.add_argument('--output', type=str, required=True, help='File to write the simplified GeoJSON to')
+parser.add_argument('input', type=str, help='Input GeoGJSON file to simplify', nargs='+')
 parser.add_argument('--expand', type=float, help='Ratio of the overall size to expand the polygon by', default=0.005)
 parser.add_argument('--threshold', type=float, help='Ratio of the overall size to use as Douglas-Peucker simplification threshold', default=0.0025)
 parser.add_argument('--shrink', type=float, help='Ratio of the overall size to shrink the polygon by', default=0.004)
@@ -70,14 +70,18 @@ def simplify_multi_polygon(multi_poly):
     return r
 
 
-# load GeoJSON input
-with open(arguments.input, 'r') as f:
-    g = json.load(f)
+# apply simplification to all given GeoJSON files
+for fn in arguments.input:
+    if pathlib.Path(fn).is_symlink():
+        continue
+    with open(fn, 'r') as f:
+        print(f"Simplifying {fn}…")
+        g = json.load(f)
 
-if g['geometry']['type'] == 'MultiPolygon':
-    g['geometry']['coordinates'] = simplify_multi_polygon(g['geometry']['coordinates'])
-elif g['geometry']['type'] == 'Polygon':
-    g['geometry']['coordinates'] = simplify_multi_polygon([g['geometry']['coordinates']])[0]
+    if g['geometry']['type'] == 'MultiPolygon':
+        g['geometry']['coordinates'] = simplify_multi_polygon(g['geometry']['coordinates'])
+    elif g['geometry']['type'] == 'Polygon':
+        g['geometry']['coordinates'] = simplify_multi_polygon([g['geometry']['coordinates']])[0]
 
-with open(arguments.output, 'w') as f:
-    json.dump(g, f)
+    with open(fn, 'w') as f:
+        json.dump(g, f)
