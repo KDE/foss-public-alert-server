@@ -141,6 +141,52 @@
     },
     {
       "source": {
+        "sourceId": "de-police-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Polizei",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://nina.api.proxy.bund.dev/api31/police/mapData.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "de-nina",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "de-katwarn-de",
+        "byLanguage": [
+          {
+            "code": "de",
+            "name": "Deutschland: Katwarn",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://nina.api.proxy.bund.dev/api31/katwarn/mapData.json",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "de",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "de-nina",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
         "sourceId": "ch-alert-swiss-xx",
         "byLanguage": [
           {
