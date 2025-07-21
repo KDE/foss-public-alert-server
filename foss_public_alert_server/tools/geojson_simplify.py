@@ -44,9 +44,20 @@ def simplify_multi_polygon(multi_poly):
     lat_center = (bbox[0][1] + bbox[1][1]) / 2.0
     bbox_width = round(geojson.geojson_distance([bbox[0][0], lat_center], [bbox[1][0], lat_center]), 0)
     bbox_height = round(geojson.geojson_distance(bbox[0], [bbox[0][0], bbox[1][1]]), 0)
-    if bbox_width < 10:
-        print("WARNING: geometry crossing the antimeridian is not supported!")
-        return multi_poly
+
+    # crossing the antimeridian: split into east and west sets and simplify separately
+    if bbox_width < 10 or (bbox[0][0] < -179 and bbox[1][0] > 179):
+        print("Geometry crosses antimeridian, simplifying separately…")
+        east_multi_poly = []
+        west_multi_poly = []
+        for poly in multi_poly:
+            bbox = geojson.geojson_path_bounding_box(poly[0])
+            if bbox[0][0] > 0:
+                east_multi_poly.append(poly)
+            else:
+                west_multi_poly.append(poly)
+        return simplify_multi_polygon(east_multi_poly) + simplify_multi_polygon(west_multi_poly)
+
     dist = round(max(bbox_width, bbox_height))
     print(f"Area size: {bbox_width} x {bbox_height}m")
 
