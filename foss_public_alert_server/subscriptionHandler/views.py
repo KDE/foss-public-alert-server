@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 def isValidBbox(x1, y1, x2, y2):
     """
     check if the given BBox is valid
+    Besides containing valid coordinates this also means not crossing the antimeridian.
     :param x1:
     :param y1:
     :param x2:
@@ -38,8 +39,8 @@ def isValidBbox(x1, y1, x2, y2):
             -180.0 <= x2 <= 180.0 and
             -90.0 <= y1 <= 90.0 and
             -90.0 <= y2 <= 90.0 and
-            x1 != x2 and
-            y1 != y2)
+            x1 < x2 and
+            y1 < y2)
 
 @csrf_exempt
 @require_http_methods(["POST", "DELETE", "PUT", "GET"])

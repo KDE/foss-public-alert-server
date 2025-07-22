@@ -77,6 +77,18 @@ class SubscriptionHandlerTestsCase(TestCase):
         response = self.client.post('/subscription/', data, content_type="application/json")
         self.assertContains(response, b'Your UnifiedPush Server ntfy.sh is blocked. We can not reliably deliver push notifications to this server. Please choose another one.', status_code=400)
 
+    def test_antimeridian_cross(self):
+        data = {
+            'min_lat': 179.0,
+            'max_lat': -179.0,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
+        }
+        response = self.client.post('/subscription/', data, content_type="application/json")
+        self.assertContains(response, b'invalid bounding box', status_code=400)
+
     def test_invalid_parameters(self):
         data = {
             'min_lat': 52.295,
