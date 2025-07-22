@@ -345,7 +345,7 @@ components:
         max_lon:
           type: number
           format: float
-          description: "The maximum longitude"
+          description: "The maximum longitude. Must be larger than `min_lon`, ie. the subscribed area cannot cross the antimeridian."
           example: 180.0
         p256dh_key:
           type: string
