@@ -28,7 +28,7 @@ SPDX-FileCopyrightText = "National Science and Technology Center for Disaster Re
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["foss_public_alert_server/alertHandler/data/AMOC-AreaCode/**.geojson"]
+path = "foss_public_alert_server/alertHandler/data/AMOC-AreaCode/**.geojson"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Copyright Commonwealth of Australia 2025, Bureau of Meteorology (ABN 92 637 533 532)"
 SPDX-License-Identifier = "LicenseRef-BoM"
@@ -38,6 +38,12 @@ path = "foss_public_alert_server/alertHandler/data/ISO3166-2/**.geojson"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "OpenStreetMap"
 SPDX-License-Identifier = "ODbL-1.0"
+
+[[annotations]]
+path = "foss_public_alert_server/alertHandler/data/CPEAS Geographic Code/**.geojson"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "GaryBikini (https://github.com/GaryBikini/ChinaAdminDivisonSHP)"
+SPDX-License-Identifier = "MIT"
 
 [[annotations]]
 path = ["foss_public_alert_server/manage.py", "foss_public_alert_server/alertHandler/migrations/**.py", "foss_public_alert_server/subscriptionHandler/migrations/**.py", "foss_public_alert_server/sourceFeedHandler/migrations/**.py", "foss_public_alert_server/configuration/migrations/**.py", "foss_public_alert_server/alertTester/migrations/**.py"]

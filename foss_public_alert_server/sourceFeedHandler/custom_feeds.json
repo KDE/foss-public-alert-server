@@ -846,34 +846,6 @@
     },
     {
       "source": {
-        "sourceId": "cn-cma-xx",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "China: China Meteorological Administration",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/cn-cma-en.png"
-          },
-          {
-            "code": "zh",
-            "name": "China: 中国气象局",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/cn-cma-zh.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.156.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=30",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://alert-feed-worldweather-org.s3.amazonaws.com/cn-cma-xx/rss.xml",
-        "capAlertFeedStatus": "missing geo codes",
-        "authorityCountry": "cn",
-        "authorityAbbrev": "cma",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
         "sourceId": "id-bmkg-id",
         "byLanguage": [
           {
