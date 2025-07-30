@@ -129,6 +129,24 @@ class AbstractCAPParser(ABC):
         # store duration as last fetch duration
         CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=datetime.now() - start_time)
 
+    def load_geocode(self, code_name: str, code_value: str):
+        """
+        Load GeoJSON geometry for a given CAP geo code.
+        Returns None if not found.
+        """
+        code_file = os.path.join(settings.BASE_DIR, 'alertHandler/data', code_name, f"{code_value}.geojson")
+        if os.path.isfile(code_file):
+            return json.load(open(code_file))
+
+        # for hierarchical CPEAS codes check if we have a parent code at least
+        if code_name == "CPEAS Geographic Code":
+            for i in range(0, 3):
+                parent_code = code_value[0:6 - i*2] + '0000000000'[4-i*2:]
+                if parent_code != code_value:
+                    return self.load_geocode(code_name, parent_code)
+
+        return None
+
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
         Some sources do not contain the polygons of the area directly in the CAP file, but use geocodes instead.
@@ -149,10 +167,8 @@ class AbstractCAPParser(ABC):
                 if not code_name or not code_value:
                     continue
                 # find correct geojson file in storage
-                # @todo think about better path?
-                code_file = os.path.join(settings.BASE_DIR, 'alertHandler/data', code_name, f"{code_value}.geojson")
-                if os.path.isfile(code_file):
-                    geojson = json.load(open(code_file))
+                geojson = self.load_geocode(code_name, code_value)
+                if geojson is not None:
                     # append geojson to original file
                     expanded = cap_geojson.geojson_feature_to_cap(area, geojson) or expanded
                 else:
