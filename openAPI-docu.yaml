@@ -225,32 +225,40 @@ paths:
           schema:
             type: number
             format: float
+            minimum: -90
+            maximum: 90
           description: "The minimum latitude"
-          example: -90.0
+          example: -48.9
         - in: query
           name: max_lat
           required: true
           schema:
             type: number
             format: float
-          description: "The maximum latitude"
-          example: 90.0
+            minimum: -90
+            maximum: 90
+          description: "The maximum latitude. Must be larger than `min_lat`."
+          example: -48.7
         - in: query
           name: min_lon
           required: true
           schema:
             type: number
             format: float
+            minimum: -180
+            maximum: 180
           description: "The minimum longitude"
-          example: -180.0
+          example: -123.5
         - in: query
           name: max_lon
           required: true
           schema:
             type: number
             format: float
-          description: "The maximum longitude"
-          example: 180.0
+            minimum: -180
+            maximum: 180
+          description: "The maximum longitude. Must be larger than `min_lon`."
+          example: -123.3
       responses:
         '200':
           description: "All CAP alerts for the area"
@@ -330,23 +338,31 @@ components:
         min_lat:
           type: number
           format: float
+          minimum: -90
+          maximum: 90
           description: "The minimum latitude"
-          example: -90.0
+          example: -48.9
         max_lat:
           type: number
           format: float
-          description: "The maximum latitude"
-          example: 90.0
+          minimum: -90
+          maximum: 90
+          description: "The maximum latitude. Must be larger than `min_lat`."
+          example: -48.7
         min_lon:
           type: number
           format: float
+          minimum: -180
+          maximum: 180
           description: "The minimum longitude"
-          example: -180.0
+          example: -123.5
         max_lon:
           type: number
           format: float
+          minimum: -180
+          maximum: 180
           description: "The maximum longitude. Must be larger than `min_lon`, ie. the subscribed area cannot cross the antimeridian."
-          example: 180.0
+          example: -123.3
         p256dh_key:
           type: string
           description: EDCH user agent public key according to RFC 8291, in Base64 URL encoding. (Only for UNIFIED_PUSH_ENCRYPTED).
