@@ -103,7 +103,7 @@ class SubscriptionHandlerTestsCase(TestCase):
 
     def test_send_notification(self):
         for alert in Alert.objects.all():
-            for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
+            for subscription in Subscription.objects.filter(bounding_box__intersects=alert.area):
                 logger.debug(f"Send notification for {subscription.id} to {subscription.distributor_url}")
                 requests.post(subscription.token, json.dumps(alert.alert_id)) #@todo fix
         # @todo check performance

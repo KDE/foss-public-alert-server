@@ -54,7 +54,7 @@ def get_alerts_for_subscription_id(request):
 
     # filter and return all alerts which intersects with the subscribed polygone
     result = []
-    for alert in Alert.objects.filter(bounding_box__intersects=polygon):
+    for alert in Alert.objects.filter(area__intersects=polygon):
         result.append(str(alert.id))
 
     return JsonResponse(result, safe=False)
@@ -76,7 +76,7 @@ def get_alerts_for_area(request):
         request_bbox = Polygon.from_bbox((x1, y1, x2, y2))
 
         res = []
-        for alert in Alert.objects.filter(bounding_box__intersects=request_bbox):
+        for alert in Alert.objects.filter(area__intersects=request_bbox):
             res.append(str(alert.id))
         return JsonResponse(res, safe=False)
     except (ValueError, TypeError):
