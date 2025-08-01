@@ -113,7 +113,7 @@ def check_for_alerts_and_send_notifications(alert: Alert, is_update: bool = Fals
         'type': 'added' if not is_update else 'update',
         'alert_id': str(alert.id)
         }
-    for subscription in Subscription.objects.filter(bounding_box__intersects=alert.bounding_box):
+    for subscription in Subscription.objects.filter(bounding_box__intersects=alert.area):
         # send push notification task to celery to free the alert parsing worker
         send_one_notification.apply_async(
             args=[subscription.id, msg],
