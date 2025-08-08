@@ -83,6 +83,7 @@ class BBK:
         Merge GeoJSON affected area information into a CAP structure
         converted from BBK CAP-like JSON.
         """
+        area_name_to_id_map = {}
         for area in alert.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
             for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
                 code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
@@ -91,3 +92,17 @@ class BBK:
                     continue
                 geo = cap_geojson.geojson_find_features(geojson, 'areaId', int(code_value))
                 cap_geojson.geojson_features_to_cap(area, geo)
+                area_desc = area.find('{urn:oasis:names:tc:emergency:cap:1.2}areaDesc')
+                if area_desc is not None:
+                    area_name_to_id_map[area_desc.text] = code_value
+
+        # Second pass for still unresolved areas
+        # Those occur for translations, those only have area names but no geocodes
+        for area in alert.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
+            if area.find('{urn:oasis:names:tc:emergency:cap:1.2}geocode') is not None or area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None or area.find('{urn:oasis:names:tc:emergency:cap:1.2}circle') is not None:
+                continue
+            area_desc = area.find('{urn:oasis:names:tc:emergency:cap:1.2}areaDesc')
+            if area_desc is None:
+                continue
+            geo = cap_geojson.geojson_find_features(geojson, 'areaId', int(area_name_to_id_map.get(area_desc.text)))
+            cap_geojson.geojson_features_to_cap(area, geo)
