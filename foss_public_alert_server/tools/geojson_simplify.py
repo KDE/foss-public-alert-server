@@ -46,7 +46,7 @@ def simplify_multi_polygon(multi_poly):
     bbox_height = round(geojson.geojson_distance(bbox[0], [bbox[0][0], bbox[1][1]]), 0)
 
     # crossing the antimeridian: split into east and west sets and simplify separately
-    if bbox_width < 10 or (bbox[0][0] < -179 and bbox[1][0] > 179):
+    if (bbox_width < 10 and bbox[1][0] - bbox[0][0] > 180) or (bbox[0][0] < -179 and bbox[1][0] > 179):
         print("Geometry crosses antimeridian, simplifying separately…")
         east_multi_poly = []
         west_multi_poly = []
