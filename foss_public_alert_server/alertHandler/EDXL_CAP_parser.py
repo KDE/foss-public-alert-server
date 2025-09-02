@@ -53,11 +53,21 @@ class EDXLCAPParser(AbstractCAPParser):
             info_xml = alert_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}info')
             onset = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}onset')
             expires = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}expires')
+            urgency = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}urgency')
+            severity = info_xml.find('{urn:oasis:names:tc:emergency:cap:1.2}severity')
             # make sure the onset exists before checking if we need the workaround
             if not onset is None:
                 # workaround for au-wa-dfes-en. if the onset time matches the expiry time, just remove the expiry element
                 if onset.text == expires.text:
                     info_xml.remove(expires)
+            # lazy workaround for au-qld-qfd-en
+            if urgency is None:
+                urgency_new = ET.SubElement(info_xml, 'urgency')
+                urgency_new.text = 'Unknown'
+            if severity is None:
+                severity_new = ET.SubElement(info_xml, 'severity')
+                severity_new.text = 'Unknown'
+
             cap_data = ET.tostring(alert_xml, 'unicode')
             # add alert to database
             self.addAlert(cap_data=cap_data)
