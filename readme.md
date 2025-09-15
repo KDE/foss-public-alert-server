@@ -5,8 +5,12 @@
 
 # FOSS Public Alert Server
 
-The FOSS Public Alert Server lets clients receive Push Notification via [UnifiedPush](https://unifiedpush.org/) about official emergency alerts worldwide. Besides infrastructure like sirens, radio, and Cell-Broadcast, CAP(Common Alerting Protocol) alerts are one way of alerting the public. 
-CAP alerts are used for a wide variety of emergencies. From alerts about extreme weather to alerts about contaminated drinking water to Pandemics. Our server bundles over 280 official CAP alert publishers worldwide and can easily extend to more sources. When finished, this server can be used with clients like [FOSS Warn](https://github.com/nucleus-ffm/foss_warn) and kPublicAlerts (still beta).
+The FOSS Public Alert Server lets clients receive push notification via [UnifiedPush](https://unifiedpush.org/) about emergency and weather alerts worldwide.
+
+This is made possible thanks to [OASIS' Common Alerting Protocol (CAP)](https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.html).
+CAP alerts are used for a wide variety of emergencies. From alerts about extreme weather to alerts about contaminated drinking water to pandemics.
+
+Our server aggregates hundreds of CAP Feeds published by alerting authorities worldwide. When finished, this server can be used with clients like [FOSS Warn](https://github.com/nucleus-ffm/foss_warn) and [KDE's alert integration](https://invent.kde.org/utilities/kpublicalerts) (still beta).
 
 We have three main motivations. Firstly, we want to offer an easy-to-use alternative to propriety emergency apps to allow privacy- and freedom-focused people to receive emergency alerts. Secondly, we want to enable other developers to implement clients for different devices like desktop PCs, smart speakers, and Linux smartphones, and last but not least, we want to make traveling easier. While traveling, no one wants to search and install the local emergency app to receive emergency alerts in this country. With our solution, there is one app for the world.
  
