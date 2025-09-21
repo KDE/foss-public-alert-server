@@ -7,21 +7,11 @@ from lib import geomath
 from django.contrib.gis.geos import MultiPolygon, Polygon
 
 
-def polygon_from_cap_polygon(cap_polygon, coords_swapped):
+def polygon_from_cap_polygon(cap_polygon):
     """
     Create a GEOS Polygon from a CAP polygon description.
     """
     coords = cap.CAPPolygon.parse_polygon(cap_polygon)
-    
-    if coords_swapped:
-        # initialise temp list to add fixed coords to
-        new_coords = []
-        for points in coords:
-            # make a new reversed tuple and add it to our list
-            new_point = (points[1], points[0])
-            new_coords.append(new_point)
-        coords = new_coords
-
 
     poly = Polygon(coords)
     if not poly.valid:
@@ -100,13 +90,13 @@ def polygon_from_cap_circle(cap_circle: str):
                 Polygon.from_bbox((-180, lat - dlat, lon + dlon - 360, lat + dlat))]
 
 
-def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage, coords_swapped: bool = False):
+def multipolygon_from_cap_alert(cap_alert: cap.CAPAlertMessage):
     """
     Returns a GEOS MultiPolygon for the affected area of the given CAP alert message.
     """
     polys = []
     for cap_poly in cap_alert.polygons():
-        polys += normalize_polygon(polygon_from_cap_polygon(cap_poly, coords_swapped))
+        polys += normalize_polygon(polygon_from_cap_polygon(cap_poly))
     for cap_circle in cap_alert.circles():
         polys += polygon_from_cap_circle(cap_circle)
     polys = [p for p in polys if p is not None]
