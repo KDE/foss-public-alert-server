@@ -255,6 +255,8 @@ class AbstractCAPParser(ABC):
             cap_msg = cap.CAPAlertMessage.from_string(cap_data)
             if cap_msg.is_expired():
                 return
+            if cap_msg.scope() == "Private":
+                return
 
             # find identifier
             alert_id = cap_msg.identifier()

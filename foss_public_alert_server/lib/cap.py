@@ -175,6 +175,9 @@ class CAPAlertMessage:
     def status(self):
         return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}status').text
 
+    def scope(self):
+        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}scope').text
+
     def polygons(self):
         """
         Returns a list of CAP polygons of the affected areas of the alert infos of this CAP message.

@@ -39,6 +39,10 @@ class TestCAP(unittest.TestCase):
         self.assertEqual(cap_alert_info.severity(), "Moderate")
         self.assertEqual(cap_alert_info.language(), "de-DE")
 
+    def test_scope(self):
+        cap_msg = cap.CAPAlertMessage.from_file("../alertHandler/test_data/test_cap_data_1.xml")
+        scope = cap_msg.scope()
+        self.assertEqual(scope, "Public")
 
 if __name__ == '__main__':
     unittest.main()
