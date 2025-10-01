@@ -28,7 +28,6 @@ class Alert(models.Model):
     - id: unique id of the alert in database
     - source_id: the source from where we got the alert
     - alert_id: the id of the alert
-    - bounding_box: coordinates of the area of the alert
     - cap_data: file of the CAP data in XML
     - cap_data_modified: true if we had to modify the original cap data
     - issue_time: the time of creation of the alert
@@ -42,7 +41,6 @@ class Alert(models.Model):
     id = models.UUIDField(primary_key=True, editable=False)
     source_id = models.CharField(max_length=255)
     alert_id = models.CharField(max_length=255)
-    bounding_box = models.PolygonField()
     cap_data = models.FileField(upload_to=alert_upload_path, null=True)
     cap_data_modified = models.BooleanField(null=True)
     issue_time = models.DateTimeField()
@@ -53,7 +51,7 @@ class Alert(models.Model):
     event = models.CharField(max_length=255, null=True)
     severity = models.CharField(max_length=255, null=True)
     urgency = models.CharField(max_length=255, null=True)
-    area = models.MultiPolygonField(null=True, spatial_index=True)
+    area = models.MultiPolygonField(spatial_index=True)
 
     class Meta:
         constraints = [models.UniqueConstraint('source_id', 'alert_id', name='source_id-alert_id-unique')]

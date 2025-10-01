@@ -147,7 +147,7 @@ class AlertHandlerCAPParserTestsCase(TestCase):
         self.assertEqual(alert.alert_id, "urn:oid:1234.5678")
         self.assertEqual(alert.expire_time, datetime.fromisoformat("2199-04-22T10:00:00-03:00"))
         self.assertEqual(alert.issue_time, datetime.fromisoformat("2024-04-21T11:51:29-03:00"))
-        bbox = alert.bounding_box.envelope.extent
+        bbox = alert.area.envelope.extent
         self.assertEqual(bbox[0], 6.328)
         self.assertEqual(bbox[1], 49.182)
         self.assertEqual(bbox[2], 13.931)

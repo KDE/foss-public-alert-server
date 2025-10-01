@@ -285,8 +285,6 @@ class AbstractCAPParser(ABC):
             # validate if the source country of the alert is allowed to send alerts for this area
             # self.validate_if_alert_is_in_country_borders()
 
-            bound_box_polygon = polygon.envelope
-
             # find an English alert info, otherwise take the first one
             # the resulting data is only used for the diagnostics map display, therefore
             # this sloppy multi-language handling is good enough here
@@ -301,7 +299,6 @@ class AbstractCAPParser(ABC):
             new_alert: Alert = Alert(
                 source_id=self.feed_source.source_id,
                 alert_id=alert_id,
-                bounding_box=bound_box_polygon,
                 issue_time=sent_time,
                 msg_type=cap_msg.msg_type(),
                 status=cap_msg.status(),
