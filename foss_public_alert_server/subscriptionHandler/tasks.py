@@ -70,7 +70,7 @@ class NotificationBaseTask(Task):
              bind=True,
              autoretry_for=(PushNotificationException,),
              retry_backoff=True,
-             retry_kwargs={'max_retries': 12},
+             retry_kwargs={'max_retries': 15},
              base=NotificationBaseTask)
 def send_one_notification(self, subscription_id, msg)  -> None:
     """
