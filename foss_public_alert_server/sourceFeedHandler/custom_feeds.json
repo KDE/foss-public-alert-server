@@ -1044,6 +1044,29 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+        "sourceId": "lu-lualert-xx",
+        "byLanguage": [
+          {
+            "code": "lu",
+            "name": "Luxembourg: LU-ALERT",
+            "logo": ""
+          }
+        ],
+        "authorName": "",
+        "authorEmail": "",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://lu-alert.lu/ctie/lualert?status=INPROGRESS",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "lu",
+        "authorityAbbrev": "",
+        "feedSource": "FPAS",
+        "format": "lu-alert",
+        "override": true,
+        "ignore": false
+      }
     }
   ]
 }

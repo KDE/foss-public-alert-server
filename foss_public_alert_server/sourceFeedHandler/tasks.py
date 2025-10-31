@@ -14,6 +14,7 @@ from alertHandler.NINA_CAP_parser import NinaCapParser
 from alertHandler.DWD_CAP_parser import DWDCAPParser
 from alertHandler.EDXL_CAP_parser import EDXLCAPParser
 from alertHandler.AlertSwiss_parser import AlertSwissParser
+from alertHandler.LUAlert_parser import LUAlertParser
 
 from . import source_feeds_aggegator
 from .models import CAPFeedSource
@@ -147,6 +148,8 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
             parser = EDXLCAPParser(feed)
         case "ch-alert-swiss":
             parser = AlertSwissParser(feed)
+        case "lu-alert":
+            parser = LUAlertParser(feed)
     if parser is not None:
         parser.get_feed(parser)
     else:
