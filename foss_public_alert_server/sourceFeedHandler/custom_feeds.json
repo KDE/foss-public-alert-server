@@ -447,29 +447,6 @@
     },
     {
       "source": {
-        "sourceId": "ca-alertable-xx",
-        "byLanguage": [
-          {
-            "code": "xx",
-            "name": "Canada: Alertable",
-            "logo": ""
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://feeds.alertable.ca/mobile/v2/feed.atom",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "ca",
-        "authorityAbbrev": "",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
         "sourceId": "us-noaa-ptwc-en",
         "byLanguage": [
           {
