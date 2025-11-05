@@ -210,7 +210,9 @@ class AbstractCAPParser(ABC):
             alerts = Alert.objects.filter(source_id=new_alert.source_id, alert_id=new_alert.alert_id)
             if len(alerts) == 1:
                 new_alert.id = alerts[0].id
+                old_path = alerts[0].cap_data.path
                 new_alert.save(force_update=True)
+                os.remove(old_path)
                 check_for_alerts_and_send_notifications(new_alert, True)
             else:
                 new_alert.save()
