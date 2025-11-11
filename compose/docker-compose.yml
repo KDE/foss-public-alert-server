@@ -57,6 +57,15 @@ services:
     depends_on:
       - db
 
+  pgfeatureserv:
+    image: docker.io/pramsey/pg_featureserv:latest
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db/foss-public-alert-server
+      - PGFS_SERVER_BASEPATH=/featureserv/
+      - PGFS_DATABASE_TABLEINCLUDES=public.alertHandler_alert
+    depends_on:
+      - db
+
   httpd:
     image: httpd:2.4-bullseye
     depends_on:
