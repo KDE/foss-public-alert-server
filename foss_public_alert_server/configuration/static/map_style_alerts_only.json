@@ -1,0 +1,95 @@
+{
+      "version": 8,
+      "sources": {
+        "alerts": {
+          "type": "vector",
+          "tiles": [
+            "https://alerts.kde.org/map/alerts/{z}/{x}/{y}.pbf"
+          ],
+          "minzoom": 0,
+          "maxzoom": 19
+        }
+      },
+      "layers": [
+        {
+          "id": "alert-outlines",
+          "type": "line",
+          "paint": {
+            "line-color": [
+              "match",
+              ["get", "msg_type"],
+              ["Cancel"],
+              "#808080",
+              [
+                "match",
+                ["get", "status"],
+                ["Test", "Exercise"],
+                "#00c0c0",
+                [
+                  "match",
+                  ["get", "urgency"],
+                  ["Past"],
+                  "#808080",
+                  [
+                    "match",
+                    ["get", "severity"],
+                    ["Extreme"],
+                    "#ff0000",
+                    ["Severe"],
+                    "#ff8000",
+                    ["Moderate"],
+                    "#f0c000",
+                    ["Minor"],
+                    "#00c000",
+                    "#0000ff"
+                  ]
+                ]
+              ]
+            ],
+            "line-width": 2
+          },
+          "source-layer": "public.alertHandler_alert",
+          "source": "alerts"
+        },
+        {
+          "id": "alert-areas",
+          "type": "fill",
+          "paint": {
+            "fill-color": [
+              "match",
+              ["get", "msg_type"],
+              ["Cancel"],
+              "#808080",
+              [
+                "match",
+                ["get", "status"],
+                ["Test", "Exercise"],
+                "#00c0c0",
+                [
+                  "match",
+                  ["get", "urgency"],
+                  ["Past"],
+                  "#808080",
+                  [
+                    "match",
+                    ["get", "severity"],
+                    ["Extreme"],
+                    "#ff0000",
+                    ["Severe"],
+                    "#ff8000",
+                    ["Moderate"],
+                    "#f0c000",
+                    ["Minor"],
+                    "#00c000",
+                    "#0000ff"
+                  ]
+                ]
+              ]
+            ],
+            "fill-opacity": 0.2
+          },
+          "source-layer": "public.alertHandler_alert",
+          "source": "alerts"
+        }
+      ]
+  }

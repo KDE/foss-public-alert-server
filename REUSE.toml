@@ -58,7 +58,7 @@ SPDX-FileCopyrightText = "FOSS Public Alert Server"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["foss_public_alert_server/sourceFeedHandler/static/css/**", "foss_public_alert_server/sourceFeedHandler/static/js/**", "foss_public_alert_server/sourceFeedHandler/templates/**", "foss_public_alert_server/sourceFeedHandler/fixtures/**", "foss_public_alert_server/configuration/fixtures/**", "foss_public_alert_server/configuration/templates/**", "foss_public_alert_server/alertTester/templates/**"]
+path = ["foss_public_alert_server/sourceFeedHandler/static/css/**", "foss_public_alert_server/sourceFeedHandler/static/js/**", "foss_public_alert_server/sourceFeedHandler/templates/**", "foss_public_alert_server/sourceFeedHandler/fixtures/**", "foss_public_alert_server/configuration/fixtures/**", "foss_public_alert_server/configuration/templates/**", "foss_public_alert_server/configuration/static/**", "foss_public_alert_server/alertTester/templates/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "FOSS Public Alert Server"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
