@@ -197,6 +197,8 @@ def unsubscribe(request):
         return HttpResponse("successfully unsubscribed")
     except ValidationError:
         return HttpResponseBadRequest("invalid subscription id")
+    except Subscription.DoesNotExist:
+        return HttpResponseNotFound("Subscription not found")
 
 @require_http_methods(["PUT"])
 def update_subscription(request):
@@ -252,7 +254,6 @@ def update_subscription(request):
             case _:
                 logger.debug("Not supported push service")
                 return HttpResponseBadRequest('something went wrong')
-
 
 @require_http_methods(["GET"])
 def handle_subscription_config_request(request):
