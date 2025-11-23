@@ -34,4 +34,4 @@ class LUAlertParser(AbstractCAPParser):
         for resource in metadata["resources"]:
             if resource["title"] in filenames:
                 alert = requests.get(resource["url"])
-                self.addAlert(resource["url"], alert.content.decode('utf-8').replace('xmlns="urn:oasis:names:tc:emergency:cap:1.2:profile:cap-lu:1.0"', 'xmlns="urn:oasis:names:tc:emergency:cap:1.2"'))
+                self.addAlert(cap_source_url=resource["url"], cap_data=alert.content.decode('utf-8').replace('xmlns="urn:oasis:names:tc:emergency:cap:1.2:profile:cap-lu:1.0"', 'xmlns="urn:oasis:names:tc:emergency:cap:1.2"'))

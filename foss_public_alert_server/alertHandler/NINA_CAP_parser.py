@@ -62,7 +62,8 @@ class NinaCapParser(AbstractCAPParser):
         for alert_id_obj in feed_data:
             alert_id = alert_id_obj["id"]
 
-            alert = self.get_json(f"https://warnung.bund.de/api31/warnings/{alert_id}.json")
+            alert_url = f"https://warnung.bund.de/api31/warnings/{alert_id}.json"
+            alert = self.get_json(alert_url)
             geojson = self.get_json(f"https://warnung.bund.de/api31/warnings/{alert_id}.geojson")
             if not alert or not geojson:
                 continue
@@ -70,4 +71,4 @@ class NinaCapParser(AbstractCAPParser):
             root = BBK.json_to_cap(alert)
             BBK.resolve_area_geometry(root, geojson)
 
-            self.addAlert(cap_data=ET.tostring(root, encoding='utf-8', xml_declaration=True).decode())
+            self.addAlert(cap_source_url=alert_url, cap_data=ET.tostring(root, encoding='utf-8', xml_declaration=True).decode())
