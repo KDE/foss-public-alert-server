@@ -89,6 +89,11 @@ def add_new_subscription(request):
     """
     try:
         data = loads(request.body)
+        user_agent = None
+        try:
+             user_agent = request.META['HTTP_USER_AGENT']
+        except KeyError:
+            pass
 
         # check if request has the right parameter
         if ('min_lat' not in data or
@@ -132,11 +137,11 @@ def add_new_subscription(request):
         match push_service:
             case "UNIFIED_PUSH":
                 isUnifiedPushServerBlacklisted(token)
-                s = unified_push.create_subscription(token, bbox)
+                s = unified_push.create_subscription(token, bbox, user_agent)
                 test_push = unified_push.send_notification(s.token, json.dumps(msg))
             case "UNIFIED_PUSH_ENCRYPTED":
                 isUnifiedPushServerBlacklisted(token)
-                s = unified_push_encrpted.create_subscription(token, bbox, data)
+                s = unified_push_encrpted.create_subscription(token, bbox, data, user_agent)
                 test_push = unified_push_encrpted.send_notification(s.token,
                                                     json.dumps(msg),
                                                     auth_key=s.auth_key,
@@ -203,13 +208,18 @@ def update_subscription(request):
     """
     # check parameter of request
     subscription_id = request.GET.get('subscription_id')
+    user_agent = None
+    try:
+        user_agent = request.META['HTTP_USER_AGENT']
+    except KeyError:
+        pass
 
     if subscription_id is None:
         return HttpResponseBadRequest('invalid or missing parameters')
 
     # check if subscription is still active
     try:
-        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now()) == 0:
+        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now(), user_agent=user_agent) == 0:
             return HttpResponseNotFound("Subscription has expired. You must register again!")
     except Exception as e:
         logger.error(f"Can not update subscription: {e}")

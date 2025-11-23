@@ -24,6 +24,7 @@ class Subscription(models.Model):
     p256dh_key = models.CharField(max_length=255, null=True) # used by web push
     error_counter = models.IntegerField(default=0)
     error_messages = models.CharField(max_length=255, null=True)
+    user_agent = models.CharField(max_length=255, null=True)
 
 class ConnectionFlag(models.Model):
     hostname = models.CharField(max_length=255)

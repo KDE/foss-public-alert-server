@@ -7,7 +7,6 @@ import logging
 
 from django.test import TestCase
 from django.test import Client
-from django.conf import settings
 
 from alertHandler.models import Alert
 from .models import Subscription
@@ -22,6 +21,18 @@ class SubscriptionHandlerTestsCase(TestCase):
     client = Client()
 
     def test_successful_subscription(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            "push_service": "UNIFIED_PUSH",
+            'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
+        }
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+        self.assertContains(response, 'successfully subscribed', status_code=200)
+
+    def test_subscription_without_user_agent(self):
         data = {
             'min_lat': 52.295,
             'max_lat': 52.789,
@@ -118,19 +129,19 @@ class SubscriptionHandlerTestsCase(TestCase):
             "push_service": "UNIFIED_PUSH",
             'token': 'https://unifiedpush.kde.org/J9gTXxwbOEKNfeJW'
         }
-        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json")
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
         data = json.loads(response.content)
         subscription_id = data["subscription_id"]
         # update subscription
-        response = self.client.put(f'/subscription/?subscription_id={subscription_id}')
+        response = self.client.put(f'/subscription/?subscription_id={subscription_id}', headers={"user_agent": "FPAS/1.0.0 (testing)"})
         self.assertContains(response, 'Subscription successfully updated', status_code=200)
 
     def test_update_subscription_invalid_subscription_id(self):
         response = self.client.put(f'/subscription/?subscription_id=invalid',
-                                   content_type="application/json")
+                                   content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
         self.assertContains(response, 'invalid input', status_code=400)
 
     def test_update_subscription_old_subscription_id(self):
         response = self.client.put(f'/subscription/?subscription_id=e1ce46fb-a885-4b26-5ba8-708cccfcfa2b',
-                                   content_type="application/json")
+                                   content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
         self.assertContains(response, 'Subscription has expired. You must register again!', status_code=404)

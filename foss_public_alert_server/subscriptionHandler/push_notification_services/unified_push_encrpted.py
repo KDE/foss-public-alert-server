@@ -16,13 +16,14 @@ from ..exceptions import PushNotificationException, PushNotificationTimeoutExcep
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_subscription(token, bbox, data):
+def create_subscription(token, bbox, data, user_agent):
     """
     create an encrypted unifiePush subscription. This requires the additional parameter `p256dh_key` and `auth_key` in
     data
     :param token: the unifiedPush endpoint
     :param bbox: the bounding box to subscribe for
     :param data: the request data with the additional parameter p256dh_key and auth_key
+    :param user_agent: the clients user agent
     :return: a new subscription of type UNIFIED_PUSH_ENCRYPTED
     """
     if ('p256dh_key' not in data or
@@ -37,7 +38,7 @@ def create_subscription(token, bbox, data):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED,
-                        last_heartbeat=datetime.now(), p256dh_key=p256dh_key, auth_key=auth_key)
+                        last_heartbeat=datetime.now(), p256dh_key=p256dh_key, auth_key=auth_key, user_agent=user_agent)
 
 
 def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or None:

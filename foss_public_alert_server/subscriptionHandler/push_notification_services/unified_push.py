@@ -15,9 +15,9 @@ from .push_tools import checkTimeoutFlag, setTimeoutFlag
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def create_subscription(token, bbox):
+def create_subscription(token, bbox, user_agent):
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH,
-                        last_heartbeat=datetime.now())
+                        last_heartbeat=datetime.now(), user_agent=user_agent)
 
 def send_notification(distributor_url, payload:json) -> Response:
     """
