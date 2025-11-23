@@ -7,7 +7,7 @@ from .models import Subscription, ConnectionFlag
 
 class SubscriptionAdmin(admin.GISModelAdmin):
     list_display = ['id', 'last_heartbeat']
-    search_fields = ['id']
+    search_fields = ['id', 'token', 'user_agent']
 
 class ConnectionFlagAdmin(admin.GISModelAdmin):
     list_display = ['hostname']
