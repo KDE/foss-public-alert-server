@@ -27,10 +27,8 @@ def send_notification(distributor_url, payload:json) -> Response:
     try:
         checkTimeoutFlag(distributor_url)
         return requests.post(distributor_url, payload, timeout=10)
-    except (ConnectTimeout, Timeout):
+    except (ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, OSError) as e:
         setTimeoutFlag(distributor_url)
-        raise PushNotificationException
-    except (ConnectionError, HTTPError, ReadTimeout, RequestException, PushNotificationTimeoutException) as e:
         logger.error(f"Failed to send push notification due to {e}")
         raise PushNotificationException
 

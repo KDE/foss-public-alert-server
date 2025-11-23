@@ -77,11 +77,8 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                        vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY,
                        vapid_claims=claims,
                        timeout=10)
-    except(ConnectTimeout, Timeout):
+    except(ConnectTimeout, Timeout, ConnectionError, WebPushException, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError) as e:
         setTimeoutFlag(endpoint)
-        raise PushNotificationException()
-    except (WebPushException, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, ConnectionError,
-            PushNotificationTimeoutException) as e:
         logger.error(f"Failed to send web push notification due to {e}")
         raise PushNotificationException()
 
