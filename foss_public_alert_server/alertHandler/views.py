@@ -3,7 +3,7 @@
 
 import logging
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.http.request import HttpRequest
 from django.shortcuts import render
 
@@ -49,7 +49,7 @@ def get_alerts_for_subscription_id(request):
         subscription = Subscription.objects.get(id=subscription_id)
         polygon = subscription.bounding_box
 
-    except (ValueError, TypeError, ObjectDoesNotExist):
+    except (ValueError, TypeError, ObjectDoesNotExist, ValidationError):
         return HttpResponseBadRequest("no valid subscription")
 
     # filter and return all alerts which intersects with the subscribed polygone

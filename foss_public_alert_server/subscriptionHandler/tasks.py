@@ -61,10 +61,13 @@ class NotificationBaseTask(Task):
         :param einfo:
         :return: None
         """
-        # get the subscription and delete it
-        subscription_id = args[0]
-        logger.debug(f"delete subscription {subscription_id}")
-        Subscription.objects.get(id=subscription_id).delete()
+        # Only delete the subscriptions if we raised a PushNotificatioinException.
+        # This avoids deleting subscriptions due to internal errors
+        if isinstance(exc, PushNotificationException):
+            # get the subscription and delete it
+            subscription_id = args[0]
+            logger.debug(f"delete subscription {subscription_id}")
+            Subscription.objects.get(id=subscription_id).delete()
 
 @shared_task(name="task.send_notification",
              bind=True,

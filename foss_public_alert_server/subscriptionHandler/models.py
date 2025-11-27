@@ -27,6 +27,6 @@ class Subscription(models.Model):
     user_agent = models.CharField(max_length=255, null=True)
 
 class ConnectionFlag(models.Model):
-    hostname = models.CharField(max_length=255)
+    hostname = models.CharField(primary_key=True, max_length=255)
     set_time_stamp  = models.DateTimeField(default=datetime.now)
     time_out = models.BooleanField()

@@ -10,31 +10,33 @@ from ..exceptions import PushNotificationTimeoutException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def setTimeoutFlag(distributor_url) -> None:
+def setTimeoutFlag(distributor_url:str) -> None:
     """
     create a new timeout flag in the database. The flag is created from the domain name of the distributor_url
     :param distributor_url: the server url
     :return: None
     """
-    extracted_domain = tldextract.extract(distributor_url)
+    extracted_domain = tldextract.extract(distributor_url.lower())
     if extracted_domain.subdomain:
         push_server_url = f"{extracted_domain.subdomain}.{extracted_domain.domain}.{extracted_domain.suffix}"
     else:
         push_server_url = f"{extracted_domain.domain}.{extracted_domain.suffix}"
-    flag = ConnectionFlag(
-        hostname=push_server_url,
-        time_out= True
-    )
-    flag.save()
+    # check if there is already an entry for this url, and if yes update this entry, if not, create a new one
+    if ConnectionFlag.objects.filter(hostname=push_server_url).update(set_time_stamp=datetime.now()) == 0:
+        flag = ConnectionFlag(
+            hostname=push_server_url,
+            time_out=True
+        )
+        flag.save()
 
-def checkTimeoutFlag(distributor_url):
+def checkTimeoutFlag(distributor_url:str):
     """
     check for the given distributor url if the server has an active timeout flag
     :param distributor_url: the UnifiedPush endpoint
     :return: None
     :raise PushNotificationTimeoutException if the server has an active timeout flag
     """
-    extracted_domain = tldextract.extract(distributor_url)
+    extracted_domain = tldextract.extract(distributor_url.lower())
     if extracted_domain.subdomain:
         push_server_url = f"{extracted_domain.subdomain}.{extracted_domain.domain}.{extracted_domain.suffix}"
     else:
