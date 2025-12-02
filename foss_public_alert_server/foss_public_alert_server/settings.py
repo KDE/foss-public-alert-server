@@ -176,7 +176,7 @@ DEFAULT_SETTINGS = [
 
     # for every failed push notification for a subscription, we increase a counter.
     # If the counter reaches the limit, the subscription is deleted
-    ["NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING", "int", 36],
+    ["NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING", "int", 10],
 
     # server config for clients
     ["OPERATOR", "char", "Example"],

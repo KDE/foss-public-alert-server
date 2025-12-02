@@ -51,9 +51,11 @@ def remove_old_subscription():
 
 class NotificationBaseTask(Task):
     def on_failure(self, exc, task_id, args, kwargs, einfo) -> None:
-        """
-        This handler will be executed after a task has failed. In our case after all 12 retries have failed.
-        As we can not deliver any push notifications, we delete the subscription to enforce a resubscribe from the client
+        """The notification was unsuccessful.
+
+        This handler will be executed after a task has failed. In our case, after all retries have failed.
+        As we can not deliver any push notifications, we increase the error counter, and we delete the subscription
+        when the error counter exceeds the max number defined in the settings to enforce a resubscribe from the client.
         :param exc: (Exception) - The exception raised by the task.
         :param task_id:
         :param args: (Tuple) - Original arguments for the task that failed.
@@ -64,16 +66,42 @@ class NotificationBaseTask(Task):
         # Only delete the subscriptions if we raised a PushNotificatioinException.
         # This avoids deleting subscriptions due to internal errors
         if isinstance(exc, PushNotificationException):
-            # get the subscription and delete it
             subscription_id = args[0]
-            logger.debug(f"delete subscription {subscription_id}")
-            Subscription.objects.get(id=subscription_id).delete()
+
+            # increase error counter by one
+            logger.debug(f"Increase error counter of subscription {subscription_id}")
+            subscription = Subscription.objects.get(id=subscription_id)
+            subscription.error_counter += 1
+
+            # delete subscription of error counter exceeds the max number
+            if subscription.error_counter > AppSetting.get("NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING"):
+                logger.debug(f"Subscription {subscription_id} has reached the max error number. Deleting.")
+                subscription.delete()
+            else:
+                subscription.save()
+
+    def on_success(self, retval, task_id, args, kwargs) -> None:
+        """The notification was successful.
+
+         We can reset the error counter to 0 again.
+
+        :param retval:
+        :param task_id:
+        :param args: Original arguments for the task that failed.
+        :param kwargs: Original keyword arguments for the task that failed.
+        :return: None
+        """
+        subscription_id = args[0]
+        subscription = Subscription.objects.get(id=subscription_id)
+        subscription.error_counter = 0
+        subscription.save()
 
 @shared_task(name="task.send_notification",
              bind=True,
              autoretry_for=(PushNotificationException,),
              retry_backoff=True,
-             retry_kwargs={'max_retries': 15},
+             retry_backoff_max=1800, # 1800s = 30min
+             retry_kwargs={'max_retries': 30 }, # results in 10h
              base=NotificationBaseTask)
 def send_one_notification(self, subscription_id, msg)  -> None:
     """
