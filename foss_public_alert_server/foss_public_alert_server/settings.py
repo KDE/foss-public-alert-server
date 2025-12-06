@@ -41,6 +41,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS').split(';') if os
 # Application definition
 
 INSTALLED_APPS = [
+    'django_prometheus',
     'subscriptionHandler.apps.SubscriptionHandlerConfig',
     'alertHandler.apps.AlertHandlerConfig',
     'sourceFeedHandler.apps.SourcefeedhandlerConfig',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusBeforeMiddleware'
 ]
 
 ROOT_URLCONF = 'foss_public_alert_server.urls'
