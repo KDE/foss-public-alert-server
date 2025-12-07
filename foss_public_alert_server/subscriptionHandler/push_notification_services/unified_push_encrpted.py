@@ -11,7 +11,7 @@ from requests import Response, HTTPError, Timeout, ConnectionError, ConnectTimeo
 from subscriptionHandler.models import Subscription
 from .push_tools import checkTimeoutFlag, setTimeoutFlag
 
-from ..exceptions import PushNotificationException, PushNotificationTimeoutException
+from ..exceptions import PushNotificationException, PushNotificationTimeoutException, PushNotificationExpiredException
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -77,8 +77,27 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                        vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY,
                        vapid_claims=claims,
                        timeout=10)
-    except(ConnectTimeout, Timeout, ConnectionError, WebPushException, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError, PushNotificationTimeoutException) as e:
-        setTimeoutFlag(endpoint)
+    except WebPushException as e:
+        logger.error(f"Failed to send web push notification due to {e}")
+        resp = getattr(e, "response", None)
+        if resp is not None:
+            status = getattr(resp, "status_code", None)
+            body = getattr(resp, "text", "")[:2000]
+
+            match status:
+                case 404 | 410:
+                    # the subscription has expired and can not be used anymore.
+                    # We have to delete the subscription on our side too
+                    # https://datatracker.ietf.org/doc/html/rfc8030
+                    raise PushNotificationExpiredException(body)
+                case 429:
+                    # The server responded with "too many requests" we have to wait until we try again.
+                    setTimeoutFlag(endpoint, body)
+                    raise PushNotificationException()
+        raise PushNotificationException()
+
+    except(ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError, PushNotificationTimeoutException) as e:
+        setTimeoutFlag(endpoint, str(e))
         logger.error(f"Failed to send web push notification due to {e}")
         raise PushNotificationException()
 

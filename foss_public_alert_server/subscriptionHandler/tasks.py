@@ -10,7 +10,7 @@ from celery import shared_task, Task
 from alertHandler.models import Alert
 from requests import ReadTimeout, RequestException, HTTPError, ConnectionError
 
-from .exceptions import PushNotificationException
+from .exceptions import PushNotificationException, PushNotificationExpiredException
 from .models import Subscription
 from configuration.models import AppSetting
 from .push_notification_services import unified_push, apn, firebase, unified_push_encrpted
@@ -65,9 +65,8 @@ class NotificationBaseTask(Task):
         """
         # Only delete the subscriptions if we raised a PushNotificatioinException.
         # This avoids deleting subscriptions due to internal errors
+        subscription_id = args[0]
         if isinstance(exc, PushNotificationException):
-            subscription_id = args[0]
-
             # increase error counter by one
             logger.debug(f"Increase error counter of subscription {subscription_id}")
             subscription = Subscription.objects.get(id=subscription_id)
@@ -79,6 +78,11 @@ class NotificationBaseTask(Task):
                 subscription.delete()
             else:
                 subscription.save()
+        elif isinstance(exc, PushNotificationExpiredException):
+            # The push notification subscription on the push server expired,
+            # we can not push anymore to this server
+            logger.debug(f"Subscription {subscription_id} has an expired push registration. Deleting.")
+            Subscription.objects.get(id=subscription_id).delete()
 
     def on_success(self, retval, task_id, args, kwargs) -> None:
         """The notification was successful.

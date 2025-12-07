@@ -10,10 +10,11 @@ from ..exceptions import PushNotificationTimeoutException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def setTimeoutFlag(distributor_url:str) -> None:
+def setTimeoutFlag(distributor_url:str, error_msg:str) -> None:
     """
     create a new timeout flag in the database. The flag is created from the domain name of the distributor_url
     :param distributor_url: the server url
+    :param error_msg: the error message why the flag is set
     :return: None
     """
     extracted_domain = tldextract.extract(distributor_url.lower())
@@ -25,7 +26,8 @@ def setTimeoutFlag(distributor_url:str) -> None:
     if ConnectionFlag.objects.filter(hostname=push_server_url).update(set_time_stamp=datetime.now()) == 0:
         flag = ConnectionFlag(
             hostname=push_server_url,
-            time_out=True
+            time_out=True,
+            error_message=error_msg[:255]
         )
         flag.save()
 
@@ -54,4 +56,4 @@ def checkTimeoutFlag(distributor_url:str):
     # if the flag is still valid, raise an exception
     if flag.time_out:
         logger.debug(f"Timeout flag for {push_server_url} has been set at {flag.set_time_stamp}")
-        raise PushNotificationTimeoutException(f"Timeout flag has been set at {flag.set_time_stamp}")
+        raise PushNotificationTimeoutException(f"Timeout flag for {push_server_url} has been set at {flag.set_time_stamp}")
