@@ -96,7 +96,12 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                     raise PushNotificationException()
         raise PushNotificationException()
 
-    except(ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError, PushNotificationTimeoutException) as e:
+    except PushNotificationTimeoutException as e:
+        # do not set the timeout flag if the flag raised the exception
+        logger.error(f"Failed to send web push notification due to {e}")
+        raise PushNotificationException()
+
+    except(ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError) as e:
         setTimeoutFlag(endpoint, str(e))
         logger.error(f"Failed to send web push notification due to {e}")
         raise PushNotificationException()
