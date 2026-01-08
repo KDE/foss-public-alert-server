@@ -14,6 +14,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
     <style>
     html, body { margin: 0; padding: 0; height: 100%; width: 100%; }
     #map { width: 100%; height: 100%; }
+    .maplibregl-popup {
+        max-height: 600px;
+        overflow-y: scroll;
+    }
     </style>
   </head>
   <body>
@@ -28,30 +32,39 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
      map.on('load', () => {
         map.on('click', 'alert-areas', (e) => {
+            const compareFn = (lhs, rhs) => {
+                return lhs.properties.issue_time < rhs.properties.issue_time ? 1 : -1;
+            };
+            let features = e.features;
+            features = features.sort(compareFn);
+
             let tooltip = '';
-            if (e.features[0].properties.event)
-                tooltip += '<b>' + e.features[0].properties.event + '</b><br/>';
-            if (e.features[0].properties.category)
-                tooltip += 'Category: ' + e.features[0].properties.category + '<br/>';
-            if (e.features[0].properties.severity)
-                tooltip += 'Severity: ' + e.features[0].properties.severity + '<br/>';
-            if (e.features[0].properties.urgency)
-                tooltip += 'Urgency: ' + e.features[0].properties.urgency + '<br/>';
-            if (e.features[0].properties.status)
-                tooltip += 'Status: ' + e.features[0].properties.status + '<br/>';
-            if (e.features[0].properties.msg_type)
-                tooltip += 'Message: ' + e.features[0].properties.msg_type + '<br/>';
-            tooltip += 'Sent: ' + e.features[0].properties.issue_time + '<br/>';
-            tooltip += 'Identifier: ' + e.features[0].properties.alert_id + '<br/>';
-            tooltip += '<a href="/alert/' + e.features[0].properties.id + '">CAP data</a><br/>';
-            if (e.features[0].properties.source_url) {
-                tooltip += '<a href="' + e.features[0].properties.source_url + '">Source CAP</a>';
+            for (const feature of features) {
+                if (feature.properties.event)
+                    tooltip += '<b>' + feature.properties.event + '</b><br/>';
+                if (feature.properties.category)
+                    tooltip += 'Category: ' + feature.properties.category + '<br/>';
+                if (feature.properties.severity)
+                    tooltip += 'Severity: ' + feature.properties.severity + '<br/>';
+                if (feature.properties.urgency)
+                    tooltip += 'Urgency: ' + feature.properties.urgency + '<br/>';
+                if (feature.properties.status)
+                    tooltip += 'Status: ' + feature.properties.status + '<br/>';
+                if (feature.properties.msg_type)
+                    tooltip += 'Message: ' + feature.properties.msg_type + '<br/>';
+                tooltip += 'Sent: ' + feature.properties.issue_time + '<br/>';
+                tooltip += 'Identifier: ' + feature.properties.alert_id + '<br/>';
+                tooltip += '<a href="/alert/' + feature.properties.id + '">CAP data</a><br/>';
+                if (feature.properties.source_url) {
+                    tooltip += '<a href="' + feature.properties.source_url + '">Source CAP</a><br/>';
+                }
+                tooltip += '<br/>';
             }
 
             new maplibregl.Popup()
                 .setLngLat(e.lngLat)
                 .setHTML(tooltip)
-                .setMaxWidth("400px")
+                .setMaxWidth("500px")
                 .addTo(map);
         });
 
