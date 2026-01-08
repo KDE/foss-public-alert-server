@@ -19,6 +19,7 @@ from .exceptions import NothingChangedException
 from .abstract_CAP_parser import AbstractCAPParser
 from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
+from lib import cap_feed
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -96,17 +97,10 @@ class XMLCAPParser(AbstractCAPParser):
 
             # if we have expiry data available here already, check that
             # to avoid additional downloads
-            try:
-                if entry.get('cap_expires') is not None:
-                    expire_time = parser.isoparse(entry.get('cap_expires'))
-                    if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                        logger.debug(f"Alert Expired: {self.feed_source.source_id} - not downloading alert "
-                                     f"{cap_source_url} expired on {expire_time} - skipping")
-                        continue
-            except ValueError as e:
-                logger.exception(f"Failed to parse expiry time: {entry.get('cap_expires')}", exc_info=e)
-            except TypeError as e:
-                logger.exception("Type error", exc_info=e)
+            expire_time = cap_feed.CAPFeedEntry.expiry_time(entry)
+            if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
+                logger.debug(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {expire_time} - skipping")
+                continue
 
             # if we have an identifier and sent time available here, check whether we
             # know the alert already

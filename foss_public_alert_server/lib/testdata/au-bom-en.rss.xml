@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss xmlns:cap="urn:oasis:names:tc:emergency:cap:1.1" version="2.0">
+  <channel>
+    <link href="https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/rss.xml" rel="alternate" title="RSS" type="application/rss+xml"/>
+    <title>Latest Official Public alerts in English for Bureau of Meteorology</title>
+    <link>https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/rss.xml</link>
+    <description>This feed lists the most recent Official Public alerts in English for Bureau of Meteorology</description>
+    <language>en</language>
+    <copyright>public domain</copyright>
+    <pubDate>Thu, 01 Jan 2026 16:05:14 +0000</pubDate>
+    <lastBuildDate>Thu, 13 Jul 2023 06:47:59 +0000</lastBuildDate>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <image>
+      <title>Latest Official Public alerts in English for Bureau of Meteorology</title>
+      <url>https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/capLogo.jpg</url>
+      <link>https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/rss.xml</link>
+    </image>
+    <item>
+      <title>Strong Wind Warning for coastal waters between Wallal and Cape Preston, between Dawesville and Walpole and between Bremer Bay and Israelite Bay for 01 January</title>
+      <description/>
+      <link>https://severeweather.wmo.int/v2/cap-alerts/au-bom-en/2026/01/01/05/01/02-dc6fc32e272f13d57f3fb683aa6bd3b8.xml</link>
+      <pubDate>Thu, 01 Jan 2026 05:09:13 +0000</pubDate>
+      <guid isPermaLink="false">AusBoM-IDW20100-2026-01-01T05:01:02+00:00</guid>
+      <cap:expires>Thu, 01 Jan 2026 16:00:00 +0000</cap:expires>
+      <cap:event>Wind</cap:event>
+      <cap:severity>Moderate</cap:severity>
+      <cap:areaDesc>Western Australia: Pilbara Coast East, Bunbury Geographe Coast, Leeuwin Coast and Esperance Coast</cap:areaDesc>
+    </item>
+  </channel>
+</rss>
