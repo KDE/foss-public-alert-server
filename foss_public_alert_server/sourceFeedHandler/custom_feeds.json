@@ -1067,6 +1067,32 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+        "sourceId": "mx-smn-es",
+        "byLanguage": [
+          {
+            "code": "es",
+            "name": "Mexico: CONAGUA - Servicio Meteorologico Nacional de Mexico",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/mx-smn-es.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.484.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=101",
+        "authorName": "Jorge Bustamante",
+        "authorEmail": "jorge.bustamante@conagua.gob.mx",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php",
+        "capAlertFeedStatus": "name resolver error",
+        "authorityCountry": "mx",
+        "authorityAbbrev": "smn"
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "Persistent name resolver error on their domain."
+      }
     }
   ]
 }
