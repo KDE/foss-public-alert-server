@@ -16,6 +16,8 @@ class TestCAPFeed(unittest.TestCase):
         self.assertEqual(cap_feed.CAPFeedEntry.parse_date_time("2026-01-01T06:30:17+00:00"), parser.isoparse("2026-01-01T06:30:17+00:00"))
         self.assertEqual(cap_feed.CAPFeedEntry.parse_date_time("Thu, 01 Jan 2026 06:40:13 +0200"), parser.isoparse("2026-01-01T06:40:13+02:00"))
         self.assertIsNone(cap_feed.CAPFeedEntry.parse_date_time("Don, 01 Jan 2026 06:40:13 +0200"))
+        self.assertEqual(cap_feed.CAPFeedEntry.parse_date_time("2026/1/6 上午 04:00:00"), parser.isoparse("2026-01-06T04:00:00"))
+        self.assertEqual(cap_feed.CAPFeedEntry.parse_date_time("2026/1/12 下午 10:00:00"), parser.isoparse("2026-01-12T22:00:00"))
 
     def test_expire_time(self):
         with open("testdata/au-bom-en.rss.xml", mode="rb", buffering=0) as f:

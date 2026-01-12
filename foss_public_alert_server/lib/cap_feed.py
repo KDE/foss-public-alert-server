@@ -33,6 +33,8 @@ class CAPFeedEntry:
         This is supposed to be in ISO format, but in reality
         also other formats occur (such as those supported by RSS/Atom).
         """
+        if not s:
+            return None
 
         # we expect ISO time format, so try that first
         try:
@@ -42,9 +44,18 @@ class CAPFeedEntry:
         except Exception:
             pass
 
+        # apply reverse translations for AM/PM markers
+        translations = [
+            ("上午", "AM"),
+            ("下午", "PM"),
+        ]
+        for t in translations:
+            s = s.replace(t[0], t[1])
+
         # otherwise try formats valid in RSS/Atom or otherwise observed
         formats = [
-            "%a, %d %b %Y %H:%M:%S %z"
+            "%a, %d %b %Y %H:%M:%S %z",
+            "%Y/%m/%d %p %I:%M:%S"
         ]
         for format in formats:
             try:
