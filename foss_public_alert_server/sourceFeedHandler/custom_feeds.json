@@ -1086,7 +1086,7 @@
         "capAlertFeed": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php",
         "capAlertFeedStatus": "name resolver error",
         "authorityCountry": "mx",
-        "authorityAbbrev": "smn"
+        "authorityAbbrev": "smn",
         "feedSource": "FPAS",
         "format": "rss or atom",
         "override": true,
