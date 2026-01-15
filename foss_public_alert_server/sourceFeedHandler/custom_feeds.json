@@ -1093,6 +1093,32 @@
         "ignore": false,
         "note": "Persistent name resolver error on their domain."
       }
+    },
+    {
+      "source": {
+        "sourceId": "vi-nchmf-xx",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Viet Nam: National Center for Hydrometeorolgical Forecasting",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/vn-nchmf-en.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.704.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=235",
+        "authorName": "Hoang Trong Thang",
+        "authorEmail": "htthang.ht@gmail.com",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://smartalert.nchmf.gov.vn/smartalert/capfeed.php",
+        "capAlertFeedStatus": "ssl certificate expired",
+        "authorityCountry": "vn",
+        "authorityAbbrev": "nchmf",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false,
+        "note": "Expired SSL certificate since mid 2025."
+      }
     }
   ]
 }
