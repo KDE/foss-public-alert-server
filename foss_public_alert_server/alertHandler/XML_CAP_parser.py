@@ -34,7 +34,7 @@ class XMLCAPParser(AbstractCAPParser):
         super().__init__(feed_source, "xml_parser")
 
     def _load_alerts_from_feed(self):
-        logger.info(f"fetching: {self.feed_source.source_id}")
+        logger.debug(f"fetching: {self.feed_source.source_id}")
         # use etags to reduce network load
         last_e_tag = self.feed_source.last_e_tag
         feed: FeedParserDict

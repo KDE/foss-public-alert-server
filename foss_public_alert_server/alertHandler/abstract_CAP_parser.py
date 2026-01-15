@@ -98,11 +98,11 @@ class AbstractCAPParser(ABC):
             # delete all old alerts in the database
             for alert in Alert.objects.filter(source_id=self.feed_source.source_id):
                 if alert.alert_id not in self.list_of_current_alert_ids:
-                    logger.info(f"{alert.alert_id} is no longer in the feed. Deleting...")
+                    logger.debug(f"{alert.alert_id} is no longer in the feed. Deleting...")
                     alert.delete()
 
         except NothingChangedException:
-            logger.info(f"{self.feed_source.source_id} - nothing changed")
+            logger.debug(f"{self.feed_source.source_id} - nothing changed")
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=True)
             # do not store empty warnings if we just checked for changes
             store_warnings = False

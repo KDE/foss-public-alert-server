@@ -6,6 +6,8 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from django.conf import settings
+from celery.app import trace
+from celery.worker import strategy
 from celery.signals import worker_ready
 import logging
 
@@ -28,6 +30,10 @@ app.autodiscover_tasks()
 
 # set timelimit for periodic background task to 30s soft and 60s hard
 app.control.time_limit('task.create_parser_and_get_feed', soft=30, hard=60, reply=True)
+
+# disable taks receiving and task success logging
+strategy.logger.setLevel(logging.WARNING)
+trace.logger.setLevel(logging.WARNING)
 
 
 @app.task(bind=True, ignore_result=True, name="debugtask")
