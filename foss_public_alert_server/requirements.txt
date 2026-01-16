@@ -30,3 +30,5 @@ flower
 tldextract
 
 prometheus_client
+
+django-prometheus

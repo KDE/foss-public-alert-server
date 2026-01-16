@@ -33,7 +33,7 @@ DEBUG = False
 if os.getenv('DJANGO_DEBUG', '') == 'True':
     DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2').split(';')
+ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2;foss-public-alert-server-httpd-1').split(';')
 
 # Allow to set CSRF_TRUSTED_ORIGINS as an environment variable but default to an empty list
 CSRF_TRUSTED_ORIGINS = os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS').split(';') if os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS') else []
@@ -66,7 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_prometheus.middleware.PrometheusBeforeMiddleware'
+    'django_prometheus.middleware.PrometheusAfterMiddleware'
 ]
 
 ROOT_URLCONF = 'foss_public_alert_server.urls'
@@ -167,6 +167,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# for celery metrics exporter
+CELERY_WORKER_SEND_TASK_EVENTS = True
+CELERY_TASK_SEND_SENT_EVENT = True
 
 # RabitMQ server URL for Celery
 AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')

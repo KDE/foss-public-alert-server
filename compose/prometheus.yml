@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 Nucleus <nucleus-ffm@posteo.de>
+# SPDX-License-Identifier: CC0-1.0
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: django
+    static_configs:
+      - targets: ["foss-public-alert-server-httpd-1:80"]
+#  - job_name: flower
+#    metrics_path: /flowermetrics
+#    static_configs:
+#      - targets: ["foss-public-alert-server-httpd-1:80"]
+  - job_name: celery
+    metrics_path: /celerymetrics
+    static_configs:
+      - targets: [ "foss-public-alert-server-httpd-1:80" ]
+  - job_name: rabbitmq
+    metrics_path: /rabbitmqmetrics
+    static_configs:
+      - targets: [ "foss-public-alert-server-httpd-1:80" ]
+
+

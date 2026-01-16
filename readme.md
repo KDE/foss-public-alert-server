@@ -123,3 +123,21 @@ docker exec -it foss-public-alert-server-aggregator-1 python manage.py createsup
 ```
 **Notice**
 The default config is for _development only_, and not safely configured for deployments!
+
+### Monitoring
+For debugging and performance monitoring, we are using different sets of metrics that are exposed and collected by Prometheus and 
+visualized with Grafana. The development setup includes the containers that are necessary for that.
+
+- Django 
+  - We are using this plugin: https://github.com/django-commons/django-prometheus 
+  - recommended dashboard:
+    - https://grafana.com/grafana/dashboards/17658-django/
+- RabbitMQ
+  - The documentation about monitoring RabbitMQ can be found here: https://www.rabbitmq.com/docs/prometheus
+  - Recommend dashboard: https://grafana.com/grafana/dashboards/10991-rabbitmq-overview/
+  - More dashboards can be found here: https://grafana.com/orgs/rabbitmq
+- Celery
+  - https://github.com/danihodovic/celery-exporter
+  - recommended dashboard: 
+    - https://grafana.com/grafana/dashboards/17509-celery-tasks-overview/ and 
+    - https://grafana.com/grafana/dashboards/17508-celery-tasks-by-task/

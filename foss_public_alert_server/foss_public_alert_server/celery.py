@@ -29,6 +29,9 @@ app.autodiscover_tasks()
 # set timelimit for periodic background task to 30s soft and 60s hard
 app.control.time_limit('task.create_parser_and_get_feed', soft=30, hard=60, reply=True)
 
+# for celery metrics exporter
+worker_send_task_events = True
+task_send_sent_event = True
 
 @app.task(bind=True, ignore_result=True, name="debugtask")
 def debug_task(self):

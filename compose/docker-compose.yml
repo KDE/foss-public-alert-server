@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Volker Krause <vkrause@kde.org>
+# SPDX-FileCopyrightText: 2026 Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: CC0-1.0
 
 # WARNING: For development only, not safely configured for deployments!!
@@ -10,8 +11,24 @@ volumes:
   feeder-cache:
   app-static:
   app-cap:
+  grafana-data:
 
 services:
+  # the webserver that serves the application See httpd.conf for more config
+  httpd:
+    image: httpd:2.4-bullseye
+    depends_on:
+      - aggregator
+    restart: always
+    volumes:
+      - app-cap:/srv/www/foss-public-alert-server/cap
+      - app-static:/srv/www/foss-public-alert-server/static
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    ports:
+      - "8000:80"
+    networks:
+      - backend
+
   db:
     image: postgis/postgis:14-3.2
     restart: always
@@ -20,16 +37,25 @@ services:
       - POSTGRES_DB=foss-public-alert-server
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - backend
 
+  # our message broker to handle background tasks
   amqp:
     image: rabbitmq
+    build:
+      context: .
+      dockerfile: ./rabbitmq/Dockerfile
     restart: always
+    networks:
+      - backend
 
   aggregator:
-    image: invent-registry.kde.org/webapps/foss-public-alert-server/foss-public-alert-server
+    # use this image, if you do not want to build the container image yourself
+    # image: invent-registry.kde.org/webapps/foss-public-alert-server/foss-public-alert-server
     build:
       context: ../foss_public_alert_server
-      dockerfile: ../foss_public_alert_server/Containerfile
+      dockerfile: ../foss_public_alert_server/Dockerfile
     depends_on:
       - db
     restart: always
@@ -42,13 +68,35 @@ services:
       - POSTGRES_DATABASE=foss-public-alert-server
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-    ports:
-      - "127.0.0.1:3032:3032"
     volumes:
       - app-cap:/app/cap
       - app-static:/app/static
       - feeder-cache:/app/cache
+    networks:
+      - backend
 
+  celery_worker:
+    build:
+      context: ../foss_public_alert_server
+      dockerfile: ../compose/celery/Dockerfile
+    depends_on:
+      - aggregator
+    ports:
+      - "5556:5555"
+    networks:
+      - backend
+    restart: always
+    environment:
+      - AMQP_URL=amqp://amqp
+      - DJANGO_STATIC_ROOT=/app/static
+      - DJANGO_MEDIA_ROOT=/app/cap
+      - DJANGO_DEBUG=True
+      - POSTGRES_HOST=db
+      - POSTGRES_DATABASE=foss-public-alert-server
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+
+  # for serving the alert map
   pgtileserv:
     image: docker.io/pramsey/pg_tileserv:latest
     environment:
@@ -56,6 +104,8 @@ services:
       - TS_BASEPATH=/tileserv/
     depends_on:
       - db
+    networks:
+      - backend
 
   pgfeatureserv:
     image: docker.io/pramsey/pg_featureserv:latest
@@ -65,15 +115,37 @@ services:
       - PGFS_DATABASE_TABLEINCLUDES=public.alertHandler_alert
     depends_on:
       - db
+    networks:
+      - backend
 
-  httpd:
-    image: httpd:2.4-bullseye
+  # optional monitoring tools
+  celery_exporter:
+    image: danihodovic/celery-exporter
     depends_on:
       - aggregator
     restart: always
+    networks:
+      - backend
+    environment:
+      - CE_BROKER_URL=amqp://amqp
+
+  prometheus:
+    image: prom/prometheus:latest
     volumes:
-      - app-cap:/srv/www/foss-public-alert-server/cap
-      - app-static:/srv/www/foss-public-alert-server/static
-      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "127.0.0.1:8000:80"
+      - 9090:9090
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+      - backend
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+networks:
+  backend:
