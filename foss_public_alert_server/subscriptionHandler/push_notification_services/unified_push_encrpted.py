@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest
 from pywebpush import webpush, WebPushException
 from django.conf import settings
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from requests import Response, HTTPError, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
 
 from subscriptionHandler.models import Subscription
@@ -38,7 +38,7 @@ def create_subscription(token, bbox, data, user_agent):
         return HttpResponseBadRequest('invalid or missing parameters')
 
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED,
-                        last_heartbeat=datetime.now(), p256dh_key=p256dh_key, auth_key=auth_key, user_agent=user_agent)
+                        last_heartbeat=datetime.now(timezone.utc), p256dh_key=p256dh_key, auth_key=auth_key, user_agent=user_agent)
 
 
 def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or None:

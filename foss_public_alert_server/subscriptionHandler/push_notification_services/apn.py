@@ -5,7 +5,7 @@ import requests
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseBadRequest
 from ..models import Subscription
-from datetime import datetime
+from datetime import datetime, timezone
 
 from django.conf import settings
 
@@ -73,6 +73,6 @@ def update_subscription(data):
     token = data['token']
     subscription_id = data['subscription_id']
     try:
-        Subscription.objects.get(id=subscription_id).update(token=token, last_heartbeat=datetime.now())
+        Subscription.objects.get(id=subscription_id).update(token=token, last_heartbeat=datetime.now(timezone.utc))
     except ObjectDoesNotExist:
         HttpResponseBadRequest("Subscription has expired. You must register again!")

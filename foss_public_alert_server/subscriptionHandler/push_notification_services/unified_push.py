@@ -6,7 +6,7 @@ from django.http import HttpResponseBadRequest
 from requests import Response, ConnectionError, HTTPError, ReadTimeout, RequestException, Timeout, ConnectTimeout
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from subscriptionHandler.models import Subscription, ConnectionFlag
 from subscriptionHandler.exceptions import PushNotificationException, PushNotificationTimeoutException
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def create_subscription(token, bbox, user_agent):
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH,
-                        last_heartbeat=datetime.now(), user_agent=user_agent)
+                        last_heartbeat=datetime.now(timezone.utc), user_agent=user_agent)
 
 def send_notification(distributor_url, payload:json) -> Response:
     """

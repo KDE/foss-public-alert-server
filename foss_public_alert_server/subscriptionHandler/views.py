@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import logging
-import datetime
+from datetime import datetime, timezone
 import json
 import uuid
 from json import loads
@@ -221,7 +221,7 @@ def update_subscription(request):
 
     # check if subscription is still active
     try:
-        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.datetime.now(), user_agent=user_agent) == 0:
+        if Subscription.objects.filter(id=subscription_id).update(last_heartbeat=datetime.now(timezone.utc), user_agent=user_agent) == 0:
             return HttpResponseNotFound("Subscription has expired. You must register again!")
     except Exception as e:
         logger.error(f"Can not update subscription: {e}")

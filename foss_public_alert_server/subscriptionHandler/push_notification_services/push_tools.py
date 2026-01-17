@@ -23,7 +23,7 @@ def setTimeoutFlag(distributor_url:str, error_msg:str) -> None:
     else:
         push_server_url = f"{extracted_domain.domain}.{extracted_domain.suffix}"
     # check if there is already an entry for this url, and if yes update this entry, if not, create a new one
-    if ConnectionFlag.objects.filter(hostname=push_server_url).update(set_time_stamp=datetime.now()) == 0:
+    if ConnectionFlag.objects.filter(hostname=push_server_url).update(set_time_stamp=datetime.now(timezone.utc)) == 0:
         flag = ConnectionFlag(
             hostname=push_server_url,
             time_out=True,
