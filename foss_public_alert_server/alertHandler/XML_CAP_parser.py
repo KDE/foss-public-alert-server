@@ -40,20 +40,14 @@ class XMLCAPParser(AbstractCAPParser):
         feed: FeedParserDict
 
         try:
+            verify = True
             if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
-                # the etag can be none, so only use it, if it is not none
-                if last_e_tag is not None:
-                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE, headers={'If-None-Match': last_e_tag, 'User-Agent': settings.USER_AGENT})
-                    feed: FeedParserDict = feedparser.parse(feed_request.content)
-                else:
-                    feed_request = requests.get(self.feed_source.cap_alert_feed, verify=BROKEN_CHAIN_FILE)
-                    feed: FeedParserDict = feedparser.parse(feed_request.content)
-            else:
-                if last_e_tag is not None:
-                    feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed, etag=last_e_tag,
-                                                            agent=settings.USER_AGENT)
-                else:
-                    feed: FeedParserDict = feedparser.parse(self.feed_source.cap_alert_feed)
+                verify = BROKEN_CHAIN_FILE
+            headers = {'User-Agent': settings.USER_AGENT}
+            if last_e_tag is not None:
+                headers['If-None-Match'] = last_e_tag
+            feed_request = requests.get(self.feed_source.cap_alert_feed, verify=verify, headers=headers)
+            feed: FeedParserDict = feedparser.parse(feed_request.content)
 
             # check if the feed contains any error and raise Exception if so
             if feed.bozo:
@@ -67,22 +61,13 @@ class XMLCAPParser(AbstractCAPParser):
             # feedparser tries to parse the feed anyway
             warnings.warn(f"NonXMLContentType - feed does not follow RFC 3023. Parse anyway. - {e}")
 
-        if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
-            if feed_request.status_code == 304:
-                raise NothingChangedException("Nothing changed")
-        else:
-            if feed.status == HttpResponseNotModified.status_code:
-                raise NothingChangedException("Nothing changed")
+        if feed_request.status_code == 304:
+            raise NothingChangedException("Nothing changed")
 
         # check if header has en etag and if yes update the etag in the database
-        if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
-            if "etag" in feed_request.headers:
-                new_etag = feed_request.headers["etag"]
-                CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
-        else:
-            if "etag" in feed.headers:
-                new_etag = feed.headers["etag"]
-                CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
+        if "etag" in feed_request.headers:
+            new_etag = feed_request.headers["etag"]
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_e_tag=new_etag)
 
         for entry in feed['entries']:
             # find the link to the CAP source
