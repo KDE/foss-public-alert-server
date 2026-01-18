@@ -16,6 +16,24 @@ class CAPFeedEntry:
     """
 
     @staticmethod
+    def is_expired(entry) -> bool:
+        """
+        Check whether the given feed entry refers to an expired CAP message.
+        """
+        dt = CAPFeedEntry.expiry_time(entry)
+        if dt is None:
+            return False
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+        if dt.tzinfo is not None:
+            return dt < now
+
+        # we got a time in an unknown local timezone, so we have to assume the worst possible
+        # combination of timezones between us (UTC) and them to decide whether this has expired for sure
+        now = now.replace(tzinfo=None)
+        return dt < (now - datetime.timedelta(hours=13))
+
+    @staticmethod
     def expiry_time(entry) -> datetime.datetime:
         """
         Retrives and parses the expiry time from a feed entry.

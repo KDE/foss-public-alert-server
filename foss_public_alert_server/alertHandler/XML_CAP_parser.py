@@ -82,9 +82,8 @@ class XMLCAPParser(AbstractCAPParser):
 
             # if we have expiry data available here already, check that
             # to avoid additional downloads
-            expire_time = cap_feed.CAPFeedEntry.expiry_time(entry)
-            if expire_time is not None and expire_time < datetime.datetime.now(datetime.timezone.utc):
-                logger.debug(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {expire_time} - skipping")
+            if cap_feed.CAPFeedEntry.is_expired(entry):
+                logger.debug(f"Alert Expired: {self.feed_source.source_id} - not downloading alert {cap_source_url} expired on {cap_feed.CAPFeedEntry.expiry_time(entry)} - skipping")
                 continue
 
             # if we have an identifier and sent time available here, check whether we

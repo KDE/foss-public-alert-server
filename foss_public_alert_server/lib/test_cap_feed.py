@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+from datetime import datetime, timedelta, timezone
 from dateutil import parser
 
 import feedparser
@@ -26,6 +27,26 @@ class TestCAPFeed(unittest.TestCase):
         self.assertEqual(len(feed.entries), 1)
         entry = feed.entries[0]
         self.assertEqual(cap_feed.CAPFeedEntry.expiry_time(entry), parser.isoparse("2026-01-01T16:00:00Z"))
+
+    def test_is_expired(self):
+        fake_entry = {}
+        fake_entry["cap_expires"] = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat(timespec="seconds")
+        self.assertFalse(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+        fake_entry["cap_expires"] = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat(timespec="seconds")
+        self.assertTrue(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+
+        fake_entry["cap_expires"] = (datetime.now() + timedelta(hours=1)).isoformat(timespec="seconds")
+        self.assertFalse(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+        fake_entry["cap_expires"] = (datetime.now() - timedelta(hours=1)).isoformat(timespec="seconds")
+        self.assertFalse(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+
+        fake_entry["cap_expires"] = (datetime.now() + timedelta(days=1)).isoformat(timespec="seconds")
+        self.assertFalse(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+        fake_entry["cap_expires"] = (datetime.now() - timedelta(days=1)).isoformat(timespec="seconds")
+        self.assertTrue(cap_feed.CAPFeedEntry.is_expired(fake_entry))
+
+        fake_entry["cap_expires"] = "2026/1/17 下午 05:00:00"
+        self.assertTrue(cap_feed.CAPFeedEntry.is_expired(fake_entry))
 
 
 if __name__ == '__main__':
