@@ -1119,6 +1119,31 @@
         "ignore": false,
         "note": "Expired SSL certificate since mid 2025."
       }
+    },
+    {
+      "source": {
+        "sourceId": "au-sa-cfs-en",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Australia: South Australian Country Fire Service",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/au-sa-cfs-en.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.__._",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=nnn",
+        "authorName": "Adam Pascoe",
+        "authorEmail": "Adam.Pascoe@sa.gov.au",
+        "sourceIsOfficial": false,
+        "capAlertFeed": "https://data.eso.sa.gov.au/prod/cfs/criimson/cfs_cap_incidents.xml",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "au",
+        "authorityAbbrev": "sa-cfs",
+        "feedSource": "FPAS",
+        "format": "embedded CAP",
+        "override": true,
+        "ignore": false
+      }
     }
   ]
 }
