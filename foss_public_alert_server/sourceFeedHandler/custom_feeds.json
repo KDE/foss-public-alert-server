@@ -1144,6 +1144,75 @@
         "override": true,
         "ignore": false
       }
+    },
+    {
+      "source": {
+          "sourceId": "ag-ms-en",
+          "byLanguage": [ {
+            "code": "en",
+            "name": "Antigua and Barbuda: Meteorological Services",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/ag-ms-en.png"
+          } ],
+          "guid": "urn:oid:2.49.0.0.28.0",
+          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=311",
+          "authorName": "Dale Destin",
+          "authorEmail": "dale_destin@yahoo.com",
+          "sourceIsOfficial": true,
+          "capAlertFeed": "https://atg-primary.capews.com/capews/public/atom?type=cap",
+          "capAlertFeedStatus": "ssl certificate expired",
+          "authorityCountry": "ag",
+          "authorityAbbrev": "ms",
+          "feedSource": "FPAS",
+          "format": "rss or atom",
+          "override": true,
+          "ignore": false
+      }
+    },
+    {
+      "source": {
+        "sourceId": "ai-dma-en",
+        "byLanguage": [ {
+          "code": "en",
+          "name": "Anguilla: Disaster Management Anguilla",
+          "logo": "https://alert-hub.s3.amazonaws.com/images/ai-dma-en.png"
+        } ],
+        "guid": "urn:oid:2.49.0.0.660.0",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=253",
+        "authorName": "Melissa Meade",
+        "authorEmail": "Melissa.Meade@gov.ai",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://axa-primary.capews.com/capews/public/atom?type=cap",
+        "capAlertFeedStatus": "ssl certificate expired",
+        "authorityCountry": "ai",
+        "authorityAbbrev": "dma",
+        "feedSource": "FPAS",
+        "format": "rss or atom",
+        "override": true,
+        "ignore": false
+      }
+    },
+    {
+      "source": {
+          "sourceId": "ml-meteo-fr",
+          "byLanguage": [ {
+            "code": "fr",
+            "name": "Mali: Agence Nationale de la Météorologie du Mali",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/ml-meteo-fr.png"
+          } ],
+          "guid": "urn:oid:2.49.0.0.466.0",
+          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=98",
+          "authorName": "Ismahila Koumear",
+          "authorEmail": "koumareismahila@gmail.com",
+          "sourceIsOfficial": true,
+          "capAlertFeed": "https://www.malimeteo.ml/api/cap/rss.xml",
+          "capAlertFeedStatus": "feed unavailable",
+          "authorityCountry": "ml",
+          "authorityAbbrev": "meteo",
+          "feedSource": "FPAS",
+          "format": "rss or atom",
+          "override": true,
+          "ignore": false
+      }
     }
   ]
 }
