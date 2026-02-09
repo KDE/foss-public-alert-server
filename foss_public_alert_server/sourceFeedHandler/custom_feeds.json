@@ -18,9 +18,7 @@
         "authorityCountry": "be",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "format": "rss or atom"
       }
     },
     {
@@ -41,9 +39,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-nina",
-        "override": true,
-        "ignore": false
+        "format": "de-nina"
       }
     },
     {
@@ -65,31 +61,14 @@
         "authorityAbbrev": "",
         "feedSource": "FPAS",
         "format": "DWD-Zip",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "de-dwd-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Germany: German Meteorological Office",
-            "logo": ""
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://www.dwd.de/DWD/warnungen/cap-feed/en/rss.xml",
         "capAlertFeedStatus": "redundant to de-dwd-de",
-        "authorityCountry": "de",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "This feed contains alerts in English that are already included in the <de-dwd-de> feed as multilingual alerts"
       }
     },
@@ -111,9 +90,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-nina",
-        "override": true,
-        "ignore": false
+        "format": "de-nina"
       }
     },
     {
@@ -134,9 +111,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-nina",
-        "override": true,
-        "ignore": false
+        "format": "de-nina"
       }
     },
     {
@@ -157,9 +132,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-nina",
-        "override": true,
-        "ignore": false
+        "format": "de-nina"
       }
     },
     {
@@ -180,9 +153,7 @@
         "authorityCountry": "de",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "de-nina",
-        "override": true,
-        "ignore": false
+        "format": "de-nina"
       }
     },
     {
@@ -203,195 +174,28 @@
         "authorityCountry": "ch",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "ch-alert-swiss",
-        "override": true,
-        "ignore": false
+        "format": "ch-alert-swiss"
       }
     },
     {
       "source": {
         "sourceId": "to-tms-xx",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Tonga: Tonga Meteorological Service",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/to-tms-en.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": false,
-        "capAlertFeed": "https://alerts.met.gov.to/capfeed.php",
         "capAlertFeedStatus": "not reachable",
-        "authorityCountry": "to",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "us-noaa-ntwc-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), National Tsunami Warning Center",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-ntwc-en.png"
-          }
-        ],
-        "authorName": "Christa von Hillebrandt-Andrade",
-        "authorEmail": "christa.vonh@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://tsunami.gov/events/xml/PAAQAtom.xml",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "us",
-        "authorityAbbrev": "noaa-ntwc",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "aw-dma-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Aruba: Meteorological Department of Aruba",
-            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "http://201.229.69.218/cap/en/alerts/rss.xml",
-        "capAlertFeedStatus": "server not reachable",
-        "authorityCountry": "aw",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "aw-dma-nl",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Aruba: Meteorological Department of Aruba",
-            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "http://201.229.69.218/cap/nl/alerts/rss.xml",
-        "capAlertFeedStatus": "server not reachable",
-        "authorityCountry": "aw",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "aw-dma-pap",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Aruba: Meteorological Department of Aruba",
-            "logo": "https://alert-hub.s3.ama…com/images/aw-dma-en.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "http://201.229.69.218/cap/pap/alerts/rss.xml",
-        "capAlertFeedStatus": "server not reachable",
-        "authorityCountry": "aw",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "br-obsis-pt",
-        "byLanguage": [
-          {
-            "code": "pt",
-            "name": "Brazil: Observatório Sismológico - OBSIS",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/br-obsis-pt.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://www.obsis.unb.br/integracao/public/feed/pt/rss.xml",
         "capAlertFeedStatus": "server not reachable",
-        "authorityCountry": "br",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "co-ungrd-es",
-        "byLanguage": [
-          {
-            "code": "es",
-            "name": "Colombia: UNGRD (Nationa…saster Risk Management)",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/co-ungrd-es.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://www.gestiondelriesgo.gov.co/rss/AtomAlert.aspx",
         "capAlertFeedStatus": "server not reachable",
-        "authorityCountry": "co",
-        "authorityAbbrev": "",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "no-met-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Norway: Norwegian Meteorological Institute",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/no-met-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.578.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=121",
-        "authorName": "Gjermund Haugen",
-        "authorEmail": "gjermundmh@met.no",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://alert.met.no/feed?lang=en",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "no",
-        "authorityAbbrev": "met",
-        "feedSource": "AlertHub",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
@@ -414,144 +218,21 @@
         "authorityCountry": "XX",
         "authorityAbbrev": "FPAS",
         "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "tw-ncdr-zh",
-        "byLanguage": [
-          {
-            "code": "tw",
-            "name": "Taiwan: National Center for Disaster Reduction",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/tw-ncdr-zh.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.170.2",
-        "registerUrl": "",
-        "authorName": "Mei-Chun Kuo",
-        "authorEmail": "bettyk@ncdr.nat.gov.tw",
-        "sourceIsOfficial": false,
-        "capAlertFeed": "https://alerts.ncdr.nat.gov.tw/RssAtomFeeds.ashx",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "tw",
-        "authorityAbbrev": "ncdr",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false,
-        "note": "endpoint on AlertHub contains all alerts, this one only has active alerts as per https://alerts.ncdr.nat.gov.tw/RSS.aspx"
-      }
-    },
-    {
-      "source": {
-        "sourceId": "us-noaa-ptwc-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), Pacific Tsunami Warning Center",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-ptwc-en.png"
-          }
-        ],
-        "authorName": "",
-        "authorEmail": "",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://tsunami.gov/events/xml/PHEBAtom.xml",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "us",
-        "authorityAbbrev": "noaa-ptwc",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
-      }
-    },
-    {
-      "source": {
-        "sourceId": "ca-msp-xx",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Canada: Quebec Ministry of Public Safety",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ca-msp-en.png"
-          },
-          {
-            "code": "fr",
-            "name": "Canada: Ministère de la Sécurité publique du Québec",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ca-msp-fr.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.124.3",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=278",
-        "authorName": "Pascal Fortier",
-        "authorEmail": "Pascal.fortier@msp.gouv.qc.ca",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://rss.naad-adna.pelmorex.com/",
-        "capAlertFeedStatus": "redundant to ca-msc-xx",
-        "authorityCountry": "ca",
-        "authorityAbbrev": "msp",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false,
-        "note": "this and ca-msc-xx both point to the Pelmorex NAADS/Alert Ready platform"
+        "format": "rss or atom"
       }
     },
     {
       "source": {
         "sourceId": "at-ehyd-xx",
-        "byLanguage": [
-          {
-            "code": "de",
-            "name": "Austria: Abteilung Wasserhaushalt",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-de.png"
-          },
-          {
-            "code": "en",
-            "name": "Austria: Water Balance Department",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/at-ehyd-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.40.1",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=8",
-        "authorName": "Petra Habersatter",
-        "authorEmail": "petra.habersatter@zamg.ac.at",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-austria",
         "capAlertFeedStatus": "redundant to at-zamg-xx",
-        "authorityCountry": "at",
-        "authorityAbbrev": "ehyd",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "ba-rhmzrs-bs",
-        "byLanguage": [
-          {
-            "code": "bs",
-            "name": "Bosnia and Herzegovina: Republički hidrometeorološki zavod",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ba-rhmzrs-bs.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.70.1",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=274",
-        "authorName": "Johannes Fleisch",
-        "authorEmail": "Johannes.Fleisch@geosphere.at",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://feeds.meteoalarm.org/feeds/meteoalarm-legacy-atom-bosnia-herzegovina",
         "capAlertFeedStatus": "redundant to ba-fhmzbih-bs",
-        "authorityCountry": "ba",
-        "authorityAbbrev": "rhmzrs",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
@@ -572,9 +253,7 @@
         "authorityCountry": "au",
         "authorityAbbrev": "rfs",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
@@ -595,9 +274,7 @@
         "authorityCountry": "au",
         "authorityAbbrev": "dfes",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
@@ -618,9 +295,7 @@
         "authorityCountry": "au",
         "authorityAbbrev": "esa",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
@@ -641,234 +316,70 @@
         "authorityCountry": "au",
         "authorityAbbrev": "qfd",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
       "source": {
         "sourceId": "fm-wsoc-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Federated States of Micronesia: Weather Service Office Chuuk",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/fm-wsoc-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.498.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=102",
-        "authorName": "Joe Berdon",
-        "authorEmail": "johannes.berdon@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?zone=PMZ172",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "fm",
-        "authorityAbbrev": "wsoc",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "fm-wsop-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Federated States of Micronesia: Weather Service Office Pohnpei",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/fsm-wsop-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.498.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=102",
-        "authorName": "Joe Berdon",
-        "authorEmail": "johannes.berdon@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?zone=PMZ173",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "fm",
-        "authorityAbbrev": "wsop",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "fm-wsoy-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Federated States of Micronesia: Weather Service Office Yap",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/fsm-wsoy-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.498.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=102",
-        "authorName": "Joe Berdon",
-        "authorEmail": "johannes.berdon@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?zone=PMZ171",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "fm",
-        "authorityAbbrev": "wsoy",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "pw-wso-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Palau: Weather Service Office",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/pw-wso-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.585.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=309",
-        "authorName": "Dilwei Ngemaes",
-        "authorEmail": "maria.ngemaes@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?zone=PMZ153",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "pw",
-        "authorityAbbrev": "wso",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "mh-wso-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Marshall Islands: Majuro Weather Service Office",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/mh-wso-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.584.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=nnn",
-        "authorName": "Reginald White",
-        "authorEmail": "Reginald.White@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?zone=PMZ181",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "mh",
-        "authorityAbbrev": "wso",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "us-noaa-mzus-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), National Weather Service - Marine Zones",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-nws-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.840.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=177",
-        "authorName": "Emily Niebuhr",
-        "authorEmail": "emily.niebuhr@noaa.gov",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://api.weather.gov/alerts/active.atom?region_type=marine",
         "capAlertFeedStatus": "redundant to us-noaa-nws-en",
-        "authorityCountry": "us",
-        "authorityAbbrev": "noaa-mzus",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "us-noaa-nws-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "United States: National Oceanic and Atmospheric Administration (NOAA), National Weather Service",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/us-noaa-nws-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.840.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=177",
-        "authorName": "Emily Niebuhr",
-        "authorEmail": "emily.niebuhr@noaa.gov",
-        "sourceIsOfficial": true,
         "capAlertFeed": "https://api.weather.gov/alerts/active.atom",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "us",
-        "authorityAbbrev": "noaa-nws",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "vc-ms-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Saint Vincent and the Grenadines: Meteorological Services",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/vc-ms-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.670.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=303",
-        "authorName": "Michelle Forbes",
-        "authorEmail": "nemosvg@gmail.com",
-        "sourceIsOfficial": true,
         "capAlertFeed": "https://vct-secondary.capews.com/capews/public/atom?type=cap",
-        "capAlertFeedStatus": "operating",
-        "authorityCountry": "vc",
-        "authorityAbbrev": "ms",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
         "sourceId": "ws-smd-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Samoa: Meteorology Division",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ws-smd-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.882.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=139",
-        "authorName": "Bernie Tauaanae",
-        "authorEmail": "bernie.tauaanae@gmail.com",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "http://alert.samet.gov.ws/capfeed.php",
         "capAlertFeedStatus": "feed times out",
-        "authorityCountry": "ws",
-        "authorityAbbrev": "smd",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
@@ -889,34 +400,14 @@
         "authorityCountry": "au",
         "authorityAbbrev": "dpac",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
       "source": {
         "sourceId": "sg-pub-en",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Singapore: PUB Singapore",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/sg-pub-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.702.2",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=332",
-        "authorName": "Shankar Ram",
-        "authorEmail": "Shankar_RAM@pub.gov.sg",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://pub-iwms.pub.gov.sg/rssfeed/rss/rsscapalert.xml",
         "capAlertFeedStatus": "geoblocked to Singapore",
-        "authorityCountry": "sg",
-        "authorityAbbrev": "pub",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
@@ -939,86 +430,30 @@
         "authorityCountry": "au",
         "authorityAbbrev": "bom",
         "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "format": "rss or atom"
       }
     },
     {
       "source": {
         "sourceId": "no-met-no",
-        "byLanguage": [
-          {
-            "code": "no",
-            "name": "Norway: Norsk Meteorologisk Institutt",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/no-met-no.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.578.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=121",
-        "authorName": "Gjermund Haugen",
-        "authorEmail": "gjermundmh@met.no",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://alert.met.no/feed?lang=no",
         "capAlertFeedStatus": "redundant to no-met-en",
-        "authorityCountry": "no",
-        "authorityAbbrev": "met",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
       }
     },
     {
       "source": {
         "sourceId": "fi-fmi-fi",
-        "byLanguage": [
-          {
-            "code": "fi",
-            "name": "Finland: Ilmatieteen laitos",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/fi-fmi-fi.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.246.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=51",
-        "authorName": "FMI Open Data helpdesk",
-        "authorEmail": "avoin-data@fmi.fi",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://alerts.fmi.fi/cap/feed/rss_fi-FI.rss",
         "capAlertFeedStatus": "redundant to fi-fmi-en",
-        "authorityCountry": "fi",
-        "authorityAbbrev": "fmi",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
       }
     },
     {
       "source": {
         "sourceId": "fi-fmi-sv",
-        "byLanguage": [
-          {
-            "code": "sv",
-            "name": "Finland: Meteorologiska institutet",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/fi-fmi-sv.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.246.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=51",
-        "authorName": "FMI Open Data helpdesk",
-        "authorEmail": "avoin-data@fmi.fi",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://alerts.fmi.fi/cap/feed/rss_sv-FI.rss",
         "capAlertFeedStatus": "redundant to fi-fmi-en",
-        "authorityCountry": "fi",
-        "authorityAbbrev": "fmi",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "The URLs only change the language of the RSS feed, not the actual alerts. Those are already delivered with one <info> block per language."
       }
     },
@@ -1040,9 +475,7 @@
         "authorityCountry": "au",
         "authorityAbbrev": "gov",
         "feedSource": "FPAS",
-        "format": "EDXL",
-        "override": true,
-        "ignore": false
+        "format": "EDXL"
       }
     },
     {
@@ -1063,60 +496,22 @@
         "authorityCountry": "lu",
         "authorityAbbrev": "",
         "feedSource": "FPAS",
-        "format": "lu-alert",
-        "override": true,
-        "ignore": false
+        "format": "lu-alert"
       }
     },
     {
       "source": {
         "sourceId": "mx-smn-es",
-        "byLanguage": [
-          {
-            "code": "es",
-            "name": "Mexico: CONAGUA - Servicio Meteorologico Nacional de Mexico",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/mx-smn-es.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.484.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=101",
-        "authorName": "Jorge Bustamante",
-        "authorEmail": "jorge.bustamante@conagua.gob.mx",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://smn.conagua.gob.mx/tools/PHP/feedsmn/cap.php",
         "capAlertFeedStatus": "name resolver error",
-        "authorityCountry": "mx",
-        "authorityAbbrev": "smn",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "Persistent name resolver error on their domain."
       }
     },
     {
       "source": {
         "sourceId": "vi-nchmf-xx",
-        "byLanguage": [
-          {
-            "code": "en",
-            "name": "Viet Nam: National Center for Hydrometeorolgical Forecasting",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/vn-nchmf-en.png"
-          }
-        ],
-        "guid": "urn:oid:2.49.0.0.704.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=235",
-        "authorName": "Hoang Trong Thang",
-        "authorEmail": "htthang.ht@gmail.com",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://smartalert.nchmf.gov.vn/smartalert/capfeed.php",
         "capAlertFeedStatus": "ssl certificate expired",
-        "authorityCountry": "vn",
-        "authorityAbbrev": "nchmf",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
         "override": true,
-        "ignore": false,
         "note": "Expired SSL certificate since mid 2025."
       }
     },
@@ -1140,78 +535,28 @@
         "authorityCountry": "au",
         "authorityAbbrev": "sa-cfs",
         "feedSource": "FPAS",
-        "format": "embedded CAP",
-        "override": true,
-        "ignore": false
+        "format": "embedded CAP"
       }
     },
     {
       "source": {
           "sourceId": "ag-ms-en",
-          "byLanguage": [ {
-            "code": "en",
-            "name": "Antigua and Barbuda: Meteorological Services",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ag-ms-en.png"
-          } ],
-          "guid": "urn:oid:2.49.0.0.28.0",
-          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=311",
-          "authorName": "Dale Destin",
-          "authorEmail": "dale_destin@yahoo.com",
-          "sourceIsOfficial": true,
-          "capAlertFeed": "https://atg-primary.capews.com/capews/public/atom?type=cap",
           "capAlertFeedStatus": "ssl certificate expired",
-          "authorityCountry": "ag",
-          "authorityAbbrev": "ms",
-          "feedSource": "FPAS",
-          "format": "rss or atom",
-          "override": true,
-          "ignore": false
+          "override": true
       }
     },
     {
       "source": {
         "sourceId": "ai-dma-en",
-        "byLanguage": [ {
-          "code": "en",
-          "name": "Anguilla: Disaster Management Anguilla",
-          "logo": "https://alert-hub.s3.amazonaws.com/images/ai-dma-en.png"
-        } ],
-        "guid": "urn:oid:2.49.0.0.660.0",
-        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=253",
-        "authorName": "Melissa Meade",
-        "authorEmail": "Melissa.Meade@gov.ai",
-        "sourceIsOfficial": true,
-        "capAlertFeed": "https://axa-primary.capews.com/capews/public/atom?type=cap",
         "capAlertFeedStatus": "ssl certificate expired",
-        "authorityCountry": "ai",
-        "authorityAbbrev": "dma",
-        "feedSource": "FPAS",
-        "format": "rss or atom",
-        "override": true,
-        "ignore": false
+        "override": true
       }
     },
     {
       "source": {
           "sourceId": "ml-meteo-fr",
-          "byLanguage": [ {
-            "code": "fr",
-            "name": "Mali: Agence Nationale de la Météorologie du Mali",
-            "logo": "https://alert-hub.s3.amazonaws.com/images/ml-meteo-fr.png"
-          } ],
-          "guid": "urn:oid:2.49.0.0.466.0",
-          "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=98",
-          "authorName": "Ismahila Koumear",
-          "authorEmail": "koumareismahila@gmail.com",
-          "sourceIsOfficial": true,
-          "capAlertFeed": "https://www.malimeteo.ml/api/cap/rss.xml",
           "capAlertFeedStatus": "feed unavailable",
-          "authorityCountry": "ml",
-          "authorityAbbrev": "meteo",
-          "feedSource": "FPAS",
-          "format": "rss or atom",
-          "override": true,
-          "ignore": false
+          "override": true
       }
     }
   ]
