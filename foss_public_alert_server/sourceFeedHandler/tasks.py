@@ -47,7 +47,7 @@ def store_feeds_in_database(feeds: json):
     for feed in feeds["sources"]:
         source_id = feed["source"]["sourceId"]
         # only store the feeds in the database that are not ignored by us
-        if not feed["source"]["ignore"]:
+        if not feed["source"].get("ignore", False):
             add_feed = False
             if current_entries.filter(source_id=feed["source"]["sourceId"]).exists():
                 current_entry: CAPFeedSource = current_entries.get(source_id=feed["source"]["sourceId"])
@@ -65,7 +65,7 @@ def store_feeds_in_database(feeds: json):
                 something_changed |= compare("authorityAbbrev", current_entry.authorityAbbrev, feed["source"]["authorityAbbrev"])
                 something_changed |= compare("feedSource", current_entry.feedSource, feed["source"]["feedSource"])
                 something_changed |= compare("format", current_entry.format, feed["source"]["format"])
-                something_changed |= compare("ignore", current_entry.ignore, feed["source"]["ignore"])
+                something_changed |= compare("ignore", current_entry.ignore, feed["source"].get("ignore", False))
 
 
                 if something_changed:
@@ -103,7 +103,7 @@ def store_feeds_in_database(feeds: json):
                     authorityAbbrev=feed["source"]["authorityAbbrev"],
                     feedSource=feed["source"]["feedSource"],
                     format=feed["source"]["format"],
-                    ignore=feed["source"]["ignore"]
+                    ignore=feed["source"].get("ignore", False),
                 )
                 new_feed.save()
 
