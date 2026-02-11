@@ -11,6 +11,8 @@ from celery.worker import strategy
 from celery.signals import worker_ready
 import logging
 
+from prometheus_client import multiprocess, CollectorRegistry
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -42,6 +44,9 @@ def debug_task(self):
 
 @worker_ready.connect
 def execute_at_startup(sender, **k) -> None:
+    registry = CollectorRegistry()
+    multiprocess.MultiProcessCollector(registry)
+
     """
     This task is executed when the application is started for the first time. Here we schedule the task to load the feed sources.
     This is done to avoid having to wait until midnight for the feed sources to be retrieved for the first time.

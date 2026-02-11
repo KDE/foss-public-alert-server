@@ -27,6 +27,8 @@ from foss_public_alert_server.celery import app as celery_app
 from subscriptionHandler.tasks import check_for_alerts_and_send_notifications
 from lib import cap, cap_geojson, cap_geometry
 
+from prometheus_client import Gauge
+
 # logging config
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,6 +40,9 @@ if not settings.DEBUG:
 # If a feed or CAP message doesn't reply in that time it's likely dead anyway
 # and potentially blocks other tasks for several minutes.
 socket.setdefaulttimeout(10)
+
+feed_alert_count_metric = Gauge('fpas_alert_count', 'Active alerts in a CAP feed', ['feed'], multiprocess_mode='mostrecent')
+feed_fetch_duration_metric = Gauge('fpas_feed_fetch_time', 'CAP feed fetch time', ['feed'], multiprocess_mode='mostrecent')
 
 
 class AbstractCAPParser(ABC):
@@ -96,6 +101,7 @@ class AbstractCAPParser(ABC):
                     CAPFeedSource.objects.filter(id=self.feed_source.id).update(missing_geo_information=True)
 
             # delete all old alerts in the database
+            feed_alert_count_metric.labels(self.feed_source.source_id).set(len(self.list_of_current_alert_ids))
             for alert in Alert.objects.filter(source_id=self.feed_source.source_id):
                 if alert.alert_id not in self.list_of_current_alert_ids:
                     logger.debug(f"{alert.alert_id} is no longer in the feed. Deleting...")
@@ -127,7 +133,9 @@ class AbstractCAPParser(ABC):
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(feed_warnings=str(warnings_list)[:255])
 
         # store duration as last fetch duration
-        CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=datetime.now() - start_time)
+        fetch_duration = datetime.now() - start_time
+        CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_duration=fetch_duration)
+        feed_fetch_duration_metric.labels(self.feed_source.source_id).set(fetch_duration.total_seconds())
 
     def load_geocode(self, code_name: str, code_value: str):
         """
