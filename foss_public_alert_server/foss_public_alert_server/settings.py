@@ -33,7 +33,7 @@ DEBUG = False
 if os.getenv('DJANGO_DEBUG', '') == 'True':
     DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2').split(';')
+ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2;aggregator').split(';')
 
 # Allow to set CSRF_TRUSTED_ORIGINS as an environment variable but default to an empty list
 CSRF_TRUSTED_ORIGINS = os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS').split(';') if os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS') else []
@@ -53,10 +53,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'django_celery_beat'
+    'django_celery_beat',
+    'django_prometheus',
 ]
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 ROOT_URLCONF = 'foss_public_alert_server.urls'
