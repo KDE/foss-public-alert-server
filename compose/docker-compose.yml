@@ -11,6 +11,7 @@ volumes:
   app-static:
   app-cap:
   prometheus-data:
+  grafana-data:
 
 services:
   db:
@@ -85,3 +86,10 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
 
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SERVER_ROOT_URL=http://localhost:8000/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - grafana-data:/var/lib/grafana
