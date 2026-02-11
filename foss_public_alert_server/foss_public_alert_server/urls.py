@@ -28,7 +28,8 @@ urlpatterns = [
     path('alert/', include("alertHandler.urls")),
     path('sources/', include("sourceFeedHandler.urls")),
     path('config/', include("configuration.urls")),
-    path('feed/', include("alertTester.urls"))
+    path('feed/', include("alertTester.urls")),
+    path('', include('django_prometheus.urls')),
 ]
 
 # needed to allow media access with the development server
