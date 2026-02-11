@@ -10,6 +10,7 @@ volumes:
   feeder-cache:
   app-static:
   app-cap:
+  prometheus-data:
 
 services:
   db:
@@ -77,3 +78,10 @@ services:
       - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
     ports:
       - "127.0.0.1:8000:80"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+

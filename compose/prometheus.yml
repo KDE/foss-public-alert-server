@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Nucleus <nucleus-ffm@posteo.de>
+# SPDX-License-Identifier: CC0-1.0
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: django
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["aggregator:8000"]
+  - job_name: flower
+    metrics_path: /flower/metrics
+    static_configs:
+      - targets: ["aggregator:5555"]
+  - job_name: rabbitmq
+    metrics_path: /metrics
+    static_configs:
+      - targets: [ "amqp:15692" ]
+
