@@ -46,7 +46,7 @@ class XMLCAPParser(AbstractCAPParser):
             headers = {'User-Agent': settings.USER_AGENT}
             if last_e_tag is not None:
                 headers['If-None-Match'] = last_e_tag
-            feed_request = requests.get(self.feed_source.cap_alert_feed, verify=verify, headers=headers)
+            feed_request = requests.get(self.feed_source.cap_alert_feed, verify=verify, headers=headers, timeout=10)
             feed: FeedParserDict = feedparser.parse(feed_request.content)
 
             # check if the feed contains any error and raise Exception if so
