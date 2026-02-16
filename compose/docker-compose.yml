@@ -80,6 +80,14 @@ services:
     ports:
       - "127.0.0.1:8000:80"
 
+  celeryexporter:
+    image: danihodovic/celery-exporter
+    depends_on:
+      - aggregator
+    restart: always
+    environment:
+      - CE_BROKER_URL=amqp://amqp
+
   prometheus:
     image: prom/prometheus:latest
     volumes:
