@@ -168,6 +168,10 @@ CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
+# for Celery metrics exporter
+CELERY_WORKER_SEND_TASK_EVENTS = True
+CELERY_TASK_SEND_SENT_EVENT = True
+
 # RabitMQ server URL for Celery
 AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')
 
