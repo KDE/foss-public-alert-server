@@ -193,13 +193,6 @@
     },
     {
       "source": {
-        "sourceId": "co-ungrd-es",
-        "capAlertFeedStatus": "server not reachable",
-        "override": true
-      }
-    },
-    {
-      "source": {
         "sourceId": "XX-FPAS-EN",
         "byLanguage": [
           {
@@ -405,13 +398,6 @@
     },
     {
       "source": {
-        "sourceId": "sg-pub-en",
-        "capAlertFeedStatus": "geoblocked to Singapore",
-        "override": true
-      }
-    },
-    {
-      "source": {
         "sourceId": "au-bom-en",
         "byLanguage": [
           {
@@ -536,27 +522,6 @@
         "authorityAbbrev": "sa-cfs",
         "feedSource": "FPAS",
         "format": "embedded CAP"
-      }
-    },
-    {
-      "source": {
-          "sourceId": "ag-ms-en",
-          "capAlertFeedStatus": "ssl certificate expired",
-          "override": true
-      }
-    },
-    {
-      "source": {
-        "sourceId": "ai-dma-en",
-        "capAlertFeedStatus": "ssl certificate expired",
-        "override": true
-      }
-    },
-    {
-      "source": {
-          "sourceId": "ml-meteo-fr",
-          "capAlertFeedStatus": "feed unavailable",
-          "override": true
       }
     }
   ]
