@@ -4,8 +4,7 @@
 from django.db.models import Sum
 from django.shortcuts import render
 from django.http.request import HttpRequest
-from django.http import (HttpResponse, HttpResponseBadRequest, HttpResponseNotFound,
-                         HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse)
+from django.http import (HttpResponseBadRequest, HttpResponseRedirect, JsonResponse)
 from django.views.decorators.http import require_http_methods
 from .models import CAPFeedSource
 import datetime
@@ -32,14 +31,14 @@ def generate_source_status_page(request: HttpRequest):
 
 
 @require_http_methods(["GET"])
-def get_feed_status_for_area(request:HttpRequest):
+def get_feed_status_for_area(request: HttpRequest):
     """
     return the feeds for the given country code
     :param request: the http POST request a list of country codes as parameter 'country_code': [list]
     :return: a list of feeds with this country code
     """
     try:
-        data:list = request.GET.getlist('country_codes', None)
+        data: list = request.GET.getlist('country_codes', None)
     except ValueError:
         return HttpResponseBadRequest('invalid input')
 
@@ -56,11 +55,41 @@ def get_feed_status_for_area(request:HttpRequest):
                            "cap_alert_feed_status": entry.cap_alert_feed_status,
                            "authorityCountry": entry.authorityCountry,
                            "register_url": entry.register_url,
-                           "latest_published_alert_datetime" : entry.latest_published_alert_datetime
+                           "latest_published_alert_datetime": entry.latest_published_alert_datetime
                            }
             result['results'].append(temp_result)
 
     return JsonResponse(result, safe=False)
+
+
+@require_http_methods(["GET"])
+def generate_alert_hub_json(request: HttpRequest):
+    """
+    All active feeds in Alert-Hub.org compatible JSON format.
+
+    Not used by FPAS, but by Alert-Hub.org to monitor differences
+    in feed usage/coverage between global CAP aggregators.
+    """
+    sources = []
+    for feed in CAPFeedSource.objects.filter(format="rss or atom").order_by("source_id"):
+        source = {
+            "sourceId": feed.source_id,
+            "byLanguage": [{
+                "code": feed.code,
+                "name": feed.name,
+                "logo": feed.logo
+            }],
+            "guid": feed.guid,
+            "registerUrl": feed.register_url,
+            "sourceIsOfficial": feed.source_is_official,
+            "capAlertFeed": feed.cap_alert_feed,
+            "capAlertFeedStatus": feed.cap_alert_feed_status,
+            "authorityCountry": feed.authorityCountry,
+            "authorityAbbrev": feed.authorityAbbrev
+        }
+        sources.append({"source": source})
+    return JsonResponse({"sources": sources})
+
 
 def index(request):
     return HttpResponseRedirect(redirect_to="../config")
