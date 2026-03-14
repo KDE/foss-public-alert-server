@@ -12,7 +12,6 @@ import os
 from feedparser import FeedParserDict
 from dateutil import parser
 
-from django.http import HttpResponseNotModified
 from django.conf import settings
 
 from .exceptions import NothingChangedException
@@ -28,6 +27,7 @@ CAP_MIMETYPES = ['application/common-alerting-protocol+xml', 'application/cap+xm
 BROKEN_CHAIN_FEEDS = ['sa-ncm-ar', 'sa-ncm-en', 'gh-gmet-en', 'za-saws-en']
 BROKEN_CHAIN_FILE = os.path.join(settings.BASE_DIR, 'alertHandler/data/broken-chains.pem')
 
+
 class XMLCAPParser(AbstractCAPParser):
 
     def __init__(self, feed_source):
@@ -39,10 +39,11 @@ class XMLCAPParser(AbstractCAPParser):
         last_e_tag = self.feed_source.last_e_tag
         feed: FeedParserDict
 
+        verify = True
+        if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
+            verify = BROKEN_CHAIN_FILE
+
         try:
-            verify = True
-            if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
-                verify = BROKEN_CHAIN_FILE
             headers = {'User-Agent': settings.USER_AGENT}
             if last_e_tag is not None:
                 headers['If-None-Match'] = last_e_tag
@@ -103,13 +104,11 @@ class XMLCAPParser(AbstractCAPParser):
                 if self.feed_source.source_id in BROKEN_CHAIN_FEEDS:
                     # upgrade http to https as a workaround for za-saws-en
                     cap_source_url = cap_source_url.replace('http://', 'https://')
-                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT}, verify=BROKEN_CHAIN_FILE)
-                else:
-                    req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT})
+                req = self.session.get(cap_source_url, headers={'User-Agent': settings.USER_AGENT}, verify=verify, timeout=10)
                 if not req.ok:
                     logger.error(f"Fetch error {req.status_code}: {cap_source_url}")
                     continue
-            except requests.exceptions.ConnectionError as e:
+            except requests.exceptions.ConnectionError:
                 logger.error(f"Connection error: {cap_source_url}")
                 continue
 
