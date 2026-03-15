@@ -72,6 +72,8 @@ def generate_alert_hub_json(request: HttpRequest):
     """
     sources = []
     for feed in CAPFeedSource.objects.filter(format="rss or atom").order_by("source_id"):
+        if feed.source_id == "XX-FPAS-EN":
+            continue
         source = {
             "sourceId": feed.source_id,
             "byLanguage": [{
