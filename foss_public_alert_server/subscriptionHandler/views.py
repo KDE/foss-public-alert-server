@@ -135,7 +135,7 @@ def add_new_subscription(request):
         msg['confirmation_id'] = confirmation_id
 
         match push_service:
-            case "UNIFIED_PUSH":
+            case "UNIFIED_PUSH": #@TODO use the enum instead of a string
                 isUnifiedPushServerBlacklisted(token)
                 s = unified_push.create_subscription(token, bbox, user_agent)
                 test_push = unified_push.send_notification(s.token, json.dumps(msg))
@@ -234,26 +234,25 @@ def update_subscription(request):
         # if token is none, the request is just to update the subscription
         return HttpResponse("Subscription successfully updated")
     else:
-        # get selected push service as human-readable label
-        push_service = Subscription.objects.get(id=subscription_id).get_push_service_display()
+        try:
+            push_service = Subscription.objects.get(id=subscription_id).push_service
 
-        # check if push_service is supported
-        if not AppSetting.get(f"SUPPORT_{push_service}") or AppSetting.get(f"SUPPORT_{push_service}") is None:
-            return HttpResponseBadRequest('unsupported push service')
-
-        # call the push notification handler
-        match push_service:
-            case Subscription.PushServices.UNIFIED_PUSH.name:
-                unified_push.update_subscription(request)
-            case Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED.name:
-                unified_push_encrpted.update_subscription(request)
-            case Subscription.PushServices.APN.name:
-                return apn.update_subscription(request)
-            case Subscription.PushServices.FIREBASE.name:
-                return firebase.update_subscription(request)
-            case _:
-                logger.debug("Not supported push service")
-                return HttpResponseBadRequest('something went wrong')
+            # call the push notification handler
+            match push_service:
+                case Subscription.PushServices.UNIFIED_PUSH:
+                    return unified_push.update_subscription(request)
+                case Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
+                    return unified_push_encrpted.update_subscription(token, request, subscription_id)
+                case Subscription.PushServices.APN:
+                    return apn.update_subscription(request)
+                case Subscription.PushServices.FIREBASE:
+                    return firebase.update_subscription(request)
+                case _:
+                    logger.debug("Not supported push service")
+                    return HttpResponseBadRequest('something went wrong')
+        except Exception as e:
+            logger.error(f"Can not update subscription push notification config: {e}")
+            return HttpResponseBadRequest("Error while updating push notification config.")
 
 @require_http_methods(["GET"])
 def handle_subscription_config_request(request):
@@ -265,7 +264,7 @@ def handle_subscription_config_request(request):
 @require_http_methods(["GET"])
 def vapid_key(request)-> HttpResponse:
     """
-    Let clients fetch the VAOID key needed for webpush
+    Let clients fetch the VAPID key needed for webpush
     :param request: the request of the client
     :return: JsonResponse with the VAPID key
     """

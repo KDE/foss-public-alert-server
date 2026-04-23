@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseNotFound
 from pywebpush import webpush, WebPushException
 from django.conf import settings
 import logging
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def create_subscription(token, bbox, data, user_agent):
     """
-    create an encrypted unifiePush subscription. This requires the additional parameter `p256dh_key` and `auth_key` in
+    create an encrypted unifiedPush subscription. This requires the additional parameter `p256dh_key` and `auth_key` in
     data
     :param token: the unifiedPush endpoint
     :param bbox: the bounding box to subscribe for
@@ -106,6 +106,28 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
         logger.error(f"Failed to send web push notification due to {e}")
         raise PushNotificationException()
 
-def update_subscription(data):
-    # @TODO: Implement
-    return HttpResponseBadRequest("Not implemented yet")
+def update_subscription(token, request, subscription_id:str) -> HttpResponse:
+    """
+    Update the push notification config for the given subscription.
+
+    This allows clients to send updated configs to the server to update the config.
+    We are not checking the refreshed config here with sending a push notification as we expect the setup did
+    not change, but just the token. If we notice that we also check the new config before accepting, we might
+    add that in the future.
+
+    Also reset the error counter to zero as the config is refreshed.
+    :param request: the http request with the p256dh_key and the auth_key
+    :param token: the new UnifiedPush token for the subscription
+    :param subscription_id: the id of the subscription to update
+    :return: HttpResponseBadRequest if there are missing parameters / invalid input, HttpResponse if the update was successful.
+    """
+    p256dh_key = request.GET.get("p256dh_key")
+    auth_key =  request.GET.get("auth_key")
+    if p256dh_key == "" or auth_key == "":
+        return HttpResponseBadRequest('invalid or missing parameters')
+    try:
+        Subscription.objects.filter(id=subscription_id).update(token=token, auth_key=auth_key, p256dh_key=p256dh_key)
+        return HttpResponse("Subscription and push config successfully updated")
+    except Exception as e:
+        logger.error(f"Can not update subscription: {e}")
+        return HttpResponseBadRequest("invalid input")
