@@ -61,6 +61,10 @@ The aggregator service is started as follows for local development:
 ```bash
 python3 manage.py collectstatic
 python3 manage.py migrate
+
+mkdir -p /tmp/fpas-metrics
+export PROMETHEUS_MULTIPROC_DIR=/tmp/fpas-metrics
+
 python3 manage.py runserver 8000
 ```
 

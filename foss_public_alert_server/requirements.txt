@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: CC0-1.0
 
-Django>=4.1,<5.0
+Django>=6.0,<7.0
 psycopg2
 uwsgi
 
@@ -12,7 +12,7 @@ django-celery-beat
 pywebpush
 
 # has to match the version of the native gdal packages
-pygdal==3.2.2.*
+pygdal==3.6.2.*
 
 requests
 requests-cache
