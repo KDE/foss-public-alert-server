@@ -1,13 +1,19 @@
 # SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: CC0-1.0
 
+stages:
+  - validate
+  - test
+  - publish
+
 include:
   - project: sysadmin/ci-utilities
     file:
       - /gitlab-templates/reuse-lint.yml
 
+# run the django unit tests
 autotest:
-  stage: "build"
+  stage: test
   variables:
      FF_NETWORK_PER_BUILD: 1
      AMQP_URL: amqp://amqp
@@ -22,17 +28,55 @@ autotest:
         POSTGRES_DB: foss-public-alert-server
     - name: rabbitmq:4.2
       alias: amqp
-  image: python:3.14-bookworm
+  image: python:3.14-trixie
   before_script:
+     - echo "Prepare environment"
      - apt-get update && apt-get -y install libgdal-dev
-     - pip install -r foss_public_alert_server/requirements.txt
-  script:
+     - curl -LsSf https://astral.sh/uv/install.sh | sh
+     - source $HOME/.local/bin/env # add uv to path
      - cd foss_public_alert_server
-     - cd lib && PYTHONPATH=$PYTHONPATH:.. python3 -m unittest discover && cd ..
-     - python3 manage.py test
+     - uv sync
+  script:
+     - echo "Run unit tests"
+     - cd lib && PYTHONPATH=$PYTHONPATH:.. uv run -m unittest discover && cd ..
+     - uv run manage.py test
 
+# run the formatter
+format-job:
+  stage: test
+
+  image: python:3.14-trixie
+  before_script:
+    - echo "Prepare environment"
+    - apt-get update && apt-get -y install libgdal-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - source $HOME/.local/bin/env # add uv to path
+    - cd foss_public_alert_server
+    - uv sync
+  script:
+    - echo "Run formatter"
+    - uv run ruff format --check
+
+# run the linter
+linting-job:
+  stage: test
+
+  image: python:3.14-trixie
+  before_script:
+    - echo "Prepare environment"
+    - apt-get update && apt-get -y install libgdal-dev
+    - curl -LsSf https://astral.sh/uv/install.sh | sh
+    - source $HOME/.local/bin/env # add uv to path
+    - cd foss_public_alert_server
+    - uv sync
+  script:
+    - echo "Run linter"
+    - uv run ruff check -e # exit with zero even upon detecting violations just until we fixed the issues
+
+
+# build the container image and push to server
 container:
-  stage: "publish"
+  stage: publish
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
