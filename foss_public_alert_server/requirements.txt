@@ -12,7 +12,7 @@ django-celery-beat
 pywebpush
 
 # has to match the version of the native gdal packages
-pygdal==3.2.2.*
+gdal==3.10.3
 
 requests
 requests-cache

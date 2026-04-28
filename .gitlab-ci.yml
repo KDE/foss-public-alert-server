@@ -22,7 +22,7 @@ autotest:
         POSTGRES_DB: foss-public-alert-server
     - name: rabbitmq:4.2
       alias: amqp
-  image: python:3.10-bullseye
+  image: python:3.12-trixie
   before_script:
      - apt-get update && apt-get -y install libgdal-dev
      - pip install -r foss_public_alert_server/requirements.txt
