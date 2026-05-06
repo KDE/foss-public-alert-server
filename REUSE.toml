@@ -86,3 +86,9 @@ path = ["logo.png"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "FOSS Public Alert Server"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["compose/grafana_config/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
