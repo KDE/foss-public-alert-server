@@ -46,11 +46,14 @@ and, depending on your setup, a corresponding database user.
 ### Aggregator service setup
 
 The aggregator service uses [Django](https://www.djangoproject.com/) and needs a few other Python modules
-as dependencies as well, see `publicAlertAggregator/requirements.txt`. Install those via your distribution or
-`pip` (see also the [pip user guide](https://pip.pypa.io/en/stable/user_guide/)).
+as dependencies as well, see `foss_public_alert_server/pyproject.toml`. 
+
+To get started with the project, install [UV](https://docs.astral.sh/uv/) and create the python environment with
+`uv sync` this will download the Python version required (if not present on your system), create a new venv, and
+install every dependency found in `publicAlertsAggregator/settings.py`.
 
 The aggregator service needs to be configured to find your PostGIS database. This
-can be done in `publicAlertsAggregator/settings.py` or via environment variables.
+can be done in  or via environment variables.
 * `POSTGRES_HOST`: IP address or host name of the PostGIS server
 * `POSTGRES_DATABASE`: name of the PostGIS database
 * `POSTGRES_USER`: name of the user on the PostGIS database
@@ -59,9 +62,13 @@ can be done in `publicAlertsAggregator/settings.py` or via environment variables
 The aggregator service is started as follows for local development:
 
 ```bash
-python3 manage.py collectstatic
-python3 manage.py migrate
-python3 manage.py runserver 8000
+mkdir -p /tmp/fpas-metrics
+export PROMETHEUS_MULTIPROC_DIR=/tmp/fpas-metrics
+
+uv sync # only needed on first start or if the dependencies changed.
+uv run manage.py collectstatic
+uv run manage.py migrate
+uv run manage.py runserver 8000
 ```
 
 The first two steps are only necessary when the static files or the database layout changed
@@ -75,9 +82,6 @@ We use [celery](https://docs.celeryq.dev/) to dispatch tasks periodically in the
 Celery requires a message transport (broker). We have chosen [rabbitmq](https://www.rabbitmq.com/).
 
 ```bash
-pip install celery
-pip install django-celery-beat
-
 # start rabbitmq docker container
 docker run -d -p 5672:5672 rabbitmq
 

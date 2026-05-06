@@ -25,11 +25,11 @@ autotest:
   image: python:3.12-trixie
   before_script:
      - apt-get update && apt-get -y install libgdal-dev
-     - pip install -r foss_public_alert_server/requirements.txt
+     - pip install uv
   script:
      - cd foss_public_alert_server
-     - cd lib && PYTHONPATH=$PYTHONPATH:.. python3 -m unittest discover && cd ..
-     - python3 manage.py test
+     - cd lib && PYTHONPATH=$PYTHONPATH:.. uv run -m unittest discover && cd ..
+     - uv run manage.py test
 
 container:
   stage: "publish"

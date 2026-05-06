@@ -6,8 +6,8 @@ rm -rf /tmp/fpas-metrics
 mkdir -p /tmp/fpas-metrics
 export PROMETHEUS_MULTIPROC_DIR=/tmp/fpas-metrics
 
-python3 manage.py collectstatic --clear --no-input
-python3 manage.py migrate
+uv run manage.py collectstatic --clear --no-input
+uv run manage.py migrate
 
 celery -A foss_public_alert_server worker --loglevel=INFO -n general --concurrency 4 &
 celery -A foss_public_alert_server worker --loglevel=INFO -Q push_notifications -n notifications --concurrency 1 &

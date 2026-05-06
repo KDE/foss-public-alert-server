@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2022 Volker Krause <vkrause@kde.org>
+# SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: CC0-1.0
 
 FROM python:3.12-trixie
@@ -6,8 +7,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN apt-get update && apt-get -y install libgdal-dev
-COPY requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install uv
+COPY pyproject.toml /app/
+RUN uv sync
 COPY . /app
 RUN mkdir -p /app/alertHandler/static/maplibre
 
