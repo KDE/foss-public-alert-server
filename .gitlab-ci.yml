@@ -1,13 +1,35 @@
 # SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: CC0-1.0
 
+
+stages:
+  - validate
+  - test
+  - publish
+
 include:
   - project: sysadmin/ci-utilities
     file:
       - /gitlab-templates/reuse-lint.yml
 
+dependency_scan:
+  stage: test
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - echo "Running Trivy scan..."
+
+    - trivy fs .
+    - trivy fs --exit-code 1 --severity CRITICAL .
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+
 autotest:
-  stage: "build"
+  stage: test
   variables:
      FF_NETWORK_PER_BUILD: 1
      AMQP_URL: amqp://amqp
@@ -32,7 +54,7 @@ autotest:
      - uv run manage.py test
 
 container:
-  stage: "publish"
+  stage: publish
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
