@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN apt-get update && apt-get -y install libgdal-dev
 RUN pip install uv
-COPY pyproject.toml /app/
+COPY pyproject.toml uv.lock /app/
 RUN uv sync
 COPY . /app
 RUN mkdir -p /app/alertHandler/static/maplibre

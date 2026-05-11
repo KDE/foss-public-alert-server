@@ -96,17 +96,17 @@ docker run -d -p 5672:5672 rabbitmq:3-management
 sudo docker exec -it [ccontainer-id] rabbitmqctl list_queues name messages messages_ready messages_unacknowledged
 
 # start celery worker for alert parsing
-celery -A foss_public_alert_server worker --loglevel=INFO -n alerts --concurrency 3
+uv run celery -A foss_public_alert_server worker --loglevel=INFO -n alerts --concurrency 3
 
 # start celery worker for sending push notifications
-celery -A foss_public_alert_server worker  --loglevel=INFO -Q push_notifications -n notifications --concurrency 1
+uv run celery -A foss_public_alert_server worker  --loglevel=INFO -Q push_notifications -n notifications --concurrency 1
 
 # if you have flower installed, you can start the celery monitoring tool with
-celery -A foss_public_alert_server flower --port=5556
+uv run celery -A foss_public_alert_server flower --port=5556
 # you can now visit the flower under http://localhost:5556
 
 # start celery beat
-celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+uv run celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
 check out the official [manual](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html)
 
@@ -121,7 +121,7 @@ cd foss-public-alert-server/compose
 # start the docker container in the background
 docker compose up -d
 # wait until the container is up, then create a django admin account
-docker exec -it foss-public-alert-server-aggregator-1 python manage.py createsuperuser
+docker exec -it foss-public-alert-server-aggregator-1 uv run manage.py createsuperuser
 # after that you should be able to visit the admin page
 # via http://localhost:8000/admin
 ```
