@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2022 Volker Krause <vkrause@kde.org>
+# SPDX-License-Identifier: CC0-1.0
+
+# WARNING: For development only, not safely configured for deployments!!
+# This can be used to provide postgis and rabbitmq to a natively running Django development setup.
+
+name: "foss-public-alert-server"
+
+volumes:
+  db:
+
+services:
+  db:
+    image: postgis/postgis:14-3.2
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=foss-public-alert-server
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  amqp:
+    image: rabbitmq:4.2 # FIXME version pin until celery / kombu fixes support for >= 4.3
+    restart: always
+    ports:
+      - "5672:5672"

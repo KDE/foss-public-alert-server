@@ -5,14 +5,14 @@
 
 # FOSS Public Alert Server
 
-The FOSS Public Alert Server lets clients receive push notification via [UnifiedPush](https://unifiedpush.org/) about emergency and weather alerts worldwide.
+The FOSS Public Alert Server lets clients receive push notifications via [UnifiedPush](https://unifiedpush.org/) about emergency and weather alerts worldwide.
 
 This is made possible thanks to [OASIS' Common Alerting Protocol (CAP)](https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2.html).
 CAP alerts are used for a wide variety of emergencies. From alerts about extreme weather to alerts about contaminated drinking water to pandemics.
 
 Our server aggregates hundreds of CAP Feeds published by alerting authorities worldwide. When finished, this server can be used with clients like [FOSS Warn](https://github.com/nucleus-ffm/foss_warn) and [KDE's alert integration](https://invent.kde.org/utilities/kpublicalerts) (still beta).
 
-We have three main motivations. Firstly, we want to offer an easy-to-use alternative to propriety emergency apps to allow privacy- and freedom-focused people to receive emergency alerts. Secondly, we want to enable other developers to implement clients for different devices like desktop PCs, smart speakers, and Linux smartphones, and last but not least, we want to make traveling easier. While traveling, no one wants to search and install the local emergency app to receive emergency alerts in this country. With our solution, there is one app for the world.
+We have three main motivations. Firstly, we want to offer an easy-to-use alternative to proprietary emergency apps to allow privacy- and freedom-focused people to receive emergency alerts. Secondly, we want to enable other developers to implement clients for different devices like desktop PCs, smart speakers, and Linux smartphones, and last but not least, we want to make traveling easier. While traveling, no one wants to search for and install the local emergency app to receive emergency alerts in this country. With our solution, there is one app for the world.
  
 This project aims to expand the existing and already used alerting infrastructure and is not a replacement for any part of it. Stay informed and safe!
 
@@ -23,7 +23,7 @@ This project is still in development and not yet ready for production!
 ## Funding
 *2024-10 until 2025-10*
 
-> This project was funded through the [NGI0 Core Fund](https://nlnet.nl/core), a fund established by [NLnet](https://nlnet.nl/) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu/) programme, under the aegis of [DG Communications Networks, Content and Technology](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en) under grant agreement [No. 101092990](https://cordis.europa.eu/project/id/101092990).
+> This project was funded through the [NGI0 Core Fund](https://nlnet.nl/core), a fund established by [NLnet](https://nlnet.nl/) with financial support from the European Commission's [Next Generation Internet](https://ngi.eu/) program, under the aegis of [DG Communications Networks, Content and Technology](https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/communications-networks-content-and-technology_en) under grant agreement [No. 101092990](https://cordis.europa.eu/project/id/101092990).
 
 <img src="https://nlnet.nl/logo/banner.svg" width=160>
 &nbsp;&nbsp;
@@ -38,62 +38,63 @@ Stores alerts in the database and provides endpoints for retrieving alerts
 * the SubscriptionHandler, with which you can register for an area to receive push notifications
 * A celery worker who calls up the alert-fetching at regular intervals
 
-### PostGIS setup
+### Getting started
 
-No special configuration is required, but there needs to be an empty database
-and, depending on your setup, a corresponding database user.
+#### Development version
+Starting the development version of Django requires some preliminary work. We recommend using the 
+Provided Docker Compose file for starting the required RabbitMQ and PostGIS services. 
 
-### Aggregator service setup
-
-The aggregator service uses [Django](https://www.djangoproject.com/) and needs a few other Python modules
-as dependencies as well, see `foss_public_alert_server/pyproject.toml`. 
-
-To get started with the project, install [UV](https://docs.astral.sh/uv/) and create the python environment with
-`uv sync` this will download the Python version required (if not present on your system), create a new venv, and
-install every dependency found in `publicAlertsAggregator/settings.py`.
-
-The aggregator service needs to be configured to find your PostGIS database. This
-can be done in  or via environment variables.
-* `POSTGRES_HOST`: IP address or host name of the PostGIS server
-* `POSTGRES_DATABASE`: name of the PostGIS database
-* `POSTGRES_USER`: name of the user on the PostGIS database
-* `POSTGRES_PASSWORD`: password for connecting to the PostGIS database
-
-The aggregator service is started as follows for local development:
+To get started with the project, install [UV](https://docs.astral.sh/uv/), a fast and performant Python package manager.
 
 ```bash
+# clone or download the repository
+git clone https://invent.kde.org/webapps/foss-public-alert-server.git
+
+# change the directory
+cd foss-public-alert-server/dev-compose
+
+# this requires having Docker installed
+docker compose up -d # this might require sudo depending on your installation
+
+# for stopping the containers run
+docker compose down
+```
+To execute the Django project, you first need to install some dependencies. The following Linux packages are required:
+
+**Fedora**
+- libpq-devel
+- python3-devel
+
+```bash
+# install these packages with
+sudo dnf install libpq-devel python3-devel
+```
+
+**Debian/ubuntu**
+- pg_config
+- python-dev
+
+```bash
+# install these packages with
+sudo apt install pg_config python-dev
+```
+
+With these packages installed and RabbitMQ and PostGIS running, you can start Django with 
+
+```bash
+# create directory for Prometheus metrics
 mkdir -p /tmp/fpas-metrics
 export PROMETHEUS_MULTIPROC_DIR=/tmp/fpas-metrics
+
+export DJANGO_DEBUG=True # in case you want to activate the debug mode of Django
 
 uv sync # only needed on first start or if the dependencies changed.
 uv run manage.py collectstatic
 uv run manage.py migrate
 uv run manage.py runserver 8000
-```
 
-The first two steps are only necessary when the static files or the database layout changed
-respectively, you'll only need the last command otherwise.
-
-For a production deployment, you'll likely want to put this behind a HTTP server,
-see the [Django deployment documentation](https://docs.djangoproject.com/en/5.0/howto/deployment/).
-
-### Celery setup
-We use [celery](https://docs.celeryq.dev/) to dispatch tasks periodically in the background.
-Celery requires a message transport (broker). We have chosen [rabbitmq](https://www.rabbitmq.com/).
-
-```bash
-# start rabbitmq docker container
-docker run -d -p 5672:5672 rabbitmq
-
-# if you need more monitoring tools you can start rabbitmq with enabled management UI instead
-docker run -d -p 5672:5672 rabbitmq:3-management 
-# you can now vist the UI under http://container-IP:15672
-# the default username is "guest" with the default password "guest"
-# you can find the container IP if you run `docker inspect <container-id>`
-# the container-id is displayed if you run `docker ps`
-
-# to inspect the rabbitmq queue manually in a shell you can do
-sudo docker exec -it [ccontainer-id] rabbitmqctl list_queues name messages messages_ready messages_unacknowledged
+# at the first start, you must create a super user
+uv run manage.py createsuperuser
 
 # start celery worker for alert parsing
 uv run celery -A foss_public_alert_server worker --loglevel=INFO -n alerts --concurrency 3
@@ -101,29 +102,60 @@ uv run celery -A foss_public_alert_server worker --loglevel=INFO -n alerts --con
 # start celery worker for sending push notifications
 uv run celery -A foss_public_alert_server worker  --loglevel=INFO -Q push_notifications -n notifications --concurrency 1
 
-# if you have flower installed, you can start the celery monitoring tool with
+# if you have Flower installed, you can start the Celery monitoring tool with
 uv run celery -A foss_public_alert_server flower --port=5556
-# you can now visit the flower under http://localhost:5556
+# You can now visit the flower under http://localhost:5556
 
 # start celery beat
 uv run celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
-check out the official [manual](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html)
 
-## Docker setup
-This repo contains a docker compose file that you can quickly start by:
+
+Check out the official [celery manual](https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html)
+
+
+This should install and build everything and should launch the Django application on http://localhost:8000
+
+
+#### Development version with Docker quick start version
+This repo contains a Docker Compose file that you can quickly start by:
+
 ```bash
 # clone or download the repository
 git clone https://invent.kde.org/webapps/foss-public-alert-server.git
+
 # change the directory
 cd foss-public-alert-server/compose 
-# make sure the docker demon
-# start the docker container in the background
-docker compose up -d
-# wait until the container is up, then create a django admin account
+# make sure the Docker daemon
+
+# start the Docker container in the background
+docker compose up -d # add --build to rebuild the container if needed
+
+# wait until the container is up, then create a Django admin account
 docker exec -it foss-public-alert-server-aggregator-1 uv run manage.py createsuperuser
-# after that you should be able to visit the admin page
+
+# after that, you should be able to visit the admin page
 # via http://localhost:8000/admin
 ```
-**Notice**
-The default config is for _development only_, and not safely configured for deployments!
+
+#### Manual setup
+
+**PostGIS setup**
+No special configuration is required, but there needs to be an empty database
+and, depending on your setup, a corresponding database user.
+
+The aggregator service needs to be configured to find your PostGIS database. This
+can be done in or via environment variables.
+* `POSTGRES_HOST`: IP address or host name of the PostGIS server
+* `POSTGRES_DATABASE`: name of the PostGIS database
+* `POSTGRES_USER`: name of the user on the PostGIS database
+* `POSTGRES_PASSWORD`: password for connecting to the PostGIS database
+
+The aggregator service is started as follows for local development:
+
+
+#### Production deployment
+The default config is for _development only_, and not safely configured for deployments! We will provide a production 
+ready version in the future.
+
+For a production deployment, you'll likely want to put this application behind an HTTP server. More information can be found in the [Django deployment documentation](https://docs.djangoproject.com/en/5.0/howto/deployment/).

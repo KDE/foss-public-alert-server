@@ -96,9 +96,9 @@ WSGI_APPLICATION = 'foss_public_alert_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('POSTGRES_DATABASE', 'postgisuser'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgisuser'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '749475hgkdhg94zojh04ztnf'),
+        'NAME': os.environ.get('POSTGRES_DATABASE', 'foss-public-alert-server'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'password'),
         'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
         'POST': os.environ.get('POSTGRES_PORT', '5432'),
     },
