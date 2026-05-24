@@ -2,12 +2,10 @@
 # SPDX-FileCopyrightText: Volker Krause <vkrause@kde.org>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-import json
 import re
 import xml.etree.ElementTree as ET
 
 from lib import cap_geojson
-
 
 class BBK:
     """
@@ -83,26 +81,13 @@ class BBK:
         Merge GeoJSON affected area information into a CAP structure
         converted from BBK CAP-like JSON.
         """
-        area_name_to_id_map = {}
         for area in alert.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
-            for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
-                code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
-                code_value = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value').text
-                if code_name != 'AreaId' or not code_value:
-                    continue
-                geo = cap_geojson.geojson_find_features(geojson, 'areaId', int(code_value))
-                cap_geojson.geojson_features_to_cap(area, geo)
-                area_desc = area.find('{urn:oasis:names:tc:emergency:cap:1.2}areaDesc')
-                if area_desc is not None:
-                    area_name_to_id_map[area_desc.text] = code_value
+            if  (area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None
+                    or area.find('{urn:oasis:names:tc:emergency:cap:1.2}circle') is not None):
+                continue
 
-        # Second pass for still unresolved areas
-        # Those occur for translations, those only have area names but no geocodes
-        for area in alert.findall('.//{urn:oasis:names:tc:emergency:cap:1.2}area'):
-            if area.find('{urn:oasis:names:tc:emergency:cap:1.2}geocode') is not None or area.find('{urn:oasis:names:tc:emergency:cap:1.2}polygon') is not None or area.find('{urn:oasis:names:tc:emergency:cap:1.2}circle') is not None:
-                continue
-            area_desc = area.find('{urn:oasis:names:tc:emergency:cap:1.2}areaDesc')
-            if area_desc is None:
-                continue
-            geo = cap_geojson.geojson_find_features(geojson, 'areaId', int(area_name_to_id_map.get(area_desc.text)))
+            alert_id = alert.find(
+            '{urn:oasis:names:tc:emergency:cap:1.2}identifier').text
+
+            geo = cap_geojson.geojson_find_features(geojson, 'warnId', alert_id )
             cap_geojson.geojson_features_to_cap(area, geo)
