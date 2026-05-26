@@ -8,12 +8,12 @@ chmod 755 /tmp/fpas-metrics
 chown www-data /tmp/fpas-metrics
 export PROMETHEUS_MULTIPROC_DIR=/tmp/fpas-metrics
 
-uv run manage.py collectstatic --clear --no-input
-uv run manage.py migrate
+uv run --no-sync --no-cache manage.py collectstatic --clear --no-input
+uv run --no-sync --no-cache manage.py migrate
 
-uv run celery -A foss_public_alert_server worker --loglevel=INFO -n general --concurrency 4 &
-uv run celery -A foss_public_alert_server worker --loglevel=INFO -Q push_notifications -n notifications --concurrency 1 &
-uv run celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler &
-uv run celery -A foss_public_alert_server flower --url_prefix=flower &
+uv run --no-sync --no-cache celery -A foss_public_alert_server worker --loglevel=INFO -n general --concurrency 4 &
+uv run --no-sync --no-cache celery -A foss_public_alert_server worker --loglevel=INFO -Q push_notifications -n notifications --concurrency 1 &
+uv run --no-sync --no-cache celery -A foss_public_alert_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler &
+uv run --no-sync --no-cache celery -A foss_public_alert_server flower --url_prefix=flower &
 
-uv run uwsgi --socket :3032 --http :8000 --uid www-data --wsgi-file /app/foss_public_alert_server/wsgi.py
+uv run --no-sync --no-cache uwsgi --socket :3032 --http :8000 --uid www-data --wsgi-file /app/foss_public_alert_server/wsgi.py

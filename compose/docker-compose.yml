@@ -48,6 +48,8 @@ services:
       - app-cap:/app/cap
       - app-static:/app/static
       - feeder-cache:/app/cache
+    read_only: true
+    tmpfs: [ /tmp ]
 
   pgtileserv:
     image: docker.io/pramsey/pg_tileserv:latest

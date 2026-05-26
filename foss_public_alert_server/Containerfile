@@ -9,7 +9,7 @@ WORKDIR /app
 RUN apt-get update && apt-get -y install libgdal-dev
 RUN pip install uv
 COPY pyproject.toml uv.lock /app/
-RUN uv sync
+RUN uv sync --no-editable --compile-bytecode --no-dev
 COPY . /app
 RUN mkdir -p /app/alertHandler/static/maplibre
 
