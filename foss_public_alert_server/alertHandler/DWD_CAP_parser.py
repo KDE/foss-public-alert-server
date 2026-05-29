@@ -29,7 +29,7 @@ class DWDCAPParser(AbstractCAPParser):
         headers = {
             "If-None-Match": self.feed_source.last_e_tag,  # what if None?
         }
-        response = requests.get(self.feed_source.cap_alert_feed, headers=headers)  # @todo why not cached?
+        response = requests.get(self.feed_source.cap_alert_feed, headers=headers, timeout=10)  # @todo why not cached?
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")
         elif response.status_code != HttpResponseBase.status_code:
