@@ -472,10 +472,9 @@
     },
     {
       "source": {
-        "sourceId": "vi-nchmf-xx",
-        "capAlertFeedStatus": "ssl certificate expired",
-        "override": true,
-        "note": "Expired SSL certificate since mid 2025."
+        "sourceId": "vn-nchmf-xx",
+        "capAlertFeedStatus": "timeout",
+        "override": true
       }
     },
     {
