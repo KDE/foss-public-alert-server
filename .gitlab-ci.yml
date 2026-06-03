@@ -23,6 +23,8 @@ autotest:
     - name: rabbitmq:4.2
       alias: amqp
   image: python:3.12-trixie
+  tags:
+    - Linux
   before_script:
      - apt-get update && apt-get -y install libgdal-dev
      - pip install uv
