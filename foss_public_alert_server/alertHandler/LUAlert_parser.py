@@ -17,7 +17,7 @@ class LUAlertParser(AbstractCAPParser):
     def _load_alerts_from_feed(self):
         filenames = []
 
-        response: dict = requests.get(self.feed_source.cap_alert_feed).json()
+        response: dict = requests.get(self.feed_source.cap_alert_feed, timeout=10).json()
         for alerts in response:
             try:
                 cap_ident = alerts['identifier']
