@@ -4,8 +4,13 @@
 class PushNotificationCheckFailed(Exception):
     pass
 
+
 class PushNotificationException(Exception):
-    pass
+    error_code: str
+
+    def __init__(self, error_code: str = "unknown"):
+        self.error_code = str(error_code)
+
 
 class PushNotificationTimeoutException(Exception):
     pass

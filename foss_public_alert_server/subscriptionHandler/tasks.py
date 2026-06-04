@@ -15,8 +15,14 @@ from .models import Subscription
 from configuration.models import AppSetting
 from .push_notification_services import unified_push, apn, firebase, unified_push_encrpted
 
+from prometheus_client import Counter
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+push_post_metric = Counter('fpas_push_post_count', 'Posted push notifications', ['status'])
+push_expire_metric = Counter('fpas_push_expire_count', 'Expired push notifications', ['reason'])
+
 
 @shared_task(name="task.remove_old_subscriptions")
 def remove_old_subscription():
@@ -46,8 +52,10 @@ def remove_old_subscription():
                     case subscription.PushServices.FIREBASE:
                         firebase.send_notification(subscription.token, json.dumps(msg))
             except (PushNotificationException, ConnectionError, HTTPError, ReadTimeout, RequestException):
-                 pass
+                pass
             subscription.delete()
+            push_expire_metric.labels("inactive").inc(1)
+
 
 class NotificationBaseTask(Task):
     def on_failure(self, exc, task_id, args, kwargs, einfo) -> None:
@@ -76,6 +84,7 @@ class NotificationBaseTask(Task):
             if subscription.error_counter > AppSetting.get("NUMBER_OF_PUSH_ERRORS_BEFORE_DELETING"):
                 logger.debug(f"Subscription {subscription_id} has reached the max error number. Deleting.")
                 subscription.delete()
+                push_expire_metric.labels("error").inc(1)
             else:
                 subscription.save()
         elif isinstance(exc, PushNotificationExpiredException):
@@ -135,8 +144,10 @@ def send_one_notification(self, subscription_id, msg)  -> None:
             case subscription.PushServices.FIREBASE:
                 firebase.send_notification(subscription.token, json.dumps(msg))
     except PushNotificationException as e:
+        push_post_metric.labels(e.error_code).inc(1)
         # reraise exception to make the task fail, to use the retry policy
         raise PushNotificationException
+    push_post_metric.labels("200").inc(1)
 
 
 def check_for_alerts_and_send_notifications(alert: Alert, is_update: bool = False) -> None:

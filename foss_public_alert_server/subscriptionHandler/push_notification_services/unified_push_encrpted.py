@@ -93,18 +93,20 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                 case 429:
                     # The server responded with "too many requests" we have to wait until we try again.
                     setTimeoutFlag(endpoint, body)
-                    raise PushNotificationException()
+            raise PushNotificationException(status)
         raise PushNotificationException()
 
     except PushNotificationTimeoutException as e:
         # do not set the timeout flag if the flag raised the exception
         logger.error(f"Failed to send web push notification due to {e}")
-        raise PushNotificationException()
+        raise PushNotificationException("defer")
 
-    except(ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, ConnectTimeout, Timeout, OSError) as e:
+    except (ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, OSError) as e:
         setTimeoutFlag(endpoint, str(e))
         logger.error(f"Failed to send web push notification due to {e}")
-        raise PushNotificationException()
+        if isinstance(e, ConnectTimeout) or isinstance(e, Timeout) or isinstance(e, ReadTimeout):
+            raise PushNotificationException("timeout")
+        raise PushNotificationException("failure")
 
 def update_subscription(token, request, subscription_id:str) -> HttpResponse:
     """
