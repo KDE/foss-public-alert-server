@@ -33,12 +33,12 @@ class EDXLCAPParser(AbstractCAPParser):
         last_e_tag = self.feed_source.last_e_tag
         response: requests.Response
         feed: ET.Element
-        
+
+        headers = {'User-Agent': settings.USER_AGENT}
         if last_e_tag is not None:
-            response: requests.Response = requests.get(self.feed_source.cap_alert_feed, headers={'If-None-Match': last_e_tag, 'User-Agent': settings.USER_AGENT})
-        else:
-            response: requests.Response = requests.get(self.feed_source.cap_alert_feed)
-        
+            headers['If-None-Match'] = last_e_tag
+        response: requests.Response = requests.get(self.feed_source.cap_alert_feed, headers=headers, timeout=10)
+
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")
 
