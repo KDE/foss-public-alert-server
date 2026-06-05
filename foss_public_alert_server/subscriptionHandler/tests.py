@@ -145,3 +145,62 @@ class SubscriptionHandlerTestsCase(TestCase):
         response = self.client.put(f'/subscription/?subscription_id=e1ce46fb-a885-4b26-5ba8-708cccfcfa2b',
                                    content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
         self.assertContains(response, 'Subscription has expired. You must register again!', status_code=404)
+
+    def test_invalid_up_token(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            'p256dh_key': 'BInn4ytZr6wQ960L3sQ6tfmrQzNQoEhj_I-0i2DRcL-_u0aU2vSgLuhLKyzGnFkmKDhfnZ7pwcsOEsqy-fDbzh0',
+            'auth_key': 'ns9swjbbKTEN12VGW_tJqA',
+        }
+        invalid_tokens = [
+            "",
+            "127.0.0.1",
+            "http://unfied.push.org",
+            "https://192.168.178.42",
+            "https://localhost:1234",
+            "https://ntfy.sh/J9gTXxwbOEKNfeJW&up=1"
+        ]
+
+        # invalid tokens on initial subscription
+        for token in invalid_tokens:
+            data["token"] = token
+            data["push_service"] = "UNIFIED_PUSH"
+            response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+            self.assertEqual(response.status_code, 400)
+        for token in invalid_tokens:
+            data["token"] = token
+            data["push_service"] = "UNIFIED_PUSH_ENCRYPTED"
+            response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+            self.assertEqual(response.status_code, 400)
+
+        # invalid tokens on subscription updates
+        data["token"] = "https://unifiedpush.kde.org/upezVkNWZjNTM5?up=1"
+        data["push_service"] = "UNIFIED_PUSH"
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+        self.assertEqual(response.status_code, 200)
+        sub_id = response.json()["subscription_id"]
+        self.assertIsNotNone(sub_id)
+
+        data["subscription_id"] = sub_id
+        for token in invalid_tokens:
+            data["token"] = token
+            data["push_service"] = "UNIFIED_PUSH"
+            response = self.client.put('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+            self.assertEqual(response.status_code, 400)
+
+        data["token"] = "https://unifiedpush.kde.org/upezVkNWZjNTM5?up=1"
+        data["push_service"] = "UNIFIED_PUSH_ENCRYPTED"
+        response = self.client.post('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+        self.assertEqual(response.status_code, 200)
+        sub_id = response.json()["subscription_id"]
+        self.assertIsNotNone(sub_id)
+
+        data["subscription_id"] = sub_id
+        for token in invalid_tokens:
+            data["token"] = token
+            data["push_service"] = "UNIFIED_PUSH_ENCRYPTED"
+            response = self.client.put('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
+            self.assertEqual(response.status_code, 400)

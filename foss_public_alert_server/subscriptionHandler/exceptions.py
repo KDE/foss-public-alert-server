@@ -19,6 +19,11 @@ class PushNotificationExpiredException(Exception):
     def __init__(self, reason):
         self.reason = reason
 
-class UnifiedPushServerIsBlacklisted(Exception):
-    def __init__(self, domainname):
-        self.domainname = domainname
+
+class UnifiedPushTokenValidationException(Exception):
+    """Emitted when validating a UnifiedPush token failed.
+
+       Examples include invalid URLs, local addresses, or blacklisted push server.
+    """
+    def __init__(self, reason):
+        self.reason = reason

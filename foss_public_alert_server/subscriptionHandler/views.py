@@ -6,10 +6,12 @@ import logging
 from datetime import datetime, timezone
 import json
 import uuid
+from ipaddress import ip_address
 from json import loads
 import tldextract
 
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseNotFound
 from django.contrib.gis.geos import Polygon
 from django.views.decorators.http import require_http_methods
@@ -17,7 +19,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
 from .models import Subscription
-from .exceptions import *
+from .exceptions import PushNotificationCheckFailed, PushNotificationException, UnifiedPushTokenValidationException
 from .push_notification_services import unified_push, unified_push_encrpted, apn, firebase
 from configuration.models import AppSetting
 
@@ -61,24 +63,48 @@ def subscribe(request):
     else:
         return HttpResponseBadRequest("Invalid HTTP method")
 
-def isUnifiedPushServerBlacklisted(token):
+
+def validateUnifiedPushToken(token):
     """
-    check if the given UnifiedPush token is from a blacklisted server
+    check if the given UnifiedPush token is a valid non-local URL and not from a blacklisted server
     :param token: the UnifiedPush endpoint to check
     :return: None
-    :raise UnifiedPushServerIsBlacklisted if the url is blacklisted
+    :raise UnifiedPushTokenValidationException if the URL is invalid or blacklisted
     """
-    # ntfy.sh allows us to publish 250 msg per day and stops sending acks afterward
-    # which results in a timeout exceptions after 10s
-    blacklisted_server = ["ntfy.sh"]
+
+    # check for syntactically invalid URLs or wrong scheme
+    validator = URLValidator(schemes=["https"])
+    try:
+        validator(token)
+    except ValidationError:
+        raise UnifiedPushTokenValidationException("UnifiedPush endpoint is not a valid https: URL")
+
     extracted_domain = tldextract.extract(token)
     if extracted_domain.subdomain:
         push_server_url = f"{extracted_domain.subdomain}.{extracted_domain.domain}.{extracted_domain.suffix}"
-    else:
+    elif extracted_domain.suffix:
         push_server_url = f"{extracted_domain.domain}.{extracted_domain.suffix}"
+    else:
+        push_server_url = extracted_domain.domain
     logger.debug(push_server_url)
+
+    # check for local IP addresses
+    try:
+        ip = ip_address(push_server_url)
+        if not ip.is_global:
+            raise UnifiedPushTokenValidationException("Local IP address is not a valid UnifiedPush endpoint.")
+    except ValueError:
+        # not an IP address: must have a TLD then
+        if not extracted_domain.suffix:
+            raise UnifiedPushTokenValidationException("Invalid UnifiedPush URL")
+        pass
+
+    # ntfy.sh allows us to publish 250 msg per day and stops sending acks afterward
+    # which results in a timeout exceptions after 10s
+    blacklisted_server = ["ntfy.sh"]
     if blacklisted_server.__contains__(push_server_url):
-        raise UnifiedPushServerIsBlacklisted(push_server_url)
+        raise UnifiedPushTokenValidationException(f"Your UnifiedPush Server {push_server_url} is blocked. We can not reliably deliver push notifications to this server. Please choose another one.")
+
 
 @require_http_methods(["POST"])
 def add_new_subscription(request):
@@ -136,11 +162,11 @@ def add_new_subscription(request):
 
         match push_service:
             case "UNIFIED_PUSH": #@TODO use the enum instead of a string
-                isUnifiedPushServerBlacklisted(token)
+                validateUnifiedPushToken(token)
                 s = unified_push.create_subscription(token, bbox, user_agent)
                 test_push = unified_push.send_notification(s.token, json.dumps(msg))
             case "UNIFIED_PUSH_ENCRYPTED":
-                isUnifiedPushServerBlacklisted(token)
+                validateUnifiedPushToken(token)
                 s = unified_push_encrpted.create_subscription(token, bbox, data, user_agent)
                 test_push = unified_push_encrpted.send_notification(s.token,
                                                     json.dumps(msg),
@@ -174,10 +200,9 @@ def add_new_subscription(request):
         logger.debug(f"invalid push config: {e}")
         return HttpResponseBadRequest('Your push service is invalid or not reachable. Please check your push notification '
                                       'server')
-    except UnifiedPushServerIsBlacklisted as domainname:
-        logger.debug("Push service is blocked and the subscription denied")
-        return HttpResponseBadRequest(f"Your UnifiedPush Server {domainname} is blocked. We can not reliably"
-                                      f" deliver push notifications to this server. Please choose another one.")
+    except UnifiedPushTokenValidationException as e:
+        logger.debug(f"Invalid UnifiedPush token: {token} - {e.reason}")
+        return HttpResponseBadRequest(e.reason)
     except Exception as e:
         logger.debug(f"invalid request: {e}")
         return HttpResponseBadRequest('invalid request')
@@ -240,8 +265,10 @@ def update_subscription(request):
             # call the push notification handler
             match push_service:
                 case Subscription.PushServices.UNIFIED_PUSH:
+                    validateUnifiedPushToken(token)
                     return unified_push.update_subscription(request)
                 case Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
+                    validateUnifiedPushToken(token)
                     return unified_push_encrpted.update_subscription(token, request, subscription_id)
                 case Subscription.PushServices.APN:
                     return apn.update_subscription(request)
@@ -250,6 +277,9 @@ def update_subscription(request):
                 case _:
                     logger.debug("Not supported push service")
                     return HttpResponseBadRequest('something went wrong')
+        except UnifiedPushTokenValidationException as e:
+            logger.debug(f"Invalid UnifiedPush token update: {token} - {e.reason}")
+            return HttpResponseBadRequest(e.reason)
         except Exception as e:
             logger.error(f"Can not update subscription push notification config: {e}")
             return HttpResponseBadRequest("Error while updating push notification config.")
