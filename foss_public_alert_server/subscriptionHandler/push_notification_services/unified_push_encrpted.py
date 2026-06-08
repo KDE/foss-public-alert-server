@@ -41,13 +41,14 @@ def create_subscription(token, bbox, data, user_agent):
                         last_heartbeat=datetime.now(timezone.utc), p256dh_key=p256dh_key, auth_key=auth_key, user_agent=user_agent)
 
 
-def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or None:
+def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures: bool = True) -> Response or None:
     """
     Send a webpush notification to the given endpoint with the given payload
     :param endpoint: the webpush endpoint
     :param payload: the message to encrypt and send
     :param auth_key: the key to authorize ourselves against the webpush server
     :param p256dh_key: encryption key
+    :param persist_failures: whether to record HTTP or network errors in the ConnectionFlag table
     :return: Response if successful
     :raise: PushNotificationException if the request failed
     """
@@ -92,7 +93,8 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
                     raise PushNotificationExpiredException(body)
                 case 429:
                     # The server responded with "too many requests" we have to wait until we try again.
-                    setTimeoutFlag(endpoint, body)
+                    if persist_failures:
+                        setTimeoutFlag(endpoint, body)
             raise PushNotificationException(status)
         raise PushNotificationException()
 
@@ -102,11 +104,13 @@ def send_notification(endpoint, payload, auth_key, p256dh_key) -> Response or No
         raise PushNotificationException("defer")
 
     except (ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, OSError) as e:
-        setTimeoutFlag(endpoint, str(e))
+        if persist_failures:
+            setTimeoutFlag(endpoint, str(e))
         logger.error(f"Failed to send web push notification due to {e}")
         if isinstance(e, ConnectTimeout) or isinstance(e, Timeout) or isinstance(e, ReadTimeout):
             raise PushNotificationException("timeout")
         raise PushNotificationException("failure")
+
 
 def update_subscription(token, request, subscription_id:str) -> HttpResponse:
     """

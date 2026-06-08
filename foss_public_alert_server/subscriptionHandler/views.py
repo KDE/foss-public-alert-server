@@ -164,14 +164,15 @@ def add_new_subscription(request):
             case "UNIFIED_PUSH": #@TODO use the enum instead of a string
                 validateUnifiedPushToken(token)
                 s = unified_push.create_subscription(token, bbox, user_agent)
-                test_push = unified_push.send_notification(s.token, json.dumps(msg))
+                test_push = unified_push.send_notification(s.token, json.dumps(msg), persist_failures=False)
             case "UNIFIED_PUSH_ENCRYPTED":
                 validateUnifiedPushToken(token)
                 s = unified_push_encrpted.create_subscription(token, bbox, data, user_agent)
                 test_push = unified_push_encrpted.send_notification(s.token,
                                                     json.dumps(msg),
                                                     auth_key=s.auth_key,
-                                                    p256dh_key=s.p256dh_key)
+                                                    p256dh_key=s.p256dh_key,
+                                                    persist_failures=False)
             case "APN":
                 s = apn.create_subscription()
                 test_push = apn.send_notification(s.token,

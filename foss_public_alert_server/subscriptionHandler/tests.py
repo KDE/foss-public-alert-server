@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.test import Client
 
 from alertHandler.models import Alert
-from .models import Subscription
+from .models import Subscription, ConnectionFlag
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -111,6 +111,32 @@ class SubscriptionHandlerTestsCase(TestCase):
         }
         response = self.client.post('/subscription/', data, content_type="application/json")
         self.assertContains(response, b'invalid or missing parameters', status_code=400)
+
+    def test_non_functional_push_service(self):
+        data = {
+            'min_lat': 52.295,
+            'max_lat': 52.789,
+            'min_lon': 8.591,
+            'max_lon': 12.063,
+            'p256dh_key': 'BInn4ytZr6wQ960L3sQ6tfmrQzNQoEhj_I-0i2DRcL-_u0aU2vSgLuhLKyzGnFkmKDhfnZ7pwcsOEsqy-fDbzh0',
+            'auth_key': 'ns9swjbbKTEN12VGW_tJqA',
+        }
+        urls = [
+            'https://alerts.kde.org/non-existing-content',  # 404 (subscription expired)
+            'https://non.existing.domain.tld/',  # name resolution failure
+            'https://85.215.55.234/non-existing-content',  # TLS certification mismatch
+            'https://429.returnco.de/whatever',  # rate limited
+            'https://500.returnco.de/whatever',  # 500
+            # TODO timeouting endpoint
+        ]
+        flag_count = ConnectionFlag.objects.count()
+        for url in urls:
+            for service in ['UNIFIED_PUSH', 'UNIFIED_PUSH_ENCRYPTED']:
+                data['push_service'] = service
+                data['token'] = url
+                response = self.client.post('/subscription/', data, content_type="application/json")
+                self.assertEqual(response.status_code, 400)
+        self.assertEqual(flag_count, ConnectionFlag.objects.count())
 
     def test_send_notification(self):
         for alert in Alert.objects.all():
