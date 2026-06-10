@@ -4,7 +4,7 @@
 import json
 import logging
 
-from datetime import timezone, datetime
+from datetime import datetime, timedelta, timezone
 from celery import shared_task, Task
 
 from alertHandler.models import Alert
@@ -30,31 +30,33 @@ def remove_old_subscription():
     deletes all subscription which hasn't sent a heartbeat since the in the settings defined number of days
     or have a push error counter above the defined limit
     """
+    inactive_timeout = AppSetting.get("DAYS_INACTIVE_TIMEOUT")
+    if inactive_timeout < 1:
+        logger.error(f"Invalid DAYS_INACTIVE_TIMEOUT setting! {inactive_timeout}")
+        return
+    cutoff_time = datetime.now(timezone.utc) - timedelta(days=inactive_timeout)
+
     msg = {'type': 'unsubscribe',
            'message': "Your subscription timed out and has been deleted."
                       " Please renew your subscription."}
-
-    for subscription in Subscription.objects.all():
-        timedelta = datetime.now(timezone.utc) - subscription.last_heartbeat
-        # check if the subscription is expired
-        if timedelta.days > AppSetting.get("DAYS_INACTIVE_TIMEOUT"):
-            try:
-                match subscription.push_service:
-                    case subscription.PushServices.UNIFIED_PUSH:
-                        unified_push.send_notification(subscription.token, json.dumps(msg))
-                    case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
-                        unified_push_encrpted.send_notification(subscription.token,
-                                                                json.dumps(msg),
-                                                                auth_key=subscription.auth_key,
-                                                                p256dh_key=subscription.p256dh_key)
-                    case subscription.PushServices.APN:
-                        apn.send_notification(subscription.token, "", "", "", "", "")
-                    case subscription.PushServices.FIREBASE:
-                        firebase.send_notification(subscription.token, json.dumps(msg))
-            except (PushNotificationException, ConnectionError, HTTPError, ReadTimeout, RequestException):
-                pass
-            subscription.delete()
-            push_expire_metric.labels("inactive").inc(1)
+    for subscription in Subscription.objects.filter(last_heartbeat__lt=cutoff_time):
+        try:
+            match subscription.push_service:
+                case subscription.PushServices.UNIFIED_PUSH:
+                    unified_push.send_notification(subscription.token, json.dumps(msg))
+                case subscription.PushServices.UNIFIED_PUSH_ENCRYPTED:
+                    unified_push_encrpted.send_notification(subscription.token,
+                                                            json.dumps(msg),
+                                                            auth_key=subscription.auth_key,
+                                                            p256dh_key=subscription.p256dh_key)
+                case subscription.PushServices.APN:
+                    apn.send_notification(subscription.token, "", "", "", "", "")
+                case subscription.PushServices.FIREBASE:
+                    firebase.send_notification(subscription.token, json.dumps(msg))
+        except (PushNotificationException, ConnectionError, HTTPError, ReadTimeout, RequestException):
+            pass
+        subscription.delete()
+        push_expire_metric.labels("inactive").inc(1)
 
 
 class NotificationBaseTask(Task):

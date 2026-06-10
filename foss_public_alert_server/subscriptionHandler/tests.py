@@ -1,15 +1,18 @@
 # SPDX-FileCopyrightText: Nucleus <nucleus-ffm@posteo.de>
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-import requests
+import datetime
 import json
 import logging
+import requests
 
+from django.contrib.gis.geos import Polygon
 from django.test import TestCase
 from django.test import Client
 
 from alertHandler.models import Alert
 from .models import Subscription, ConnectionFlag
+from .tasks import remove_old_subscription
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -230,3 +233,21 @@ class SubscriptionHandlerTestsCase(TestCase):
             data["push_service"] = "UNIFIED_PUSH_ENCRYPTED"
             response = self.client.put('/subscription/', json.dumps(data), content_type="application/json", headers={"user_agent": "FPAS/1.0.0 (testing)"})
             self.assertEqual(response.status_code, 400)
+
+    def test_expire(self):
+        prev_count = Subscription.objects.count()
+        remove_old_subscription()
+        self.assertEqual(Subscription.objects.count(), prev_count)
+        sub = Subscription(
+            token="https://unifiedpush.kde.org/upezVkNWZjNTM5?up=1",
+            bounding_box=Polygon.from_bbox((8.591, 52.295, 12.063, 52.789)),
+            push_service=Subscription.PushServices.UNIFIED_PUSH_ENCRYPTED,
+            last_heartbeat=datetime.datetime(2025, 1, 1, 12, 43, 56, 0, datetime.timezone.utc),
+            p256dh_key="BInn4ytZr6wQ960L3sQ6tfmrQzNQoEhj_I-0i2DRcL-_u0aU2vSgLuhLKyzGnFkmKDhfnZ7pwcsOEsqy-fDbzh0",
+            auth_key="ns9swjbbKTEN12VGW_tJqA",
+            user_agent="FPAS/1.0.0 (testing)"
+        )
+        sub.save()
+        self.assertEqual(Subscription.objects.count(), prev_count + 1)
+        remove_old_subscription()
+        self.assertEqual(Subscription.objects.count(), prev_count)
