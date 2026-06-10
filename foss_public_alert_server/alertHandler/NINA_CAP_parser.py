@@ -33,7 +33,7 @@ class NinaCapParser(AbstractCAPParser):
 
     def get_json(self, url):
         try:
-            req = self.session.get(url)
+            req = self.session.get(url, timeout=10)
             if not req.ok:
                 logger.error(f"Fetch error {req.status_code}: {url}")
                 return None

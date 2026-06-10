@@ -40,7 +40,7 @@ class AlertSwissParser(AbstractCAPParser):
 
         # this neither supports If-Modified-Since nor If-None-Match (etags)...
         for lang in self.languages:
-            response = requests.get(self.feed_source.cap_alert_feed.replace("{LANG}", lang))
+            response = requests.get(self.feed_source.cap_alert_feed.replace("{LANG}", lang), timeout=10)
             if response.status_code != HttpResponseBase.status_code:
                 raise "Feed status code is not 200"
 
