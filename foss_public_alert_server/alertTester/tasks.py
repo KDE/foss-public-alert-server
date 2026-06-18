@@ -37,7 +37,7 @@ def create_test_alert():
         source_id=feed,
         alert_id=f"FPAS_{datetime.now(timezone.utc)}",
         sent=datetime.now(timezone.utc),
-        sender= "FOSS Public Alert Sever",
+        sender= "FOSS Public Alert Server",
         status=TestAlert.Status.Test,
         msg_type=TestAlert.MsgType.Alert,
         scope = TestAlert.Scope.Public,
