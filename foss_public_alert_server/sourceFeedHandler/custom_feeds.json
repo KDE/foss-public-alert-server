@@ -472,20 +472,6 @@
     },
     {
       "source": {
-        "sourceId": "sa-ncm-ar",
-        "capAlertFeedStatus": "timeout",
-        "override": true
-      }
-    },
-    {
-      "source": {
-        "sourceId": "sa-ncm-en",
-        "capAlertFeedStatus": "timeout",
-        "override": true
-      }
-    },
-    {
-      "source": {
         "sourceId": "vn-nchmf-xx",
         "capAlertFeedStatus": "timeout",
         "override": true
