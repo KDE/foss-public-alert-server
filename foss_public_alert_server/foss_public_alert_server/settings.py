@@ -179,7 +179,7 @@ AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')
 DEFAULT_SETTINGS = [
     # name, datatype, default value
     # timeperiod after which an inactive subscription without heartbeats will be deleted from the database
-    ["DAYS_INACTIVE_TIMEOUT", "int", 10],
+    ["DAYS_INACTIVE_TIMEOUT", "int", 365],
 
     # for every failed push notification for a subscription, we increase a counter.
     # If the counter reaches the limit, the subscription is deleted
