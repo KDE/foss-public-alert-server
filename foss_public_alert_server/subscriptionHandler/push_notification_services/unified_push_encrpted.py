@@ -6,7 +6,7 @@ from pywebpush import webpush, WebPushException
 from django.conf import settings
 import logging
 from datetime import datetime, timezone
-from requests import Response, HTTPError, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
+from requests import Response, HTTPError, Session, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
 
 from subscriptionHandler.models import Subscription
 from .push_tools import checkTimeoutFlag, setTimeoutFlag
@@ -15,6 +15,9 @@ from ..exceptions import PushNotificationException, PushNotificationTimeoutExcep
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+session = Session()
+
 
 def create_subscription(token, bbox, data, user_agent):
     """
@@ -77,7 +80,8 @@ def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures:
                        payload,
                        vapid_private_key=settings.WEB_PUSH_CONFIG_PRIVATE_KEY,
                        vapid_claims=claims,
-                       timeout=10)
+                       timeout=10,
+                       requests_session=session)
     except WebPushException as e:
         logger.error(f"Failed to send web push notification due to {e}")
         resp = getattr(e, "response", None)
