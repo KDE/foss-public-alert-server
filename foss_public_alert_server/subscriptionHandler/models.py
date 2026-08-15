@@ -29,7 +29,11 @@ class Subscription(models.Model):
 
 
 class ConnectionFlag(models.Model):
+    class FlagType(models.IntegerChoices):
+        TIME_OUT = 0, "TIME_OUT"
+        RATE_LIMIT = 1, "RATE_LIMIT"
     hostname = models.CharField(primary_key=True, max_length=255)
     set_time_stamp  = models.DateTimeField(default=datetime.now)
-    time_out = models.BooleanField()
+    expire_time_stamp = models.DateTimeField(default=datetime.now)
+    type = models.IntegerField(choices=FlagType.choices, default=FlagType.TIME_OUT)
     error_message = models.CharField(max_length=255, null=True)

@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 import time
 from requests import Response, HTTPError, Session, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
 
-from subscriptionHandler.models import Subscription
-from .push_tools import checkTimeoutFlag, setTimeoutFlag
+from subscriptionHandler.models import Subscription, ConnectionFlag
+from .push_tools import check_timeout_flag, set_timeout_flag
 
 from ..exceptions import PushNotificationException, PushNotificationTimeoutException, PushNotificationExpiredException
 
@@ -81,7 +81,7 @@ def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures:
         }
 
         # check if this server has a timeout flag
-        checkTimeoutFlag(endpoint)
+        check_timeout_flag(endpoint)
 
         return webpush(subscription_info,
                        payload,
@@ -105,8 +105,8 @@ def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures:
                 case 429:
                     # The server responded with "too many requests" we have to wait until we try again.
                     if persist_failures:
-                        setTimeoutFlag(endpoint, body)
-            raise PushNotificationException(status)
+                        set_timeout_flag(endpoint, ConnectionFlag.FlagType.RATE_LIMIT, body)
+            raise PushNotificationException(str(status))
         raise PushNotificationException()
 
     except PushNotificationTimeoutException as e:
@@ -116,7 +116,7 @@ def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures:
 
     except (ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, OSError) as e:
         if persist_failures:
-            setTimeoutFlag(endpoint, str(e))
+            set_timeout_flag(endpoint, ConnectionFlag.FlagType.TIME_OUT, str(e))
         logger.error(f"Failed to send web push notification due to {e}")
         if isinstance(e, ConnectTimeout) or isinstance(e, Timeout) or isinstance(e, ReadTimeout):
             raise PushNotificationException("timeout")

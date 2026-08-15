@@ -10,7 +10,7 @@ class SubscriptionAdmin(admin.GISModelAdmin):
     search_fields = ['id', 'token', 'user_agent']
 
 class ConnectionFlagAdmin(admin.GISModelAdmin):
-    list_display = ['hostname', 'set_time_stamp', 'time_out', 'error_message']
+    list_display = ['hostname', 'set_time_stamp', 'type', 'error_message']
     search_fields = ['hostname', 'error_message']
 
 # Register your models here.

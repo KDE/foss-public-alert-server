@@ -212,6 +212,12 @@ DEFAULT_SETTINGS = [
     ["VERSION", "char", "0.1.0"]
 ]
 
+# Settings for connection flags
+# timeperiod after which a general connection flag is considered as expired, Default is 300s = 5min
+CONNECTION_FLAG_GENERAL_EXPIRATION_SECONDS = 300
+# timeperiod after which a connection flag set for a rate limit is considered as expired, 60s = 1min
+CONNECTION_FLAG_RATE_LIMIT_EXPIRATION_SECONDS = 60
+
 # webpush config
 # SECURITY WARNING: keep the private key used in production secret!
 WEB_PUSH_CONFIG_PRIVATE_KEY = os.environ.get('WEB_PUSH_CONFIG_PRIVATE_KEY', 'tiQpqhJBxAAEwxbDQ2OYiQoJ1j18NLEn-Qm09oxte0Q')

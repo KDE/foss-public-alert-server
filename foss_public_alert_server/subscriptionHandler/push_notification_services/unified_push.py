@@ -8,9 +8,9 @@ import json
 import logging
 from datetime import datetime, timezone
 
-from subscriptionHandler.models import Subscription
+from subscriptionHandler.models import Subscription, ConnectionFlag
 from subscriptionHandler.exceptions import PushNotificationException, PushNotificationTimeoutException
-from .push_tools import checkTimeoutFlag, setTimeoutFlag
+from .push_tools import check_timeout_flag, set_timeout_flag
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -29,14 +29,14 @@ def send_notification(distributor_url, payload: json, persist_failures: bool = T
     :raise PushNotificationException if the request failed
     """
     try:
-        checkTimeoutFlag(distributor_url)
+        check_timeout_flag(distributor_url)
         res = requests.post(distributor_url, payload, timeout=10)
         if res.status_code == 429:
             # rate limited
             if persist_failures:
-                setTimeoutFlag(distributor_url, res.text)
+                set_timeout_flag(distributor_url, ConnectionFlag.FlagType.RATE_LIMIT, res.text)
         if res.status_code < 200 or res.status_code > 299:
-            raise PushNotificationException(res.status_code)
+            raise PushNotificationException(str(res.status_code))
         return res
 
     except PushNotificationTimeoutException as e:
@@ -45,7 +45,7 @@ def send_notification(distributor_url, payload: json, persist_failures: bool = T
 
     except (ConnectTimeout, Timeout, ConnectionError, HTTPError, ReadTimeout, RequestException, OSError) as e:
         if persist_failures:
-            setTimeoutFlag(distributor_url, str(e))
+            set_timeout_flag(distributor_url, ConnectionFlag.FlagType.TIME_OUT, str(e))
         logger.error(f"Failed to send push notification due to {e}")
         if isinstance(e, ConnectTimeout) or isinstance(e, Timeout) or isinstance(e, ReadTimeout):
             raise PushNotificationException("timeout")
