@@ -15,6 +15,12 @@ autotest:
      POSTGRES_HOST: db
      POSTGRES_USER: postgres
      POSTGRES_PASSWORD: password
+     WEB_PUSH_CONTACT: "mailto:ci@example.com"
+     # ATTENTION: These keys are only for testing in the CI, Do not use these keys in production
+     WEB_PUSH_CONFIG_PUBLIC_KEY: "BISP8d-nxdLcdCWFPyJtPlLwTd55GigHgjelmb57mUBPozHRmQw1Z8kRu2eHnQYZbpjRNNWKy10p0IeCVG6Gxgk"
+     WEB_PUSH_CONFIG_PRIVATE_KEY: "QXbtg1dXsz-y9A6Xvcu2llqQk4J_LCKu2ClT7zkCnlE"
+     DJANGO_SECRET_KEY: "u7%sp@ngm5w(2^pmb*-6lu73(utwwmwn#lshpo#nh^!(-7hat("
+
   services:
     - name: postgis/postgis:14-3.2
       alias: db
