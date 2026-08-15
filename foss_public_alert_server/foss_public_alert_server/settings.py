@@ -146,8 +146,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-USE_X_FORWARDED_HOST = os.getenv('DJANGO_USE_X_FORWARDED', False)
-USE_X_FORWARDED_PORT = os.getenv('DJANGO_USE_X_FORWARDED', False)
+def env_bool(name, default=False) -> bool:
+    """Reads the given name from env and return a bool depending on if is the "true" or "false"""
+    return os.getenv(name, str(default)).strip().lower() in ('true',)
+
+USE_X_FORWARDED_HOST = env_bool('DJANGO_USE_X_FORWARDED')
+USE_X_FORWARDED_PORT = env_bool('DJANGO_USE_X_FORWARDED')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
