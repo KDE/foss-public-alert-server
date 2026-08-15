@@ -12,6 +12,7 @@ from django.http import HttpResponseBase
 from .abstract_CAP_parser import AbstractCAPParser
 
 from lib.alertswiss import AlertSwiss
+from .exceptions import FeedFetchException
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ class AlertSwissParser(AbstractCAPParser):
         for lang in self.languages:
             response = requests.get(self.feed_source.cap_alert_feed.replace("{LANG}", lang), timeout=10)
             if response.status_code != HttpResponseBase.status_code:
-                raise "Feed status code is not 200"
+                raise FeedFetchException(f"Feed returned HTTP {HttpResponseBase.status_code}")
 
             feed_data = json.loads(response.content)
             for alert in feed_data["alerts"]:

@@ -11,7 +11,6 @@ class DatabaseWritingException(Exception):
     """
     pass
 
-
 class AlertParameterException(Exception):
     pass
 
@@ -26,5 +25,11 @@ class NoGeographicDataAvailableException(Exception):
 class NothingChangedException(Exception):
     """
     This exception is raised if a http request returns status code 304  Nothing changed
+    """
+    pass
+
+class FeedFetchException(Exception):
+    """
+    This exception is raised if the server returned an unexpected HTTP status
     """
     pass

@@ -10,7 +10,7 @@ import logging
 
 from django.http import HttpResponseNotModified, HttpResponseBase
 
-from .exceptions import NothingChangedException
+from .exceptions import NothingChangedException, FeedFetchException
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class DWDCAPParser(AbstractCAPParser):
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")
         elif response.status_code != HttpResponseBase.status_code:
-            raise "Feed status code is not 200"
+            raise FeedFetchException(f"Feed returned HTTP {HttpResponseBase.status_code}")
 
         # update etag and store it in the database
         new_etag = response.headers.get("ETag")
