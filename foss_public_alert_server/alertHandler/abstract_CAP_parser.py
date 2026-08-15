@@ -18,7 +18,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from celery import shared_task
 
-
+from lib.cap import CAPException
 from .exceptions import AlertExpiredException, DatabaseWritingException, AlertParameterException, \
     NoGeographicDataAvailableException, NothingChangedException
 from .models import Alert
@@ -122,6 +122,11 @@ class AbstractCAPParser(ABC):
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
             # do not add database exceptions to warnings because they could include sensitive information
             warnings_list.append("Database writing error")
+        except CAPException as e:
+            logger.exception(f"Malformed CAP message"
+                             f"{self.feed_source.source_id}", exc_info=e)
+            CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)
+            warnings_list.append("Malformed CAP message")
         except Exception as e:
             logger.exception(f"Something went wrong while getting the feed {self.feed_source.source_id}", exc_info=e)
             CAPFeedSource.objects.filter(id=self.feed_source.id).update(last_fetch_status=False)

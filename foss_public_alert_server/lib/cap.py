@@ -8,7 +8,7 @@ from dateutil import parser
 from datetime import datetime, timezone
 
 
-class CAPException(BaseException):
+class CAPException(Exception):
     """
     Raised for violation of the CAP specification.
     """
