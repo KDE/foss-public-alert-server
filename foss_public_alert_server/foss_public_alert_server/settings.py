@@ -17,6 +17,10 @@ import os
 import logging.config
 from pathlib import Path
 from django.utils.log import DEFAULT_LOGGING
+from django.core.exceptions import ImproperlyConfigured
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,13 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 if os.getenv('DJANGO_DEBUG', '') == 'True':
     DEBUG = True
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k')
+if not DEBUG and SECRET_KEY.startswith('django-insecure-'):
+    raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set in production")
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2;aggregator').split(';')
 
@@ -205,9 +211,20 @@ DEFAULT_SETTINGS = [
 # webpush config
 # SECURITY WARNING: keep the private key used in production secret!
 WEB_PUSH_CONFIG_PRIVATE_KEY = os.environ.get('WEB_PUSH_CONFIG_PRIVATE_KEY', 'tiQpqhJBxAAEwxbDQ2OYiQoJ1j18NLEn-Qm09oxte0Q')
+if not DEBUG and WEB_PUSH_CONFIG_PRIVATE_KEY.startswith('tiQpqhJBxAA'):
+    logger.error(
+        "Attention: You are running a release server with a debug key. This will not be allowed in the future. Follow the key rotation process!")
+    # raise ImproperlyConfigured("WEB_PUSH_CONFIG_PRIVATE_KEY must be set in production")
+
 WEB_PUSH_CONFIG_PUBLIC_KEY = os.environ.get('WEB_PUSH_CONFIG_PUBLIC_KEY', 'BHJnBOSvBJ9Vl0fF44dUFxmr3l-mNSjuAGvIsFKBSWUsBu2-v2dov1UcGgE2Ry_yjJsz38F3a0A-QrAjCr3OCA4')
+if not DEBUG and WEB_PUSH_CONFIG_PUBLIC_KEY.startswith('BHJnBOSvBJ9Vl0fF44dUFxmr3l'):
+    logger.error(
+        "Attention: You are running a release server with a debug key. This will not be allowed in the future. Follow the key rotation process!")
+    # raise ImproperlyConfigured("WEB_PUSH_CONFIG_PUBLIC_KEY must be set in production")
 
 WEB_PUSH_CONTACT =  os.environ.get("WEB_PUSH_CONTACT", "mailto:todo@example.com")
+if not DEBUG and WEB_PUSH_CONTACT.startswith('mailto:todo@example.com'):
+    raise ImproperlyConfigured("WEB_PUSH_CONTACT must be set in production")
 
 # Logging config
 
