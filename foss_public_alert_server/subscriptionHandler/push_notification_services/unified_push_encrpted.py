@@ -6,6 +6,7 @@ from pywebpush import webpush, WebPushException
 from django.conf import settings
 import logging
 from datetime import datetime, timezone
+import time
 from requests import Response, HTTPError, Session, Timeout, ConnectionError, ConnectTimeout, RequestException, ReadTimeout
 
 from subscriptionHandler.models import Subscription
@@ -70,11 +71,13 @@ def send_notification(endpoint, payload, auth_key, p256dh_key, persist_failures:
 
         # web push claims
         # aud: The “audience” is the destination URL of the push service.
-        # exp: The “expiration” date is the UTC time in seconds when the claim should expire. (not more than 24h
+        # ->  If aud is not specified, pywebpush will attempt to auto-fill from the endpoint
+        # exp: The “expiration” date is the UTC time in seconds when the claim should expire. (not more than 24h)
+        # -> If exp is not specified or set in the past, it will be set to 12 hours from now
         # sub: The “subscriber” is the primary contact email for this subscription.
         claims = {
             "sub": settings.WEB_PUSH_CONTACT,
-            "exp": round(datetime.now().second + 86400)  # now + 24h
+            "exp": int(time.time()) + 24 * 60 * 60  # now + 24h
         }
 
         # check if this server has a timeout flag
