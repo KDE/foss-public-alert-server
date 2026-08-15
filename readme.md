@@ -146,7 +146,8 @@ and, depending on your setup, a corresponding database user.
 
 The aggregator service needs to be configured to find your PostGIS database. This
 can be done in or via environment variables.
-* `POSTGRES_HOST`: IP address or host name of the PostGIS server
+* `POSTGRES_HOST`: IP address or host name of the PostGIS server. Defaults to `127.0.0.1`
+* `POSTGRES_PORT`: Port of the PostGIS server. Defaults to `5432`
 * `POSTGRES_DATABASE`: name of the PostGIS database
 * `POSTGRES_USER`: name of the user on the PostGIS database
 * `POSTGRES_PASSWORD`: password for connecting to the PostGIS database
