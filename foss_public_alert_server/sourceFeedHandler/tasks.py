@@ -19,6 +19,7 @@ from alertHandler.embedded_CAP_parser import EmbeddedCAPParser
 
 from . import source_feeds_aggegator
 from .models import CAPFeedSource
+from .models import create_periodic_task
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ def store_feeds_in_database(feeds: json):
                             not PeriodicTask.objects.filter(name=current_entry.periodic_task_name).exists()):
                         # if the periodic task is missing, recreate the task
                         logger.info(f"Periodic task for {current_entry.source_id} was missing, recreating...")
-                        current_entry.create_periodic_task()
+                        create_periodic_task(None, current_entry)
                     # Nothing changed for the feed, we don't have to modify it
                     logger.info(f"Nothing changed for the feed {source_id}, skipping...")
                     continue
