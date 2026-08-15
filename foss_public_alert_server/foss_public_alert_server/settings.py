@@ -26,17 +26,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANOG_SECRET_KEY', 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 if os.getenv('DJANGO_DEBUG', '') == 'True':
     DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('DJANOG_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2;aggregator').split(';')
+ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost;127.0.0.1;10.0.2.2;aggregator').split(';')
 
 # Allow to set CSRF_TRUSTED_ORIGINS as an environment variable but default to an empty list
-CSRF_TRUSTED_ORIGINS = os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS').split(';') if os.getenv('DJANOG_CSRF_TRUSTED_ORIGINS') else []
+CSRF_TRUSTED_ORIGINS = os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS').split(';') if os.getenv('DJANGO_CSRF_TRUSTED_ORIGINS') else []
 
 # Application definition
 
