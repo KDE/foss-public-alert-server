@@ -36,6 +36,8 @@ if os.getenv('DJANGO_DEBUG', '') == 'True':
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-)auz7%gl8fg)i-w!e5srhx2&na7rd(e^nok!&i)qsv1a5olz&k')
+# Fallback keys to allow key rotation
+SECRET_KEY_FALLBACKS = os.getenv("DJANGO_SECRET_KEY_FALLBACKS", [])
 if not DEBUG and SECRET_KEY.startswith('django-insecure-'):
     raise ImproperlyConfigured("DJANGO_SECRET_KEY must be set in production")
 
@@ -182,7 +184,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_WORKER_SEND_TASK_EVENTS = True
 CELERY_TASK_SEND_SENT_EVENT = True
 
-# RabitMQ server URL for Celery
+# RabbitMQ server URL for Celery
 AMQP_URL = os.getenv('AMQP_URL', 'amqp://localhost')
 
 # Default settings for the server. The values can be changed at runtime in the admin interface
