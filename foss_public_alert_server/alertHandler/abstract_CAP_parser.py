@@ -42,11 +42,6 @@ feed_fetch_duration_metric = Gauge('fpas_feed_fetch_time', 'CAP feed fetch time'
 
 
 class AbstractCAPParser(ABC):
-    feed_source: CAPFeedSource = None
-    session = None
-    parser = None
-    name = None
-    list_of_current_alert_ids = []
 
     def __init__(self, feed_source, name: str):
         self.feed_source = feed_source
@@ -54,6 +49,7 @@ class AbstractCAPParser(ABC):
         self.session.cache.delete(expired=True)
         self.session.cache.delete(invalid=True)
         self.name = name
+        self.list_of_current_alert_ids = []
 
     @abstractmethod
     def _load_alerts_from_feed(self):
