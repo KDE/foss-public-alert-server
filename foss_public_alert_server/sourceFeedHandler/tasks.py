@@ -30,7 +30,7 @@ def compare(compare_description, old_entry, new_entry) -> bool:
     Compare two values and return True if there are different,
     False if they have the same value
     """
-    if old_entry != new_entry and old_entry is not None:
+    if old_entry != new_entry:
         # something changed
         logger.info(f"{compare_description} changed - {old_entry} is now {new_entry}")
         return True
