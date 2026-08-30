@@ -7,6 +7,8 @@ import os
 import logging
 from django.conf import settings
 
+from sourceFeedHandler.exceptions import SourceFeedFetchException
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,8 @@ aggregated_feed_object = {}
 def get_alert_hub_feeds() -> json:
     """
     fetch the json feeds file from the alert hub
+
+    Raises: SourceFeedFetchException in case of error
     :return: the json data with the feeds form the alert hub
     """
     response = requests.get(alert_hub_feeds_url, timeout=10)
@@ -27,7 +31,7 @@ def get_alert_hub_feeds() -> json:
         return data
     else:
         logger.error('Error while loading alerthub data')
-        return None
+        raise SourceFeedFetchException('Error while loading alerthub data')
 
 
 def get_fpas_feeds() -> json:
@@ -80,6 +84,7 @@ def parse_one_custom_feed(data: json):
 def parse_feeds_and_create_new_json() -> json:
     """
     parse all feed sources and merge all feeds in a new file
+    Raises: SourceFeedFetchException in case of error
     :return: None
     """
     alert_hub_feeds: json = get_alert_hub_feeds()

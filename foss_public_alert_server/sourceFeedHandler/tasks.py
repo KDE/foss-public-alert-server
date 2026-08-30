@@ -18,6 +18,7 @@ from alertHandler.LUAlert_parser import LUAlertParser
 from alertHandler.embedded_CAP_parser import EmbeddedCAPParser
 
 from . import source_feeds_aggegator
+from .exceptions import SourceFeedFetchException
 from .models import CAPFeedSource
 from .models import create_periodic_task
 
@@ -38,6 +39,8 @@ def compare(compare_description, old_entry, new_entry) -> bool:
 
 def store_feeds_in_database(feeds: json):
     current_entries = CAPFeedSource.objects.all()
+    if not feeds["sources"]:
+        return
     new_feed_ids = {feed["source"]["sourceId"] for feed in feeds["sources"]}
     # delete all feed which are not in the new feed list
     for entry in current_entries:
@@ -115,7 +118,10 @@ def reload_feed_sources_and_update_database() -> None:
     :return: None
     """
     # load new feeds and recreated json file
-    feeds = source_feeds_aggegator.parse_feeds_and_create_new_json()
+    try:
+        feeds = source_feeds_aggegator.parse_feeds_and_create_new_json()
+    except SourceFeedFetchException:
+        return
     # @todo validate json file before replacing the old database
     store_feeds_in_database(feeds)
 
