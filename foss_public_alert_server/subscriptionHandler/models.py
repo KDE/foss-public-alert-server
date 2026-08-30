@@ -4,7 +4,7 @@
 
 from django.contrib.gis.db import models
 
-from datetime import datetime
+from django.utils.timezone import now
 import uuid
 
 
@@ -19,7 +19,7 @@ class Subscription(models.Model):
     bounding_box = models.PolygonField()
     token = models.CharField(max_length=2048)
     push_service = models.IntegerField(choices=PushServices.choices, default=PushServices.UNIFIED_PUSH)
-    last_heartbeat = models.DateTimeField(default=datetime.now)
+    last_heartbeat = models.DateTimeField(default=now)
     auth_key = models.CharField(max_length=255, null=True) # used by web push
     p256dh_key = models.CharField(max_length=255, null=True) # used by web push
     error_counter = models.IntegerField(default=0)
@@ -33,7 +33,7 @@ class ConnectionFlag(models.Model):
         TIME_OUT = 0, "TIME_OUT"
         RATE_LIMIT = 1, "RATE_LIMIT"
     hostname = models.CharField(primary_key=True, max_length=255)
-    set_time_stamp  = models.DateTimeField(default=datetime.now)
-    expire_time_stamp = models.DateTimeField(default=datetime.now)
+    set_time_stamp  = models.DateTimeField(default=now)
+    expire_time_stamp = models.DateTimeField(default=now)
     type = models.IntegerField(choices=FlagType.choices, default=FlagType.TIME_OUT)
     error_message = models.CharField(max_length=255, null=True)
