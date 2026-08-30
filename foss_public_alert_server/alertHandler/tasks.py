@@ -23,15 +23,6 @@ def test_celery():
     return "Task complete!"
 
 
-def check_if_alert_is_expired(expire_time:datetime) -> bool:
-    """
-    check if the expire_time is later than current time
-    :param expire_time: the expire_time of the alert
-    :return: true if alert is expired, false if not
-    """
-    return expire_time and expire_time < datetime.datetime.now(datetime.timezone.utc)
-
-
 @shared_task(name="task.remove_expired_alerts")
 def remove_expired_alerts() -> bool:
     """
@@ -39,10 +30,6 @@ def remove_expired_alerts() -> bool:
     called by a periodic celery task
     :return:
     """
-    for alert in Alert.objects.all():
-        if check_if_alert_is_expired(alert.expire_time):
-            logger.info(f"delete alert {alert.alert_id}")
-            Alert.objects.filter(id=alert.id).delete()
-            # the delete() sends also a signal to a class methode (Alert.auto_delete_capdata_on_delete)
-            # to also delete the stored cap data
+    now = datetime.datetime.now(datetime.timezone.utc)
+    Alert.objects.filter(expire_time__lt=now).delete()
     return True

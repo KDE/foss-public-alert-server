@@ -58,12 +58,9 @@ def create_test_alert():
     print("Successfully saved test Alert")
 
 @shared_task(name="task.delete_expired_test_alerts")
-def delete_alert():
+def delete_alert() -> None:
     """
     delete all expired test alerts
-    :return:
+    :return: None
     """
-    all_alert = TestAlert.objects.all()
-    for alert in all_alert:
-        if alert.expires < datetime.now(timezone.utc):
-            alert.delete()
+    TestAlert.objects.filter(expires__lt=datetime.now(timezone.utc)).delete()
