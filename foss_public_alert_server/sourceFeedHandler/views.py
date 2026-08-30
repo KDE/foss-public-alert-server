@@ -19,12 +19,13 @@ def generate_source_status_page(request: HttpRequest):
     """
 
     number_of_source = CAPFeedSource.objects.all().count()
+    total = CAPFeedSource.objects.aggregate(Sum('last_fetch_duration'))['last_fetch_duration__sum']
 
     context = {
         'number_of_sources': number_of_source,
         'list_of_sources': CAPFeedSource.objects.filter(cap_alert_feed_status="operating").order_by('source_id'),
         'datetime':  datetime.datetime.now(),  # @todo fix timezone
-        'total_fetch_duration': CAPFeedSource.objects.aggregate(Sum('last_fetch_duration'))['last_fetch_duration__sum'].total_seconds()
+        'total_fetch_duration': total.total_seconds() if total else 0,
     }
 
     return render(request, 'source_status_page.html', context=context)
