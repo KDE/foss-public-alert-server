@@ -9,8 +9,7 @@ from django.conf import settings
 
 from sourceFeedHandler.exceptions import SourceFeedFetchException
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 alert_hub_feeds_url = 'https://alert-hub-sources.s3.amazonaws.com/json'
 fpas_feeds_file = os.path.join(settings.BASE_DIR, "sourceFeedHandler/custom_feeds.json")

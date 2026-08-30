@@ -30,8 +30,7 @@ from lib import cap, cap_geojson, cap_geometry
 from prometheus_client import Gauge
 
 # logging config
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 # Disable extremely noisy GEOS warnings about self-intersecting polygons
 if not settings.DEBUG:
     logging.getLogger('django.contrib.gis').setLevel(logging.ERROR)

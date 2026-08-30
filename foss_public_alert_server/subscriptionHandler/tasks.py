@@ -17,8 +17,7 @@ from .push_notification_services import unified_push, apn, firebase, unified_pus
 
 from prometheus_client import Counter
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 push_post_metric = Counter('fpas_push_post_count', 'Posted push notifications', ['status'])
 push_expire_metric = Counter('fpas_push_expire_count', 'Expired push notifications', ['reason'])

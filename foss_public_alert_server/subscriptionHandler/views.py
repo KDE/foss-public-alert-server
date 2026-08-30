@@ -24,8 +24,7 @@ from .push_notification_services import unified_push, unified_push_encrpted, apn
 from configuration.models import AppSetting
 from lib.bbox import is_valid_bbox
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 

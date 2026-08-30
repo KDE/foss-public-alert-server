@@ -7,8 +7,7 @@ import logging
 from .models import AppSetting
 from django.conf import settings
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 @shared_task(name="task.store_default_settings_in_database")
 def add_default_settings():

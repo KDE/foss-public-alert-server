@@ -14,8 +14,7 @@ from .push_tools import check_timeout_flag, set_timeout_flag
 
 from ..exceptions import PushNotificationException, PushNotificationTimeoutException, PushNotificationExpiredException
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 session = Session()
 

@@ -7,8 +7,7 @@ from django.test import TestCase, RequestFactory, Client
 from django.http.request import HttpRequest
 from .views import get_feed_status_for_area
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 class SourceFeedHandlerTestsCase(TestCase):
     fixtures = ["sourceFeedHandlerDump.json"]

@@ -16,8 +16,7 @@ from .exceptions import NothingChangedException
 from .abstract_CAP_parser import AbstractCAPParser
 from sourceFeedHandler.models import CAPFeedSource
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 # make the CAP namespace the default one
 ET.register_namespace('', 'urn:oasis:names:tc:emergency:cap:1.2')

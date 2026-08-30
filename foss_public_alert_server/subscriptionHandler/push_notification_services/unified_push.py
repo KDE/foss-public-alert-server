@@ -12,8 +12,7 @@ from subscriptionHandler.models import Subscription, ConnectionFlag
 from subscriptionHandler.exceptions import PushNotificationException, PushNotificationTimeoutException
 from .push_tools import check_timeout_flag, set_timeout_flag
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 def create_subscription(token, bbox, user_agent):
     return Subscription(token=token, bounding_box=bbox, push_service=Subscription.PushServices.UNIFIED_PUSH,

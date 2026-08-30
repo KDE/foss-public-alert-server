@@ -13,8 +13,7 @@ import logging
 
 from prometheus_client import multiprocess, CollectorRegistry
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foss_public_alert_server.settings')

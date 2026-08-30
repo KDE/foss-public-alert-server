@@ -12,8 +12,7 @@ from .XML_CAP_parser import XMLCAPParser
 from .DWD_CAP_parser import DWDCAPParser
 from .models import Alert
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 @shared_task()
 def test_celery():

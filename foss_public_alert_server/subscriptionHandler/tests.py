@@ -14,8 +14,7 @@ from alertHandler.models import Alert
 from .models import Subscription, ConnectionFlag
 from .tasks import remove_old_subscription
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 class SubscriptionHandlerTestsCase(TestCase):

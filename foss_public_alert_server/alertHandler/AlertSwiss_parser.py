@@ -14,8 +14,7 @@ from .abstract_CAP_parser import AbstractCAPParser
 from lib.alertswiss import AlertSwiss
 from .exceptions import FeedFetchException
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 class AlertSwissParser(AbstractCAPParser):

@@ -10,8 +10,7 @@ from subscriptionHandler.models import ConnectionFlag
 from ..exceptions import PushNotificationTimeoutException
 from django.conf import settings
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 def set_timeout_flag(distributor_url:str, flag_type:ConnectionFlag.FlagType, error_msg:str) -> None:
     """

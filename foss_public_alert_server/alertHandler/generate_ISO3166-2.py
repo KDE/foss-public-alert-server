@@ -10,8 +10,7 @@ import math
 import pyclipper
 import logging
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 file_name = "data/ISO3166-2/iso3166-2-boundaries.zip"
 folder_name = "data/ISO3166-2/"

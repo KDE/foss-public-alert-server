@@ -5,8 +5,7 @@
 import logging
 import xml.etree.ElementTree as ET
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 def geojson_polygon_to_cap(coordinates) -> str:

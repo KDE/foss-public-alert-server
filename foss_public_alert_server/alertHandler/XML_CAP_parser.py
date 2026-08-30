@@ -20,8 +20,7 @@ from .models import Alert
 from sourceFeedHandler.models import CAPFeedSource
 from lib import cap_feed
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 CAP_MIMETYPES = ['application/common-alerting-protocol+xml', 'application/cap+xml']
 BROKEN_CHAIN_FEEDS = ['za-saws-en']

@@ -22,8 +22,7 @@ from .exceptions import SourceFeedFetchException
 from .models import CAPFeedSource
 from .models import create_periodic_task
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 def compare(compare_description, old_entry, new_entry) -> bool:
     """

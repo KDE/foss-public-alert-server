@@ -16,8 +16,7 @@ from .models import Alert
 from subscriptionHandler.models import Subscription # has to be so because of django
 from lib.bbox import is_valid_bbox
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 @require_http_methods(["GET"])
 def get_alert_cap_data(request, identifier):

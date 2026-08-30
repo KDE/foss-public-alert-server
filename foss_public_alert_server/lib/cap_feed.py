@@ -6,8 +6,7 @@ import logging
 
 from dateutil import parser
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 class CAPFeedEntry:

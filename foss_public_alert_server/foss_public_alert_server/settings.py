@@ -19,8 +19,7 @@ from pathlib import Path
 from django.utils.log import DEFAULT_LOGGING
 from django.core.exceptions import ImproperlyConfigured
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

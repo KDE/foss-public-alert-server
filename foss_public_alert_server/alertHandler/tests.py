@@ -16,8 +16,7 @@ import xml.etree.ElementTree as ET
 
 from lib import cap_geojson
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 
 class AlertHandlerCAPParserTestsCase(TestCase):

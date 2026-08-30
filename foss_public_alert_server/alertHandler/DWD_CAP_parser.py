@@ -12,8 +12,7 @@ from django.http import HttpResponseNotModified, HttpResponseBase
 
 from .exceptions import NothingChangedException, FeedFetchException
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 from .abstract_CAP_parser import AbstractCAPParser
 from sourceFeedHandler.models import CAPFeedSource

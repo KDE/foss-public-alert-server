@@ -13,8 +13,7 @@ from .exceptions import NothingChangedException, FeedFetchException
 
 from lib.bbk import BBK
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("app")
 
 from sourceFeedHandler.models import CAPFeedSource
 
