@@ -14,14 +14,14 @@ def version_string() -> str:
     :return: the version code with build revision or debug tag
     """
     version = AppSetting.get("VERSION")
-    if not settings.DEBUG:
-        revision_file = os.path.join(settings.BASE_DIR, "build-revision")
-        with open(revision_file, 'r') as f:
-            rev = f.read()
-            version = f"{version} ({rev})"
-    else:
-        version = f"{version} (DEBUG)"
-    return version
+    if settings.DEBUG:
+        return f"{version} (DEBUG)"
+    # Just return the version string for deployments without our container file
+    try:
+        with open(os.path.join(settings.BASE_DIR, "build-revision")) as f:
+            return f"{version} ({f.read().strip()})"
+    except OSError:
+        return str(version)
 
 def get_server_status(request:HttpRequest):
     """
