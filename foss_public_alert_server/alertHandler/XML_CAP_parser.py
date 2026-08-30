@@ -94,9 +94,9 @@ class XMLCAPParser(AbstractCAPParser):
                 cap_sent = entry.get('cap_sent')
                 if cap_ident is not None and cap_sent is not None:
                     sent_time = parser.isoparse(cap_sent)
-                if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=cap_ident, issue_time=sent_time)) == 1:
-                    self.record_unchanged_alert(cap_ident)
-                    continue
+                    if Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=cap_ident, issue_time=sent_time).exists():
+                        self.record_unchanged_alert(cap_ident)
+                        continue
             except Exception:
                 pass
 

@@ -22,7 +22,7 @@ class LUAlertParser(AbstractCAPParser):
             try:
                 cap_ident = alerts['_id']
                 sent_time = datetime.datetime.utcfromtimestamp(alerts['sent'] / 1000)
-                if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=cap_ident, issue_time=sent_time)) == 1:
+                if Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=cap_ident, issue_time=sent_time).exists():
                     self.record_unchanged_alert(cap_ident)
                     continue
             except Exception:

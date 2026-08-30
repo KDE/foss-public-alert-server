@@ -279,9 +279,9 @@ class AbstractCAPParser(ABC):
             # find sent time
             sent_time = cap_msg.sent_time()
 
-            # if we already know the alert and it's sent time matches we assume nothing changed
-            # if the sent time did change we got an update
-            if len(Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=alert_id, issue_time=sent_time)) == 1:
+            # if we already know the alert, and it's sent time matches we assume nothing changed
+            # if the sent_time did change we got an update
+            if Alert.objects.filter(source_id=self.feed_source.source_id, alert_id=alert_id, issue_time=sent_time).exists():
                 self.record_unchanged_alert(alert_id)
                 return
 
