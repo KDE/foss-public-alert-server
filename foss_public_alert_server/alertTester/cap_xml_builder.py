@@ -22,7 +22,7 @@ def build_alert(alert_model):
     }
 
     for element in alert_elements:
-        if element is not None:
+        if alert_elements[element] is not None:
             node = ET.SubElement(xml_tree, '{urn:oasis:names:tc:emergency:cap:1.2}' + element)
             node.text = alert_elements[element]
 
@@ -45,17 +45,17 @@ def build_info(alert_model) -> ET.Element:
                      'severity': alert_model.severity,
                      'certainty': alert_model.certainty,
                      'senderName': "FOSS Public Alert Server",
-                     'onset': alert_model.onset.isoformat(),
-                     'expires': alert_model.expires.isoformat(),
+                     'onset': alert_model.onset.isoformat() if alert_model.onset else None,
+                     'expires': alert_model.expires.isoformat() if alert_model.expires else None,
                      'headline': alert_model.headline,
                      'description': alert_model.description,
                      'instruction': "There is no real danger. No action is required. This is just a test alert.",
                      }
 
-    for element in info_elements:
-        if element is not None:
-            node = ET.SubElement(info_tree, '{urn:oasis:names:tc:emergency:cap:1.2}'+element)
-            node.text = info_elements[element]
+    for name, value in info_elements.items():
+        if value is None:
+            continue
+        ET.SubElement(info_tree, '{urn:oasis:names:tc:emergency:cap:1.2}' + name).text = value
 
     info_tree.append(build_area(alert_model))
 
