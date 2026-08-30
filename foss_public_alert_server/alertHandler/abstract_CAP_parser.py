@@ -36,10 +36,6 @@ logger = logging.getLogger(__name__)
 if not settings.DEBUG:
     logging.getLogger('django.contrib.gis').setLevel(logging.ERROR)
 
-# Reduce timeout for network operations to just 10 seconds
-# If a feed or CAP message doesn't reply in that time it's likely dead anyway
-# and potentially blocks other tasks for several minutes.
-socket.setdefaulttimeout(10)
 
 feed_alert_count_metric = Gauge('fpas_alert_count', 'Active alerts in a CAP feed', ['feed'], multiprocess_mode='mostrecent')
 feed_fetch_duration_metric = Gauge('fpas_feed_fetch_time', 'CAP feed fetch time', ['feed'], multiprocess_mode='mostrecent')

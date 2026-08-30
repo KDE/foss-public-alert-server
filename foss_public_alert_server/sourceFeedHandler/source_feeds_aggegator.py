@@ -17,16 +17,17 @@ aggregated_feed_object = {}
 
 def get_alert_hub_feeds() -> json:
     """
-    fetch the json feeds file from the aler thub
+    fetch the json feeds file from the alert hub
     :return: the json data with the feeds form the alert hub
     """
-    response = requests.get(alert_hub_feeds_url)
+    response = requests.get(alert_hub_feeds_url, timeout=10)
 
     if response.status_code == 200:
         data = response.json()
         return data
     else:
         logger.error('Error while loading alerthub data')
+        return None
 
 
 def get_fpas_feeds() -> json:

@@ -35,9 +35,9 @@ class EmbeddedCAPParser(AbstractCAPParser):
         feed: ET.Element
 
         if last_e_tag is not None:
-            response: requests.Response = requests.get(self.feed_source.cap_alert_feed, headers={'If-None-Match': last_e_tag, 'User-Agent': settings.USER_AGENT})
+            response: requests.Response = requests.get(self.feed_source.cap_alert_feed, headers={'If-None-Match': last_e_tag, 'User-Agent': settings.USER_AGENT}, timeout=10)
         else:
-            response: requests.Response = requests.get(self.feed_source.cap_alert_feed)
+            response: requests.Response = requests.get(self.feed_source.cap_alert_feed, timeout=10)
 
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")

@@ -30,8 +30,8 @@ class LUAlertParser(AbstractCAPParser):
 
             filenames.append(f"dump-alert.{alerts['_id'].split('.')[1]}.xml")
 
-        metadata: dict = requests.get("https://data.public.lu/api/1/datasets/alertes-du-systeme-lu-alert/").json()
+        metadata: dict = requests.get("https://data.public.lu/api/1/datasets/alertes-du-systeme-lu-alert/", timeout=10).json()
         for resource in metadata["resources"]:
             if resource["title"] in filenames:
-                alert = requests.get(resource["url"])
+                alert = requests.get(resource["url"], timeout=10)
                 self.addAlert(cap_source_url=resource["url"], cap_data=alert.content.decode('utf-8').replace('xmlns="urn:oasis:names:tc:emergency:cap:1.2:profile:cap-lu:1.0"', 'xmlns="urn:oasis:names:tc:emergency:cap:1.2"'))

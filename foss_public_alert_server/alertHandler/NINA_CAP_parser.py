@@ -47,7 +47,7 @@ class NinaCapParser(AbstractCAPParser):
         headers = {
             "If-None-Match": self.feed_source.last_e_tag,
         }
-        response = requests.get(self.feed_source.cap_alert_feed, headers=headers)
+        response = requests.get(self.feed_source.cap_alert_feed, headers=headers, timeout=10)
         if response.status_code == HttpResponseNotModified.status_code:
             raise NothingChangedException("Nothing changed")
         elif response.status_code != HttpResponseBase.status_code:
