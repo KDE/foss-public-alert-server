@@ -79,7 +79,10 @@ class NotificationBaseTask(Task):
         if isinstance(exc, PushNotificationException):
             # increase error counter by one
             logger.debug(f"Increase error counter of subscription {subscription_id}")
-            subscription = Subscription.objects.get(id=subscription_id)
+            try:
+                subscription = Subscription.objects.get(id=subscription_id)
+            except Subscription.DoesNotExist:
+                return
             subscription.error_counter += 1
 
             # delete subscription of error counter exceeds the max number
@@ -107,9 +110,12 @@ class NotificationBaseTask(Task):
         :return: None
         """
         subscription_id = args[0]
-        subscription = Subscription.objects.get(id=subscription_id)
-        subscription.error_counter = 0
-        subscription.save()
+        try:
+            subscription = Subscription.objects.get(id=subscription_id)
+        except Subscription.DoesNotExist:
+            return
+        # reset error counter if not already zero
+        Subscription.objects.filter(id=subscription_id).exclude(error_counter=0).update(error_counter=0)
 
 @shared_task(name="task.send_notification",
              bind=True,
