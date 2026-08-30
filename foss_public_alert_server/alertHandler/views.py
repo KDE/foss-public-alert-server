@@ -55,8 +55,8 @@ def get_alerts_for_subscription_id(request):
 
     # filter and return all alerts which intersects with the subscribed polygone
     result = []
-    for alert in Alert.objects.filter(area__intersects=polygon):
-        result.append(str(alert.id))
+    for alert in Alert.objects.filter(area__intersects=polygon).values_list('id', flat=True):
+        result.append(str(alert))
 
     return JsonResponse(result, safe=False)
 
@@ -77,8 +77,9 @@ def get_alerts_for_area(request):
         request_bbox = Polygon.from_bbox((x1, y1, x2, y2))
 
         res = []
-        for alert in Alert.objects.filter(area__intersects=request_bbox):
-            res.append(str(alert.id))
+        # TODO(Nucleus): restrict max size of bounding box
+        for alert in Alert.objects.filter(area__intersects=request_bbox).values_list('id', flat=True):
+            res.append(str(alert))
         return JsonResponse(res, safe=False)
     except (ValueError, TypeError):
         return HttpResponseBadRequest('invalid bounding box')
