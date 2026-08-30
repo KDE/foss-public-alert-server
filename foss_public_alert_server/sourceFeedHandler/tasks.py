@@ -159,7 +159,7 @@ def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
         case "embedded CAP":
             parser = EmbeddedCAPParser(feed)
     if parser is not None:
-        parser.get_feed(parser)
+        parser.get_feed()
     else:
         logger.error(f"{feed.source_id}: Parser is None for {feed_format}")
 

@@ -58,7 +58,6 @@ class AbstractCAPParser(ABC):
         """
         pass
 
-    @shared_task(name="get_feed")
     def get_feed(self) -> None:
         """
         get the feed and process the data
