@@ -22,27 +22,13 @@ from .models import Subscription
 from .exceptions import PushNotificationCheckFailed, PushNotificationException, UnifiedPushTokenValidationException
 from .push_notification_services import unified_push, unified_push_encrpted, apn, firebase
 from configuration.models import AppSetting
+from lib.bbox import is_valid_bbox
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def isValidBbox(x1, y1, x2, y2):
-    """
-    check if the given BBox is valid
-    Besides containing valid coordinates this also means not crossing the antimeridian.
-    :param x1:
-    :param y1:
-    :param x2:
-    :param y2:
-    :return:
-    """
-    return (-180.0 <= x1 <= 180.0 and
-            -180.0 <= x2 <= 180.0 and
-            -90.0 <= y1 <= 90.0 and
-            -90.0 <= y2 <= 90.0 and
-            x1 < x2 and
-            y1 < y2)
+
 
 @csrf_exempt
 @require_http_methods(["POST", "DELETE", "PUT", "GET"])
@@ -144,7 +130,7 @@ def add_new_subscription(request):
             return HttpResponseBadRequest('This push service is not available on this instance. '
                                           'Please try a different service')
 
-        if not isValidBbox(min_lon, min_lat, max_lon, max_lat):
+        if not is_valid_bbox(min_lon, min_lat, max_lon, max_lat):
             return HttpResponseBadRequest('invalid bounding box')
 
         bbox = Polygon.from_bbox((min_lon, min_lat, max_lon, max_lat))

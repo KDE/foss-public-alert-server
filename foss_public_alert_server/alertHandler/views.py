@@ -14,6 +14,7 @@ from django.views.decorators.http import require_http_methods
 
 from .models import Alert
 from subscriptionHandler.models import Subscription # has to be so because of django
+from lib.bbox import is_valid_bbox
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ def get_alerts_for_area(request):
         y2 = float(request.GET.get('max_lat'))
         x1 = float(request.GET.get('min_lon'))
         x2 = float(request.GET.get('max_lon'))
-        if not isValidBbox(x1, y1, x2, y2):
+        if not is_valid_bbox(x1, y1, x2, y2):
             return HttpResponseBadRequest('invalid bounding box')
         request_bbox = Polygon.from_bbox((x1, y1, x2, y2))
 
@@ -81,23 +82,6 @@ def get_alerts_for_area(request):
         return JsonResponse(res, safe=False)
     except (ValueError, TypeError):
         return HttpResponseBadRequest('invalid bounding box')
-
-
-def isValidBbox(x1, y1, x2, y2):
-    """
-    check if the given BBox is valid
-    :param x1:
-    :param y1:
-    :param x2:
-    :param y2:
-    :return:
-    """
-    return (-180.0 <= x1 <= 180.0 and
-            -180.0 <= x2 <= 180.0 and
-            -90.0 <= y1 <= 90.0 and
-            -90.0 <= y2 <= 90.0 and
-            x1 != x2 and
-            y1 != y2)
 
 
 @require_http_methods(["GET"])
