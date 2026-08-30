@@ -147,18 +147,21 @@ class AbstractCAPParser(ABC):
         Load GeoJSON geometry for a given CAP geo code.
         Returns None if not found.
         """
-        code_file = os.path.join(settings.BASE_DIR, 'alertHandler/data', code_name, f"{code_value}.geojson")
-        if os.path.isfile(code_file):
-            return json.load(open(code_file))
+        data_root = (settings.BASE_DIR / 'alertHandler/data').resolve()
+        code_file = (data_root / code_name / f"{code_value}.geojson").resolve()
 
         # for hierarchical CPEAS codes check if we have a parent code at least
         if code_name == "CPEAS Geographic Code":
             for i in range(0, 3):
-                parent_code = code_value[0:6 - i*2] + '0000000000'[4-i*2:]
+                parent_code = code_value[0:6 - i * 2] + '0000000000'[4 - i * 2:]
                 if parent_code != code_value:
                     return self.load_geocode(code_name, parent_code)
 
-        return None
+        if not code_file.is_relative_to(data_root) or not code_file.is_file():
+            return None
+        with open(code_file) as f:
+            return json.load(f)
+
 
     def expand_geocode(self, cap_tree: xml) -> [bool]:
         """
