@@ -125,8 +125,7 @@ def reload_feed_sources_and_update_database() -> None:
     # @todo validate json file before replacing the old database
     store_feeds_in_database(feeds)
 
-
-@shared_task(name="task.create_parser_and_get_feed")
+@shared_task(name="task.create_parser_and_get_feed", soft_time_limit=30, time_limit=60)
 def create_parser_and_get_feed(feed_id: str, feed_format:str) -> None :
     """
     called from the periodic celery task. Creates a parser instance and get the feed

@@ -30,8 +30,6 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
-# set timelimit for periodic background task to 30s soft and 60s hard
-app.control.time_limit('task.create_parser_and_get_feed', soft=30, hard=60, reply=True)
 
 # disable taks receiving and task success logging
 strategy.logger.setLevel(logging.WARNING)
