@@ -28,7 +28,7 @@ def get_alert_cap_data(request, identifier):
     """
     try:
         a = Alert.objects.get(id=identifier)
-    except Exception as e: # @todo use other exception type
+    except (Alert.DoesNotExist, ValidationError):
         return HttpResponseNotFound('no such alert')
 
     # server xml files to client

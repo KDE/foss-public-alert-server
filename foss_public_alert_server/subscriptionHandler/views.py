@@ -192,6 +192,7 @@ def add_new_subscription(request):
         logger.debug(f"Invalid UnifiedPush token: {token} - {e.reason}")
         return HttpResponseBadRequest(e.reason)
     except Exception as e:
+        # TODO(Nucleus): This exception might not be the clients fault, we should handle that case differently
         logger.debug(f"invalid request: {e}")
         return HttpResponseBadRequest('invalid request')
 
