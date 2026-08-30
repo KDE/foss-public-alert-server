@@ -148,7 +148,7 @@ def send_one_notification(self, subscription_id, msg)  -> None:
     except PushNotificationException as e:
         push_post_metric.labels(e.error_code).inc(1)
         # reraise exception to make the task fail, to use the retry policy
-        raise PushNotificationException
+        raise e
     push_post_metric.labels("200").inc(1)
 
 
