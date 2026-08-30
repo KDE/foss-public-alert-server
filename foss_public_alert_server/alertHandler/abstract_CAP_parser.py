@@ -175,10 +175,11 @@ class AbstractCAPParser(ABC):
                     or area.find('{urn:oasis:names:tc:emergency:cap:1.2}circle') is not None):
                 continue
             for geocode in area.findall('{urn:oasis:names:tc:emergency:cap:1.2}geocode'):
-                code_name = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName').text
-                code_value = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value').text
-                if not code_name or not code_value:
+                name_node = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}valueName')
+                value_node = geocode.find('{urn:oasis:names:tc:emergency:cap:1.2}value')
+                if name_node is None or value_node is None or not name_node.text or not value_node.text:
                     continue
+                code_name, code_value = name_node.text, value_node.text
                 # find correct geojson file in storage
                 geojson = self.load_geocode(code_name, code_value)
                 if geojson is not None:

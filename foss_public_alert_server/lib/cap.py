@@ -61,12 +61,15 @@ class CAPAlertInfo:
     def __init__(self, xml):
         self.xml = xml
 
-    def event(self) -> str:
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}event').text
+    def event(self) -> str | None:
+        event = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}event')
+        if event is not None and event.text is not None:
+            return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}event').text
+        return None
 
-    def expire_time(self) -> datetime:
+    def expire_time(self) -> datetime | None:
         """
-        Returny the expiry time of this CAP alert info.
+        Return the expiry time of this CAP alert info.
         """
         node = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}expires')
         if node is None or not node.text:
@@ -92,11 +95,17 @@ class CAPAlertInfo:
         elem = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}language')
         return elem.text if elem is not None else 'en-US'
 
-    def severity(self) -> str:
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}severity').text
+    def severity(self) -> str | None:
+        severity = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}severity')
+        if severity is not None and severity.text is not None:
+            return severity.text
+        return None
 
-    def urgency(self) -> str:
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}urgency').text
+    def urgency(self) -> str | None:
+        urgency = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}urgency')
+        if urgency is not None and urgency.text is not None:
+            return urgency.text
+        return None
 
     def polygons(self):
         """
@@ -159,8 +168,11 @@ class CAPAlertMessage:
         """
         return all(info.is_expired() for info in self.alert_infos())
 
-    def msg_type(self) -> str:
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}msgType').text
+    def msg_type(self) -> str | None:
+        msg_type = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}msgType')
+        if msg_type is not None and msg_type.text is not None:
+            return msg_type.text
+        return None
 
     def sent_time(self) -> datetime:
         """
@@ -172,11 +184,17 @@ class CAPAlertMessage:
             raise CAPException("Couldn't find CAP alert message sent time.")
         return parser.isoparse(sent_time_node.text)
 
-    def status(self):
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}status').text
+    def status(self) -> str | None:
+        status = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}status')
+        if status is not None and status.text is not None:
+            return status.text
+        return None
 
-    def scope(self):
-        return self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}scope').text
+    def scope(self) -> str | None:
+        scope = self.xml.find('{urn:oasis:names:tc:emergency:cap:1.2}scope')
+        if scope is not None and scope.text is not None:
+            return scope.text
+        return None
 
     def polygons(self):
         """
