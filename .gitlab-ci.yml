@@ -11,11 +11,12 @@ include:
   - project: sysadmin/ci-utilities
     file:
       - /gitlab-templates/reuse-lint.yml
+  - remote: https://gitlab.com/renovate-bot/renovate-runner/-/raw/de7a9d9cfccb413502ed7a396c3a35837da3130a/templates/renovate.gitlab-ci.yml # v26.1.0
 
 dependency_scan:
   stage: test
   image:
-    name: aquasec/trivy:latest
+    name: aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 #v0.74.0
     entrypoint: [""]
   script:
     - echo "Running Trivy scan..."
@@ -38,13 +39,13 @@ autotest:
      POSTGRES_USER: postgres
      POSTGRES_PASSWORD: password
   services:
-    - name: postgis/postgis:14-3.2
+    - name: postgis/postgis:14-3.2@sha256:23cf687e825ded53a98cf15200314b4b12e64f0cf5baa7a75666677447ae4c17
       alias: db
       variables:
         POSTGRES_DB: foss-public-alert-server
-    - name: rabbitmq:4.2
+    - name: rabbitmq:4.2@sha256:d5a5402953e3993bf0baf91a4fc960854623c659fe1172ea403da735923d70b2
       alias: amqp
-  image: python:3.12-trixie
+  image: python:3.12-trixie@sha256:0c2998a13d94a4afaaaf4613890a9cc9eabc65992d4d24931e3b35fa9c5ab0a5
   tags:
     - Linux
   before_script:
@@ -71,3 +72,13 @@ container:
     - podman login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - podman build --pull --build-arg REVISION="$CI_COMMIT_SHORT_SHA" --no-cache --tag ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG} foss_public_alert_server/
     - podman push ${CI_REGISTRY}/${CI_PROJECT_PATH}/${IMAGE_NAME}:${IMAGE_TAG}
+
+# Dependency updates. Runs only in a pipeline schedule that sets RENOVATE == "true",
+# so it does not collide with the schedule used by dependency_scan.
+renovate:
+  stage: publish
+  variables:
+    CI_RENOVATE_IMAGE: ghcr.io/renovatebot/renovate:44@sha256:6922c734849f2ed1c01e3a7924bd60e25e0ea904731a67bad72b02d563c0c3c3
+    RENOVATE_EXTRA_FLAGS: --onboarding=false --autodiscover=false $CI_PROJECT_PATH
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $RENOVATE == "true"

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "timezone": "Europe/Berlin",
+  "schedule": ["before 6am on monday"],
+  "prConcurrentLimit": 5,
+  "labels": ["dependencies"],
+  "pinDigests": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on the first day of the month"]
+  },
+  "packageRules": [
+    {
+      "description": "Group all container image digest refreshes into one MR",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest"],
+      "groupName": "container image digests"
+    },
+    {
+      "description": "celery / kombu do not support RabbitMQ >= 4.3 yet - see FIXME in the compose files",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["rabbitmq"],
+      "allowedVersions": "<4.3"
+    },
+    {
+      "description": "Django is constrained to the 4.x series by pyproject.toml",
+      "matchManagers": ["pep621"],
+      "matchPackageNames": ["django"],
+      "allowedVersions": "<5.0"
+    }
+  ]
+}
