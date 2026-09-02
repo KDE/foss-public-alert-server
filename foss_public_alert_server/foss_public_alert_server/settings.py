@@ -209,8 +209,8 @@ WEB_PUSH_CONFIG_PUBLIC_KEY = os.environ.get('WEB_PUSH_CONFIG_PUBLIC_KEY', 'BHJnB
 
 # previously used VAPID keys that are rotated out of service but still have active subscriptions
 # both arrays must use the same order, ie. matching private and public keys must be at the same position
-WEB_PUSH_CONFIG_LEGACY_PRIVATE_KEYS = []
-WEB_PUSH_CONFIG_LEGACY_PUBLIC_KEYS = []
+WEB_PUSH_CONFIG_LEGACY_PRIVATE_KEYS = list(filter(None, os.environ.get('WEB_PUSH_CONFIG_LEGACY_PRIVATE_KEYS', '').split(':')))
+WEB_PUSH_CONFIG_LEGACY_PUBLIC_KEYS = list(filter(None, os.environ.get('WEB_PUSH_CONFIG_LEGACY_PUBLIC_KEYS', '').split(':')))
 
 WEB_PUSH_CONTACT = os.environ.get("WEB_PUSH_CONTACT", "mailto:todo@example.com")
 
