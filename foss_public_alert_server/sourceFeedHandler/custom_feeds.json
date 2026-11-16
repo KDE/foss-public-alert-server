@@ -520,6 +520,29 @@
         "feedSource": "FPAS",
         "format": "embedded CAP"
       }
+    },
+    {
+      "source": {
+        "sourceId": "br-sedec-pt",
+        "byLanguage": [
+          {
+            "code": "en",
+            "name": "Brazil: National Secretariat for Civil Protection and Defense - SEDEC",
+            "logo": "https://alert-hub.s3.amazonaws.com/images/br-sedec-pt.png"
+          }
+        ],
+        "guid": "urn:oid:2.49.0.0.76.3",
+        "registerUrl": "https://alertingauthority.wmo.int/authorities.php?recId=333",
+        "authorName": "Jose Mauro de Rezende",
+        "authorEmail": "jmauro.rezende@inmet.gov.br",
+        "sourceIsOfficial": true,
+        "capAlertFeed": "https://idapfile.mdr.gov.br/idap/api/rss/cap",
+        "capAlertFeedStatus": "operating",
+        "authorityCountry": "br",
+        "authorityAbbrev": "sedec",
+        "feedSource": "FPAS",
+        "format": "embedded CAP"
+      }
     }
   ]
 }
