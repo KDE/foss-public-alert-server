@@ -38,7 +38,7 @@ container:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
-  image: storage.kde.org/vm-images/image-builder
+  image: s3.kde.org/ci-vm-images/image-builder
   tags:
     - VM
     - amd64
